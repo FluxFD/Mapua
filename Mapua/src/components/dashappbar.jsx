@@ -5,7 +5,6 @@ import { Button, Container, Paper } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CustomTheme from "./customTheme";
 import Dashcontent from "./dashcontent";
-import Dashtoolbar from "./dashtoolbar";
 
 const drawerWidth = 240;
 export default function Dashappbar() {
@@ -20,7 +19,6 @@ export default function Dashappbar() {
           Student/Teacher Profiles
         </Typography>
       </Toolbar>
-      <Dashtoolbar />
     </AppBar>
   );
 }

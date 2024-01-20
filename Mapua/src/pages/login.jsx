@@ -3,20 +3,18 @@ import { Paper, Box } from "@mui/material";
 
 const Login = () => {
   return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <Paper sx={{ height: "50vh", width: "25vw" }}>
-          <SignIn />
-        </Paper>
-      </Box>
-    </>
+    <Box
+      sx={{ 
+        display: "flex", 
+        justifyContent: "center", 
+        alignItems: "center",
+        height: "98vh",
+      }}
+    >
+      <Paper sx={{ height: "50vh", width: "25vw" }}>
+        <SignIn />
+      </Paper>
+    </Box>
   );
 };
 

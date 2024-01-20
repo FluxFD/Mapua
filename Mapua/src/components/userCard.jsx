@@ -3,24 +3,15 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const userCard = () => {
   return (
-    <Card
-      elevation={3}
-      sx={{ display: "space-between", marginBottom: 3 }}
-    >
+    <Card elevation={3} sx={{ display: "space-between", marginBottom: 1 }}>
       <CardContent>
         <AccountCircleIcon sx={{ fontSize: 50 }} />
       </CardContent>
       <CardContent>
-        <Typography
-          variant="h6"
-          component="div"
-        >
+        <Typography variant="h6" component="div">
           UserName
         </Typography>
-        <Typography
-          variant="body2"
-          color="text.secondary"
-        >
+        <Typography variant="body2" color="text.secondary">
           StudentNumber
         </Typography>
       </CardContent>
