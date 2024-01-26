@@ -1,9 +1,10 @@
 import { Box } from "@mui/material"
 import CssBaseline from '@mui/material/CssBaseline';
 
-import Sidenav from "../components/sidenav"
+import Sidenav from "../../components/sidenav"
 import Dashappbar from "../components/dashappbar"
 import Dashcontent from "../components/dashcontent";
+import Dashtoolbar from "../components/dashtoolbar"
 
 
 const dashboard = () => {

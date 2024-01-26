@@ -3,7 +3,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { Button, Container, Paper } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import CustomTheme from "./customTheme";
+import CustomTheme from "../customTheme";
 import Dashcontent from "./dashcontent";
 
 const drawerWidth = 240;

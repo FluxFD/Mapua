@@ -14,7 +14,8 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import SortIcon from "@mui/icons-material/Sort";
 import UserCard from "./userCard";
-import CustomTheme from "./customTheme";
+import CustomTheme from "../customTheme";
+import UserTable from "./userTable";
 
 const Dashcontent = () => {
   const [userCards, setUserCards] = useState([]);
@@ -43,8 +44,10 @@ const Dashcontent = () => {
       backgroundColor="#D9D9D9"
       height="100vh"
     >
-      <Toolbar/>
-      
+      <Toolbar />
+      <Paper>
+        <UserTable />
+      </Paper>
     </Box>
   );
 };

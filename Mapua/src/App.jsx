@@ -7,7 +7,7 @@ import axios from "axios";
 //PAGE AND COMPONENT IMPORTS
 import './App.css'
 import Login from "./pages/Login";
-import Dashboard from "./pages/dashboard";
+import Dashboard from "./pages/moderator/dashboard";
 import { UserContextProvider } from "../context/userContext";
 import Test from "./pages/test";
 import PrivateRoute from "./components/privateRoute";
