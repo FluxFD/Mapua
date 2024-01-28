@@ -11,11 +11,11 @@ const Login = () => {
         height: "98vh",
       }}
     >
-      <Paper sx={{ height: "50vh", width: "25vw" }}>
+      <Paper sx={{ height: "60vh", width: "25vw" }}>
         <SignIn />
       </Paper>
     </Box>
   );
 };
 
-export default Login;
+export default Login
