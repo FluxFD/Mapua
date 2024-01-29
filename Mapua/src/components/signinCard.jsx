@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
@@ -36,9 +37,11 @@ function Copyright(props) {
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
-const SignIn = ({}) => {
-  //SHOW PASSWORD
+const SignIn = () => {
   const [showPassword, setShowPassword] = React.useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -46,17 +49,12 @@ const SignIn = ({}) => {
     event.preventDefault();
   };
 
-  //LOGIN BUTTON
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost/oq1/login_auth.php", {
+      const response = await fetch("http://localhost/mapua/login_auth.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -67,11 +65,18 @@ const SignIn = ({}) => {
         }),
       });
 
-      const data = await response.json();
+      const data = await response.json(); // Parse the response as JSON
 
-      if (data === 1) {
-        // Redirect to home page
-        console.log('login success');
+      if (data.status === 1) {
+        if (data.user_type === 1) {
+          navigate("/moderator/dashboard");
+        }
+        else if (data.user_type === 2) {
+          navigate("/moderator/dashboard");
+        }
+        else if (data.user_type === 3) {
+          navigate("/student/dashboard");
+        }
       } else {
         alert("Incorrect username or password.");
       }
@@ -82,6 +87,9 @@ const SignIn = ({}) => {
       setLoading(false);
     }
   };
+
+  // Inside your functional component
+  const navigate = useNavigate();
 
   return (
     <ThemeProvider theme={Theme}>
@@ -114,6 +122,8 @@ const SignIn = ({}) => {
               name="username"
               autoComplete="username"
               autoFocus
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
             <TextField
               margin="normal"
@@ -124,6 +134,8 @@ const SignIn = ({}) => {
               type={showPassword ? "text" : "password"}
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -148,8 +160,9 @@ const SignIn = ({}) => {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
               onClick={handleLogin}
+              disabled={loading}
             >
-              Sign In
+              {loading ? "Signing In..." : "Sign In"}
             </Button>
             <Divider>
               <Typography variant="subtitle2" sx={{ color: "grey" }}>

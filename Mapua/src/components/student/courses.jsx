@@ -7,8 +7,10 @@ import {
   Typography,
   AppBar,
 } from "@mui/material";
-import ProfileCard from "./profileCard";
+import Coursecard from "./courses/coursecard";
 import Sidenav from "../../components/student/sidenav";
+import CustomTheme from "../customTheme";
+// import CourseTable from "./courses/coursetable";
 
 const Courses = () => {
   const drawerWidth = 240;
@@ -30,10 +32,14 @@ const Courses = () => {
         >
           <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography variant="h6" noWrap component="div">
-              Student/Teacher Profiles
+              Courses
             </Typography>
           </Toolbar>
         </AppBar>
+        <Toolbar/>
+        <Coursecard/>
+        <Coursecard/>
+        <Coursecard/>
       </Box>
     </>
   );

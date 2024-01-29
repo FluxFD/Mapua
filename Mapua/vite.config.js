@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost/oq1/', // Your API server address
+        target: 'http://localhost/', // Your API server address
         changeOrigin: true,
         cors: true, // Enable CORS
         rewrite: (path) => path.replace(/^\/api/, ''),

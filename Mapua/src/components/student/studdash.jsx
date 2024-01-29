@@ -1,5 +1,5 @@
 import { Toolbar, Box, Paper, Grid, Stack, Typography } from "@mui/material";
-import ProfileCard from "./profileCard";
+import ProfileCard from "./studdash/profileCard";
 import Sidenav from "./sidenav";
 
 export const StudDash = () => {
