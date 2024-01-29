@@ -10,18 +10,17 @@ import {
   Toolbar,
   IconButton,
   Box,
-
 } from "@mui/material";
-import { Close, } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
+import CourseTable from "./coursetable";
 
-const Coursecard = () => {
+const Coursecard = ({title, color}) => {
   const [coursemodalopen, setcoursemodalOpen] = React.useState(false);
   const handlecoursemodalOpen = () => setcoursemodalOpen(true);
   const handlecoursemodalClose = () => setcoursemodalOpen(false);
 
   return (
     <>
-
       {/* COURSE MODAL */}
       <Modal
         open={coursemodalopen}
@@ -34,8 +33,8 @@ const Coursecard = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "80vh",
-            height: "80vh",
+            width: "150vh",
+            height: "95vh",
             bgcolor: "background.paper",
             boxShadow: 24,
             p: 1,
@@ -49,23 +48,33 @@ const Coursecard = () => {
             }}
           >
             <Typography id="modal-modal-title" variant="h6" color={"white"}>
-              Certificate
+              Certificate {/*REPLACE WITH SQL QUERY*/}
             </Typography>
             <IconButton onClick={handlecoursemodalClose} sx={{ color: "white" }}>
               <Close />
             </IconButton>
           </Toolbar>
-          <Box sx={{ paddingLeft: 10, paddingRight: 10 }}>
-            
+          <Box>
+            <CourseTable />
           </Box>
         </Paper>
       </Modal>
       {/* END OF COURSE MODAL */}
 
-      <Card sx={{ height: 100, mb: 3 }}>
+      <Card sx={{ height: 100, mb: 3, position: "relative"}}>
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            height: "100%",
+            width: 5, // Width of the colored vertical line
+            backgroundColor: color, // Color of the vertical line
+          }}
+        ></div>
         <CardActionArea sx={{ height: "100%" }} onClick={handlecoursemodalOpen}>
           <CardContent>
-            <Typography variant="h6">Certificate</Typography>
+            <Typography variant="h6">{title}</Typography>
           </CardContent>
         </CardActionArea>
       </Card>
