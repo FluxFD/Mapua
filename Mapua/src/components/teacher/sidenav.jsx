@@ -49,35 +49,35 @@ export default function PermanentDrawerLeft() {
       <Toolbar />
       <Divider />
       <List>
-        <ListItem disablePadding component={Link} to="/student/dashboard">
+        <ListItem disablePadding component={Link} to="/teacher/dashboard">
           <ListItemButton>
             <ListItemIcon>{dashicon}</ListItemIcon>
             <ListItemText primary="Dashboard" sx={{ color: "white" }} />
           </ListItemButton>
         </ListItem>
 
-        <ListItem disablePadding component={Link} to="/student/courses">
+        <ListItem disablePadding component={Link} to="/teacher/courses">
           <ListItemButton>
             <ListItemIcon>{bookicon}</ListItemIcon>
             <ListItemText primary="Courses" sx={{ color: "white" }} />
           </ListItemButton>
         </ListItem>
 
-        <ListItem disablePadding component={Link} to="/student/calendar">
+        <ListItem disablePadding component={Link} to="/teacher/calendar">
           <ListItemButton>
             <ListItemIcon>{calendaricon}</ListItemIcon>
             <ListItemText primary="Calendar" sx={{ color: "white" }} />
           </ListItemButton>
         </ListItem>
 
-        <ListItem disablePadding component={Link} to="/student/messages">
+        <ListItem disablePadding component={Link} to="/teacher/messages">
           <ListItemButton>
             <ListItemIcon>{messageicon}</ListItemIcon>
             <ListItemText primary="Messages" sx={{ color: "white" }} />
           </ListItemButton>
         </ListItem>
 
-        <ListItem disablePadding component={Link} to="/student/settings">
+        <ListItem disablePadding component={Link} to="/teacher/settings">
           <ListItemButton>
             <ListItemIcon>{settingsicon}</ListItemIcon>
             <ListItemText primary="Settings" sx={{ color: "white" }} />

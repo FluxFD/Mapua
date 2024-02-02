@@ -7,8 +7,9 @@ import {
 } from "@mui/material";
 import Coursecard from "./courses/coursecard";
 import CustomTheme from "../customTheme";
+import Test from "./courses/test";
 
-const StudCourses = () => {
+const TeachCourses = () => {
 
   const drawerWidth = 240;
 
@@ -52,12 +53,15 @@ const StudCourses = () => {
         <Toolbar />
         
         {/* Map over the coursesData array and render Coursecard for each course */}
-        {coursesData.map((course, index) => (
+        {/* {coursesData.map((course, index) => (
           <Coursecard key={index} title={course.title} color={getRandomColor()} />
-        ))}
+        ))} */}
+
+        <Test/>
+
       </Box>
     </>
   );
 };
 
-export default StudCourses;
+export default TeachCourses;

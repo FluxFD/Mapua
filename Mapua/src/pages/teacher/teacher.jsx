@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { Box } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
-import Sidenav from "../../components/student/sidenav";
+import Sidenav from "../../components/teacher/sidenav";
 
 const Teacher = () => {
   return (

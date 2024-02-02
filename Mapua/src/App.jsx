@@ -12,9 +12,18 @@ import Student from "./pages/student/student";
 import { UserContextProvider } from "../context/userContext";
 import Test from "./pages/test";
 import PrivateRoute from "./components/privateRoute";
+
+// MODERATOR PAGES
 import ModDash from "./components/moderator/moddash";
+
+// STUDENT PAGES
 import StudDash from "./components/student/studdash";
-import Courses from "./components/student/courses";
+import StudCourses from "./components/student/courses";
+
+//TEACHER PAGES
+import Teacher from "./pages/teacher/teacher";
+import TeachDash from "./components/teacher/teachdash";
+import TeachCourses from "./components/teacher/courses";
 
 //AXIOS CONFIG
 axios.defaults.baseURL = "http://localhost:3306";
@@ -30,9 +39,13 @@ function App() {
           <Route path="moderator" element={<Moderator />}>
             <Route path="dashboard" element={<ModDash/>}/>
           </Route>
+          <Route path="teacher" element={<Teacher />}>
+            <Route path="dashboard" element={<TeachDash/>}/>
+            <Route path='courses' element={<TeachCourses/>}/>
+          </Route>
           <Route path="student" element={<Student />}>
             <Route path='dashboard' element={<StudDash/>}/>
-            <Route path='courses' element={<Courses/>}/>
+            <Route path='courses' element={<StudCourses/>}/>
           </Route>
           <Route path="/" element={<Test />} />
         </Routes>

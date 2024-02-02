@@ -54,7 +54,7 @@ const SignIn = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost/mapua/login_auth.php", {
+      const response = await fetch("http://localhost/learn/URL_LOGIN.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

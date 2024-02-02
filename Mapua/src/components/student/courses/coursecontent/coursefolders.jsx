@@ -10,13 +10,15 @@ import {
   IconButton,
   Box,
 } from "@mui/material";
-import { ArrowDropDown, Folder, Class } from "@mui/icons-material";
+import { ArrowDropDown, Folder, Book, Quiz } from "@mui/icons-material";
 
 const CourseFiles = ({ files }) => {
   const handleClick = () => {
     // Handle click event for CourseFiles
     console.log("CourseFiles clicked!");
   };
+
+  
 
   return (
     <Box sx={{ p: 2 }}>
@@ -25,7 +27,7 @@ const CourseFiles = ({ files }) => {
           <ListItemButton key={index}>
             <ListItemAvatar>
               <Avatar>
-                <Class />
+                <Book />
               </Avatar>
             </ListItemAvatar>
             <ListItemText primary={file} />
@@ -62,7 +64,7 @@ const CourseFolders = ({ folders }) => {
             </IconButton>
           </ListItem>
           <Collapse in={expand[index]} timeout="auto" unmountOnExit>
-            <Box sx={{ paddingLeft: 4, backgroundColor: "#f0f0f0" }}>
+            <Box sx={{ paddingLeft: 2, backgroundColor: "#f0f0f0" }}>
               <CourseFiles files={folder.files} />
             </Box>
           </Collapse>
