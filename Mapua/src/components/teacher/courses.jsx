@@ -1,19 +1,13 @@
-import React from "react";
-import {
-  Toolbar,
-  Box,
-  AppBar,
-  Typography,
-} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Toolbar, Box, AppBar, Typography } from "@mui/material";
 import Coursecard from "./courses/coursecard";
 import CustomTheme from "../customTheme";
 import Test from "./courses/test";
 
 const TeachCourses = () => {
-
   const drawerWidth = 240;
+  const [coursesData, setCoursesData] = useState([]);
 
-  // Function to generate a random color
   const getRandomColor = () => {
     const letters = "0123456789ABCDEF";
     let color = "#";
@@ -23,13 +17,15 @@ const TeachCourses = () => {
     return color;
   };
 
-  // Mock data for courses (replace it with your actual data or fetch from an API)
-  const coursesData = [
-    { title: "Course 1" },
-    { title: "Course 2" },
-    { title: "Course 3" },
-    // Add more courses as needed
-  ];
+  useEffect(() => {
+    fetch("http://localhost/learn/URL_QUIZ.php")
+      .then((response) => response.json())
+      .then((data) => {
+        // Assuming the data from the server has a 'data' property containing an array of courses
+        setCoursesData(data.data || []);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
 
   return (
     <>
@@ -40,25 +36,30 @@ const TeachCourses = () => {
         height="98vh"
       >
         <AppBar
-        position="fixed"
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
-        theme={CustomTheme}
-      >
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography variant="h6" noWrap component="div">
-            Courses
-          </Typography>
-        </Toolbar>
-      </AppBar>
+          position="fixed"
+          sx={{
+            width: `calc(100% - ${drawerWidth}px)`,
+            ml: `${drawerWidth}px`,
+          }}
+          theme={CustomTheme}
+        >
+          <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography variant="h6" noWrap component="div">
+              Courses
+            </Typography>
+          </Toolbar>
+        </AppBar>
         <Toolbar />
-        
-        {/* Map over the coursesData array and render Coursecard for each course */}
+
         {/* {coursesData.map((course, index) => (
-          <Coursecard key={index} title={course.title} color={getRandomColor()} />
+          <Coursecard
+            key={index}
+            title={course.quiz_name}
+            color={getRandomColor()}
+          />
         ))} */}
 
-        <Test/>
-
+        <Test />
       </Box>
     </>
   );

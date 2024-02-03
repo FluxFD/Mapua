@@ -26,9 +26,9 @@ import {
 
 import { Close, Edit, Delete, Add } from "@mui/icons-material";
 
-
-
 const Test = () => {
+  const [newQuizName, setNewQuizName] = useState("");
+  const [rows, setRows] = useState([]);
   const columns = [
     { id: "qid", label: "Quiz ID" },
     { id: "qname", label: "Quiz Name" },
@@ -49,24 +49,27 @@ const Test = () => {
     },
   ];
 
-  const [rows, setRows] = useState([]);
-  
-  useEffect(() => {
-    axios.get("http://localhost/learn/URL_QUIZ.php", { withCredentials: true })
-        .then((response) => {
-            setRows(response.data);
-        })
-        .catch((error) => {
-            console.error("Error fetching quiz data:", error);
-        });
-}, []);
+  const handleCreate = () => {
+    // You can access the form data from the newQuizName state
+    const formData = {
+      quizName: newQuizName,
+      // Add other form fields as needed
+    };
+    console.log(formData);
 
-  function createData(qid, qname) {
-    return { qid, qname };
-  }
+  // GET QUIZ
+  useEffect(() => {
+    fetch("http://localhost/learn/URL_QUIZ.php")
+      .then((response) => response.json())
+      .then((data) => {
+        // Assuming the data from the server has a 'data' property containing an array of courses
+        setRows(data.data || []);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
 
   const [createmodalopen, setcreatemodalOpen] = useState(false);
-  const handlecreatemodalOpen = () => setcreatemodalOpen(true);
+  const handlecreatemodalOpen = () => { setNewQuizName(""); setcreatemodalOpen(true); };
   const handlecreatemodalClose = () => setcreatemodalOpen(false);
 
   const [editmodalopen, seteditmodalOpen] = useState(false);
@@ -123,14 +126,20 @@ const Test = () => {
               <Close />
             </IconButton>
           </Toolbar>
-          <Box sx={{ p: 2, width: '100%', height: '100vh' }}>
-            <FormControl sx={{ width: '100%' }}>
-              <TextField label="Quiz Name" variant="outlined" sx={{ m: 1 }} />
+          <Box sx={{ p: 2, width: "100%", height: "100vh" }}>
+            <FormControl sx={{ width: "100%" }}>
+              <TextField
+                label="Quiz Name"
+                variant="outlined"
+                value={newQuizName}
+                onChange={(e) => setNewQuizName(e.target.value)}
+                sx={{ m: 1 }}
+              />
               <Button
                 variant="contained"
                 color="primary"
                 sx={{ m: 1 }}
-                onClick={handlecreatemodalClose}
+                onClick={}
               >
                 Create
               </Button>
@@ -245,11 +254,20 @@ const Test = () => {
               {rows
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
-                  <TableRow key={row.qid} hover role="checkbox" tabIndex={-1}>
+                  <TableRow
+                    key={row.quiz_id}
+                    hover
+                    role="checkbox"
+                    tabIndex={-1}
+                  >
                     {columns.map((column) => (
                       <TableCell key={column.id} align={column.align}>
                         {column.id === "actions"
                           ? column.format(row[column.id], row)
+                          : column.id === "qname" // Add this condition to handle "Quiz Name" column
+                          ? row.quiz_name
+                          : column.id === "qid" // Add this condition to handle "Quiz Name" column
+                          ? row.quiz_id
                           : column.format && typeof row[column.id] === "number"
                           ? column.format(row[column.id])
                           : row[column.id]}
@@ -257,7 +275,6 @@ const Test = () => {
                     ))}
                   </TableRow>
                 ))}
-              <TableRow></TableRow>
             </TableBody>
           </Table>
         </TableContainer>
