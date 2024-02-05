@@ -15,7 +15,6 @@ import com.example.mapua.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class Dashboard extends AppCompatActivity {
-    TextView username, usertype;
     ActivityDashboardBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
