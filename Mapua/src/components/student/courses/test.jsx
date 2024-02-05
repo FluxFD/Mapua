@@ -26,8 +26,7 @@ import {
 } from "@mui/material";
 
 import { Close, Edit, Delete, Add } from "@mui/icons-material";
-import { createQuiz, editQuiz, deleteQuiz} from "./crud";
-import { CreateModal, EditModal } from "./modals"; // Adjust the path based on your project structure
+import { createQuiz, editQuiz, deleteQuiz, fetchQuizzes } from "./crud";
 
 const Test = () => {
   const [newQuizName, setNewQuizName] = useState("");
@@ -143,22 +142,124 @@ const Test = () => {
 
   return (
     <>
-      <CreateModal
+      {/* CREATE MODAL */}
+      <Modal
         open={createmodalopen}
-        handleClose={handlecreatemodalClose}
-        handleCreate={handleCreate}
-        newQuizName={newQuizName}
-        setNewQuizName={setNewQuizName}
-      />
+        onClose={handlecreatemodalClose}
+        aria-labelledby="file-modal"
+      >
+        <Paper
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "80vh",
+            height: "95vh",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 1,
+          }}
+        >
+          <Toolbar
+            sx={{
+              backgroundColor: "#1B365B",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography id="modal-modal-title" variant="h6" color={"white"}>
+              Create
+            </Typography>
+            <IconButton
+              onClick={handlecreatemodalClose}
+              sx={{ color: "white" }}
+            >
+              <Close />
+            </IconButton>
+          </Toolbar>
+          <Box sx={{ p: 2, width: "100%", height: "100vh" }}>
+            <FormControl sx={{ width: "100%" }}>
+              <TextField
+                label="Quiz Name"
+                variant="outlined"
+                value={newQuizName}
+                onChange={(e) => setNewQuizName(e.target.value)}
+                sx={{ m: 1 }}
+              />
+              <FormControlLabel
+                control={<Switch defaultChecked />}
+                label="Label"
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ m: 1, width: "25%" }}
+                onClick={handleCreate}
+              >
+                Create
+              </Button>
+            </FormControl>
+          </Box>
+        </Paper>
+      </Modal>
 
-      <EditModal
+      {/* EDIT MODAL */}
+      <Modal
         open={editmodalopen}
-        handleClose={handleeditmodalClose}
-        handleEdit={handleEdit}
-        newQuizName={newQuizName}
-        setNewQuizName={setNewQuizName}
-      />
+        onClose={handleeditmodalClose}
+        aria-labelledby="file-modal"
+      >
+        <Paper
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "80vh",
+            height: "95vh",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 1,
+          }}
+        >
+          <Toolbar
+            sx={{
+              backgroundColor: "#1B365B",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography id="modal-modal-title" variant="h6" color={"white"}>
+              Edit
+            </Typography>
+            <IconButton onClick={handleeditmodalClose} sx={{ color: "white" }}>
+              <Close />
+            </IconButton>
+          </Toolbar>
+          <Box p={2}>
+            <FormControl>
+              <TextField
+                label="Quiz Name"
+                variant="outlined"
+                value={newQuizName}
+                onChange={(e) => setNewQuizName(e.target.value)}
+                sx={{ m: 1 }}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ m: 1, width: "25%" }}
+                onClick={handleEdit}
+              >
+                UPDATE
+              </Button>
+            </FormControl>
+          </Box>
+        </Paper>
+      </Modal>
 
+      {/* TABLE */}
 
       <Paper sx={{ width: "100%", overflow: "hidden", marginTop: 2 }}>
         <Toolbar
