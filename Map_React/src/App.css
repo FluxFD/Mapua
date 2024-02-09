@@ -5,3 +5,18 @@
   font-weight: normal;
   font-style: normal;
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #739072;
+  border-radius: 20px; /* Set the border-radius to make it round */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #739072;
+}

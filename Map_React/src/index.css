@@ -31,9 +31,26 @@
   border: 1px solid rgba(255, 255, 255, 0.089);
 }
 
+.glass-morphism2 {
+  padding: 20px 10px;
+  border-radius: 10px;
+  backdrop-filter: blur(30px);
+  background-color: rgba(236, 227, 206, 9);
+  border: 1px solid rgba(255, 255, 255, 0.089);
+}
+
 .centered {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+}
+
+.title-header {
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.not-allowed-cursor {
+  cursor: not-allowed;
 }

@@ -32,7 +32,7 @@ function LoginPage() {
 
       if (email === "test@gmail.com") {
         toast.success("Logged in successfully");
-        navigate("/home");
+        navigate("/main");
       }
     } catch (error) {
       toast.error("Admin Permission Needed");

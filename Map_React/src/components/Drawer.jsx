@@ -11,8 +11,15 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import EventIcon from "@mui/icons-material/Event";
+import AirportShuttleIcon from "@mui/icons-material/AirportShuttle";
+import GroupsIcon from "@mui/icons-material/Groups";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import NotesIcon from "@mui/icons-material/Notes";
+import MarkEmailUnreadIcon from "@mui/icons-material/MarkEmailUnread";
+import EngineeringIcon from "@mui/icons-material/Engineering";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const drawerWidth = 240;
 
@@ -61,7 +68,7 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-export default function MiniDrawer() {
+export default function MiniDrawer({ onItemClick, selectedItem }) {
   const theme = useTheme();
   const [open, setOpen] = useState(true);
 
@@ -97,24 +104,32 @@ export default function MiniDrawer() {
         </Box>
         <List>
           {[
-            "Inbox",
-            "Starred",
-            "Send email",
-            "Drafts",
-            "All mail",
-            "Trash",
-            "Spam",
-          ].map((text, index) => (
+            { text: "Dashboard" },
+            { text: "Event Planner" },
+            { text: "Vehicle Management" },
+            { text: "Applicants" },
+            { text: "Driver Management" },
+            { text: "Attendance Record" },
+            { text: "Leave Request" },
+            { text: "Maintenance Record" },
+            { text: "Logout" },
+          ].map((item, index) => (
             <ListItem
-              key={text}
+              key={item.text}
               disablePadding
               sx={{ display: "block", color: "white" }}
             >
               <ListItemButton
+                selected={selectedItem === item.text}
+                onClick={() => onItemClick(item.text)}
+                to={item.path}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
                   px: 2.5,
+                  "&.Mui-selected": {
+                    backgroundColor: "rgba(255, 255, 255, 0.1)", // Adjust the background color as needed
+                  },
                 }}
               >
                 <ListItemIcon
@@ -125,9 +140,30 @@ export default function MiniDrawer() {
                     color: "white",
                   }}
                 >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  {index === 0 ? (
+                    <DashboardIcon />
+                  ) : index === 1 ? (
+                    <EventIcon />
+                  ) : index === 2 ? (
+                    <AirportShuttleIcon />
+                  ) : index === 3 ? (
+                    <GroupsIcon />
+                  ) : index === 4 ? (
+                    <ManageAccountsIcon />
+                  ) : index === 5 ? (
+                    <NotesIcon />
+                  ) : index === 6 ? (
+                    <MarkEmailUnreadIcon />
+                  ) : index === 7 ? (
+                    <EngineeringIcon />
+                  ) : (
+                    <LogoutIcon />
+                  )}
                 </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText
+                  primary={item.text}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
               </ListItemButton>
             </ListItem>
           ))}
