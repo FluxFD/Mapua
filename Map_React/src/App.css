@@ -1,0 +1,7 @@
+@font-face {
+  font-family: "Colon Mono";
+  src: url("./fonts/colon-mono.woff2") format("woff2"),
+    url("./fonts/colon-mono.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
