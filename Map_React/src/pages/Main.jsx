@@ -5,13 +5,13 @@ import { useNavigate } from "react-router-dom";
 // Pages
 import MiniDrawer from "../components/Drawer";
 import HomePage from "../pages/Home";
-import EventPlannerPage from "../pages/EventPlanner";
-import AssignVehiclePage from "./AssignVehicle";
-import Applicants from "../pages/Applicants";
-import DriverLetter from "./LeaveRequest";
-import DriverManagement from "./Drivers";
-import AttendanceRecord from "./Attendance";
-import MaintenanceRecord from "./Maintenance";
+// import EventPlannerPage from "../pages/EventPlanner";
+// import AssignVehiclePage from "./AssignVehicle";
+// import Applicants from "../pages/Applicants";
+// import DriverLetter from "./LeaveRequest";
+// import DriverManagement from "./Drivers";
+// import AttendanceRecord from "./Attendance";
+// import MaintenanceRecord from "./Maintenance";
 
 // Firebase
 import { auth } from "../services/Firebase";
@@ -37,20 +37,20 @@ const MainPage = () => {
     switch (selectedItem) {
       case "Dashboard":
         return <HomePage />;
-      case "Event Planner":
-        return <EventPlannerPage />;
-      case "Vehicle Management":
-        return <AssignVehiclePage />;
-      case "Applicants":
-        return <Applicants />;
-      case "Driver Management":
-        return <DriverManagement />;
-      case "Attendance Record":
-        return <AttendanceRecord />;
-      case "Leave Request":
-        return <DriverLetter />;
-      case "Maintenance Record":
-        return <MaintenanceRecord />;
+      // case "Event Planner":
+      //   return <EventPlannerPage />;
+      // case "Vehicle Management":
+      //   return <AssignVehiclePage />;
+      // case "Applicants":
+      //   return <Applicants />;
+      // case "Driver Management":
+      //   return <DriverManagement />;
+      // case "Attendance Record":
+      //   return <AttendanceRecord />;
+      // case "Leave Request":
+      //   return <DriverLetter />;
+      // case "Maintenance Record":
+      //   return <MaintenanceRecord />;
       case "Logout":
         handleLogout();
         return null;

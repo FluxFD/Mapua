@@ -105,13 +105,11 @@ export default function MiniDrawer({ onItemClick, selectedItem }) {
         <List>
           {[
             { text: "Dashboard" },
-            { text: "Event Planner" },
-            { text: "Vehicle Management" },
+            { text: "Courses" },
+            { text: "Calendar" },
             { text: "Applicants" },
-            { text: "Driver Management" },
-            { text: "Attendance Record" },
-            { text: "Leave Request" },
-            { text: "Maintenance Record" },
+            { text: "Message" },
+            { text: "Settings" },
             { text: "Logout" },
           ].map((item, index) => (
             <ListItem

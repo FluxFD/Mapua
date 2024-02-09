@@ -3,13 +3,13 @@ import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB4iu9hWAjqgNVrsM0-1O_KejtM4tQhuZ0",
-  authDomain: "reservation-e7e3c.firebaseapp.com",
-  databaseURL: "https://reservation-e7e3c-default-rtdb.firebaseio.com",
-  projectId: "reservation-e7e3c",
-  storageBucket: "reservation-e7e3c.appspot.com",
-  messagingSenderId: "246127805295",
-  appId: "1:246127805295:web:bf0a7549d5b7adfb3fde9a",
+  apiKey: "AIzaSyBaxHH-6DLzyJa89gvsF8cF8q48TYlcMmI",
+  authDomain: "mapua-f1526.firebaseapp.com",
+  databaseURL: "https://mapua-f1526-default-rtdb.firebaseio.com",
+  projectId: "mapua-f1526",
+  storageBucket: "mapua-f1526.appspot.com",
+  messagingSenderId: "1086364766487",
+  appId: "1:1086364766487:web:bf6116d5a551c9bcb96752"
 };
 
 const app = initializeApp(firebaseConfig);
