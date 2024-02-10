@@ -5,13 +5,7 @@ import { useNavigate } from "react-router-dom";
 // Pages
 import MiniDrawer from "../components/Drawer";
 import HomePage from "../pages/Home";
-// import EventPlannerPage from "../pages/EventPlanner";
-// import AssignVehiclePage from "./AssignVehicle";
-// import Applicants from "../pages/Applicants";
-// import DriverLetter from "./LeaveRequest";
-// import DriverManagement from "./Drivers";
-// import AttendanceRecord from "./Attendance";
-// import MaintenanceRecord from "./Maintenance";
+import Courses from "../pages/Courses";
 
 // Firebase
 import { auth } from "../services/Firebase";
@@ -37,8 +31,8 @@ const MainPage = () => {
     switch (selectedItem) {
       case "Dashboard":
         return <HomePage />;
-      // case "Event Planner":
-      //   return <EventPlannerPage />;
+      case "Courses":
+        return <Courses />;
       // case "Vehicle Management":
       //   return <AssignVehiclePage />;
       // case "Applicants":
