@@ -12,32 +12,43 @@ function HomePage() {
   const [studentData, setStudentData] = useState(null);
 
   useEffect(() => {
-    if (currentUser) {
+    const fetchStudentData = () => {
+      if (!currentUser) return;
       const studentRef = ref(database, 'students/' + currentUser.uid);
-
       onValue(studentRef, (snapshot) => {
         const studentData = snapshot.val();
         setStudentData(studentData);
       });
+    };
 
+    const fetchCourses = () => {
+      if (!currentUser) return;
       const coursesRef = ref(database, 'Course');
-
       onValue(coursesRef, (snapshot) => {
         const coursesData = snapshot.val();
         if (coursesData) {
-          const coursesArray = Object.keys(coursesData).map((key) => ({
-            id: key,
-            ...coursesData[key],
-          }));
+          const coursesArray = Object.keys(coursesData).map((courseId) => {
+            const course = coursesData[courseId];
+            const studies = Object.keys(course).map((studyId) => ({
+              id: studyId,
+              dueDate: course[studyId].dueDate
+            }));
+            return {
+              id: courseId,
+              studies: studies
+            };
+          });
           setCourses(coursesArray);
         }
       });
+    };
 
-      return () => {
-        onValue(studentRef, null);
-        onValue(coursesRef, null);
-      };
-    }
+    fetchStudentData();
+    fetchCourses();
+
+    return () => {
+      // Cleanup code here if needed
+    };
   }, [currentUser]);
 
   return (
@@ -61,21 +72,24 @@ function HomePage() {
       </Card>
       <Row className="d-flex align-items-center">
         <Col sm={8}>
-          <Card
-            style={{ width: '90%' }}
-            className="mt-5 ms-5 p-5 title-header bg-light"
-          >
-            <FilterAltIcon />
-            {courses.map((course) => (
-              <div style={{ cursor: 'pointer' }} key={course.id} onClick={() => handleCardClick(course.id)}>
-                <Card border="warning" className="mt-4 p-3 title-header">
-                  <h5 className="ms-4 mb-1">{course.id}</h5>
-                  <p className="ms-4 mb-1">Due Activity: {course.Name}</p>
-                  <p className="ms-4 mb-1">Due Date: {course.DueDate}</p>
-                </Card>
-              </div>
-            ))}
-          </Card>
+        <Card
+  style={{ width: '90%' }}
+  className="mt-5 ms-5 p-5 title-header bg-light"
+>
+  <FilterAltIcon />
+  {courses.map((course) => (
+    <div key={course.id}>
+      {course.studies.map((study) => (
+        <Card style={{cursor:"pointer"}} key={study.id} border="warning" className="mt-4 p-3 title-header">
+          <h5 className="ms-4 mb-1">{course.id}</h5>
+          <h5 className="ms-4 mb-1">{study.id}</h5>
+          <p className="ms-4 mb-1">Due Date: {study.dueDate}</p>
+        </Card>
+      ))}
+    </div>
+  ))}
+</Card>
+
         </Col>
         <Col sm={4}>
           <Card className="mt-5 ms-5 p-5 title-header bg-light">
