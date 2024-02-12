@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1086364766487",
+    "firebase_url": "https://mapua-f1526-default-rtdb.firebaseio.com",
+    "project_id": "mapua-f1526",
+    "storage_bucket": "mapua-f1526.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1086364766487:android:ed9fc028d75db0a2b96752",
+        "android_client_info": {
+          "package_name": "com.example.mapua"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGp9vqpU83tZZj7tF4-5JiK4hYd7vAuRY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
