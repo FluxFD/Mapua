@@ -20,17 +20,17 @@ public class MoreFragment extends Fragment {
     private static final String ARG_USERTYPE = "usertype";
 
     private String username;
-    private String usertype;
+    private String usernum;
 
     public MoreFragment() {
         // Required empty public constructor
     }
 
-    public static MoreFragment newInstance(String username, String usertype) {
+    public static MoreFragment newInstance(String username, String usernum) {
         MoreFragment fragment = new MoreFragment();
         Bundle args = new Bundle();
         args.putString(ARG_USERNAME, username);
-        args.putString(ARG_USERTYPE, usertype);
+        args.putString(ARG_USERTYPE, usernum);
         fragment.setArguments(args);
         return fragment;
     }
@@ -40,7 +40,7 @@ public class MoreFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             username = getArguments().getString(ARG_USERNAME);
-            usertype = getArguments().getString(ARG_USERTYPE);
+            usernum = getArguments().getString(ARG_USERTYPE);
         }
     }
 
@@ -55,7 +55,7 @@ public class MoreFragment extends Fragment {
 
         // Set text values with username and usertype
         studentNameTextView.setText(username);
-        studentNumberTextView.setText(usertype);
+        studentNumberTextView.setText(usernum);
 
         return view;
     }

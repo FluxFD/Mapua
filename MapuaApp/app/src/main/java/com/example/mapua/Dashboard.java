@@ -31,6 +31,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public class Dashboard extends AppCompatActivity {
     ActivityDashboardBinding binding;
     FirebaseAuth mAuth;
+    private String name;
+    private String studentNo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +53,13 @@ public class Dashboard extends AppCompatActivity {
             } else if (itemId == R.id.calendar) {
                 replaceFragment(new CalendarFragment());
             } else {
-                replaceFragment(new MoreFragment());
+                // Pass data to MoreFragment
+                MoreFragment moreFragment = new MoreFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("name", name);
+                bundle.putString("studentNo", studentNo);
+                moreFragment.setArguments(bundle);
+                replaceFragment(moreFragment);
             }
 
             return true;
@@ -62,14 +70,13 @@ public class Dashboard extends AppCompatActivity {
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Iterate through each student
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    // Get field name and studentNo
-                    String name = snapshot.child("name").getValue(String.class);
-                    String studentNo = snapshot.child("studentNo").getValue(String.class);
-                    Log.d(TAG, "Student Name: " + name + ", Student No: " + studentNo);
-                    // You can use the retrieved data here as needed
-                }
+                // Assuming there's only one student's data
+                DataSnapshot studentSnapshot = dataSnapshot.getChildren().iterator().next();
+                // Get field name and studentNo
+                name = studentSnapshot.child("name").getValue(String.class);
+                studentNo = studentSnapshot.child("studentNo").getValue(String.class);
+                Log.d(TAG, "Student Name: " + name + ", Student No: " + studentNo);
+                // You can use the retrieved data here as needed
             }
 
             @Override
@@ -87,3 +94,4 @@ public class Dashboard extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 }
+
