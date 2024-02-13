@@ -54,11 +54,7 @@ public class Dashboard extends AppCompatActivity {
                 replaceFragment(new CalendarFragment());
             } else {
                 // Pass data to MoreFragment
-                MoreFragment moreFragment = new MoreFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("name", name);
-                bundle.putString("studentNo", studentNo);
-                moreFragment.setArguments(bundle);
+                MoreFragment moreFragment = MoreFragment.newInstance(name, studentNo);
                 replaceFragment(moreFragment);
             }
 

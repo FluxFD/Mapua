@@ -26,11 +26,11 @@ public class MoreFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static MoreFragment newInstance(String username, String usernum) {
+    public static MoreFragment newInstance(String name, String studentNo) {
         MoreFragment fragment = new MoreFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_USERNAME, username);
-        args.putString(ARG_USERTYPE, usernum);
+        args.putString(ARG_USERNAME, name);
+        args.putString(ARG_USERTYPE, studentNo);
         fragment.setArguments(args);
         return fragment;
     }
