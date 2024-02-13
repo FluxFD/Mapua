@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ import java.util.List;
  * Use the {@link CoursesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CoursesFragment extends Fragment {
+public class CoursesFragment extends Fragment implements CoursesAdapter.OnCourseClickListener {
 
     private static final String TAG = "CoursesFragment";
     private RecyclerView recyclerView;
@@ -87,7 +89,7 @@ public class CoursesFragment extends Fragment {
         recyclerView = view.findViewById(R.id.courseRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         courseIds = new ArrayList<>();
-        adapter = new CoursesAdapter(courseIds);
+        adapter = new CoursesAdapter(courseIds, this); // Pass 'this' as the OnCourseClickListener
         recyclerView.setAdapter(adapter);
 
         // Get a reference to the "Courses" collection
@@ -112,4 +114,37 @@ public class CoursesFragment extends Fragment {
             }
         });
     }
+
+
+    @Override
+    public void onCourseClick(String courseId) {
+        // Get a reference to the Task collection for the selected course
+        DatabaseReference tasksRef = FirebaseDatabase.getInstance().getReference("Task");
+        Query query = tasksRef.orderByChild("Course").equalTo(courseId).limitToFirst(1);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Get the first task found for the selected course
+                    String taskId = dataSnapshot.getChildren().iterator().next().getKey();
+                    // Open CourseContentFragment with the courseId and taskId
+                    CourseContentFragment fragment = CourseContentFragment.newInstance(courseId, taskId);
+                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.cons_layout_dashboard, fragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                } else {
+                    Log.e(TAG, "No tasks found for course: " + courseId);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle error
+                Log.e(TAG, "Error fetching tasks", databaseError.toException());
+            }
+        });
+    }
+
 }
