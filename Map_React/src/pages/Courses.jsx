@@ -3,41 +3,62 @@ import { Container, Card, Col, Row } from 'react-bootstrap';
 import AddIcon from '@mui/icons-material/Add';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { database } from '../services/Firebase';
-import { ref, get } from 'firebase/database'; // Import `get` to fetch data once
+import { ref, onValue } from 'firebase/database';
 import useAuth from '../services/Auth';
 
 function Courses() {
-  const [courses, setCourses] = useState([]); // State to hold courses data
+  const [courses, setCourses] = useState([]);
+  const { currentUser } = useAuth();
+  const [studentData, setStudentData] = useState(null);
 
   useEffect(() => {
-    // Define a reference to the "Courses" collection
-    const coursesRef = ref(database, 'Course');
-
-    // Fetch the data once from the "Courses" collection
-    get(coursesRef)
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          // Convert the snapshot to an array of courses
-          const coursesData = [];
-          snapshot.forEach((childSnapshot) => {
-            coursesData.push({ id: childSnapshot.key, ...childSnapshot.val() });
-          });
-          // Update the state with the fetched courses
-          setCourses(coursesData);
-        } else {
-          console.log('No data available');
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
+    const fetchStudentData = () => {
+      if (!currentUser) return;
+      const studentRef = ref(database, 'students/' + currentUser.uid);
+      onValue(studentRef, (snapshot) => {
+        const studentData = snapshot.val();
+        setStudentData(studentData);
       });
-  }, []); // Empty dependency array ensures this effect runs only once
+    };
+
+    const fetchCourses = () => {
+      if (!currentUser) {
+        setCourses([]); // Reset courses if the user is not authenticated
+        return;
+      }
+      const coursesRef = ref(database, 'Course');
+      onValue(coursesRef, (snapshot) => {
+        const coursesData = snapshot.val();
+        if (coursesData) {
+          const coursesArray = Object.keys(coursesData).map((courseId) => {
+            const course = coursesData[courseId];
+            const studies = Object.keys(course).map((studyId) => ({
+              id: studyId,
+              dueDate: course[studyId].dueDate
+            }));
+            return {
+              id: courseId,
+              studies: studies
+            };
+          });
+          setCourses(coursesArray);
+        }
+      });
+    };
+
+    fetchStudentData();
+    fetchCourses();
+
+    return () => {
+      // Cleanup code here if needed
+    };
+  }, [currentUser]);
 
   return (
-    <Container className='mt-5' fluid style={{ paddingLeft: '18%', paddingRight: '5%' }}>
+    <Container fluid style={{ paddingLeft: '18%', paddingRight: '5%' }}>
       <h1>Courses</h1>
       <div className="mt-5">
-        {courses.map((course) => (
+        {currentUser && courses.map((course) => (
           <Row key={course.id} className="mb-4">
             <Col md={12}>
               <Card className='title-header'>
@@ -49,6 +70,7 @@ function Courses() {
             </Col>
           </Row>
         ))}
+        {!currentUser && <p>Please log in to view courses</p>}
       </div>
     </Container>
   );

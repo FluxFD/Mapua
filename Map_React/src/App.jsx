@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Main from "./pages/Main";
 import Courses from "./pages/Courses";
+import CourseContent from "./pages/courseContent";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path="/Main" element={<Main />}></Route>
             <Route path="/Home" element={<Home />}></Route>
             <Route path="/Courses" element={<Courses />}></Route>
+            <Route path="/CourseContent" element={<CourseContent />}></Route>
              {/* <Route path="/EventPlanning" element={<EventPlanner />}></Route>
             <Route path="/Applicants" element={<Applicants />}></Route>
             <Route path="/Letters" element={<DriverLetter />}></Route>
