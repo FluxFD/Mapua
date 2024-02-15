@@ -84,15 +84,12 @@ public class CourseContentFragment extends Fragment {
 
         courseContentRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        // Get the course ID passed from CoursesFragment
         String courseId = getArguments().getString("courseId");
 
-        // Fetch tasks for the selected course ID
         DatabaseReference tasksRef = FirebaseDatabase.getInstance().getReference("Task");
         tasksRef.orderByChild("Course").equalTo(courseId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Retrieve the course title for the selected course ID
                 DatabaseReference courseRef = FirebaseDatabase.getInstance().getReference("Course").child(courseId);
                 courseRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -100,24 +97,19 @@ public class CourseContentFragment extends Fragment {
                         if (courseSnapshot.exists()) {
                             Log.d(TAG, "Course Snapshot: " + courseSnapshot.toString());
 
-                            // Create a list to hold course content strings
                             List<String> courseContentList = new ArrayList<>();
 
-                            // Iterate through tasks and add course content strings to the list
                             for (DataSnapshot taskSnapshot : dataSnapshot.getChildren()) {
                                 String courseTitle = taskSnapshot.child("Course").getValue(String.class);
                                 String taskName = taskSnapshot.child("taskName").getValue(String.class);
                                 String dueDate = taskSnapshot.child("dueDate").getValue(String.class);
 
-                                // Create a course content string and add it to the list
                                 String courseContent = courseTitle + "," + taskName + "," + dueDate;
                                 courseContentList.add(courseContent);
                             }
 
-                            // Create an instance of the CourseContentAdapter with the courseContentList
-                            CourseContentAdapter adapter = new CourseContentAdapter(courseContentList);
-
-                            // Set the adapter to the courseContentRecyclerView
+                            // Pass the context to the adapter
+                            CourseContentAdapter adapter = new CourseContentAdapter(requireContext(), courseContentList);
                             courseContentRecyclerView.setAdapter(adapter);
                         } else {
                             Log.e(TAG, "Course not found for ID: " + courseId);
@@ -126,7 +118,6 @@ public class CourseContentFragment extends Fragment {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        // Handle errors
                         Log.e(TAG, "Error fetching course", databaseError.toException());
                     }
                 });
@@ -134,11 +125,11 @@ public class CourseContentFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle errors
                 Log.e(TAG, "Error fetching tasks", databaseError.toException());
             }
         });
     }
 
-
 }
+
+
