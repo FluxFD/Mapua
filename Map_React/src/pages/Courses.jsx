@@ -1,15 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Card, Col, Row } from 'react-bootstrap';
+import { Container, Card, Col, Row, Modal } from 'react-bootstrap';
 import AddIcon from '@mui/icons-material/Add';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { database } from '../services/Firebase';
 import { ref, onValue } from 'firebase/database';
 import useAuth from '../services/Auth';
+import CourseModal from './CourseModal'; // Make sure to adjust the path if needed
+
 
 function Courses() {
   const [courses, setCourses] = useState([]);
   const { currentUser } = useAuth();
   const [studentData, setStudentData] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleCardClick = (course) => {
+    setSelectedCourse(course);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
 
   useEffect(() => {
     const fetchStudentData = () => {
@@ -50,7 +64,6 @@ function Courses() {
     fetchCourses();
 
     return () => {
-      // Cleanup code here if needed
     };
   }, [currentUser]);
 
@@ -61,10 +74,9 @@ function Courses() {
         {currentUser && courses.map((course) => (
           <Row key={course.id} className="mb-4">
             <Col md={12}>
-              <Card className='title-header'>
+              <Card className='title-header' onClick={() => handleCardClick(course)}>
                 <Card.Body>
                   <h3>{course.id}</h3>
-                  {/* Render other details of the course */}
                 </Card.Body>
               </Card>
             </Col>
@@ -72,6 +84,13 @@ function Courses() {
         ))}
         {!currentUser && <p>Please log in to view courses</p>}
       </div>
+      {selectedCourse && (
+        <CourseModal
+          show={showModal}
+          handleClose={handleCloseModal}
+          course={selectedCourse}
+        />
+      )}
     </Container>
   );
 }
