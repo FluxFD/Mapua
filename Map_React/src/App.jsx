@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import Main from "./pages/Main";
 import Courses from "./pages/Courses";
 import CourseContent from "./pages/courseContent";
+import TaskDetailsPage from "./pages/TaskDetailsPage";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/Home" element={<Home />}></Route>
             <Route path="/Courses" element={<Courses />}></Route>
             <Route path="/CourseContent" element={<CourseContent />}></Route>
+            <Route path="/task/:taskId" component={TaskDetailsPage} />
              {/* <Route path="/EventPlanning" element={<EventPlanner />}></Route>
             <Route path="/Applicants" element={<Applicants />}></Route>
             <Route path="/Letters" element={<DriverLetter />}></Route>
