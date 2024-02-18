@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Card, Col, Row } from 'react-bootstrap';
+import { Container, Card, Col, Row, Modal, Button, Spinner } from 'react-bootstrap'; // Import Spinner from react-bootstrap
 import AddIcon from '@mui/icons-material/Add';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { database } from '../services/Firebase';
@@ -10,6 +10,10 @@ function HomePage() {
   const [tasks, setTasks] = useState([]);
   const { currentUser } = useAuth();
   const [studentData, setStudentData] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
+  const [hideCancel, setHideCancel] = useState(false);
 
   useEffect(() => {
     const fetchStudentData = () => {
@@ -35,7 +39,6 @@ function HomePage() {
             const daysDifference = timeDifference / (1000 * 3600 * 24);
 
             if (daysDifference <= 2) {
-              // Only add tasks due within 2 days
               tasksArray.push({
                 id: taskId,
                 Course: task.Course,
@@ -55,6 +58,23 @@ function HomePage() {
     return () => {
     };
   }, [currentUser]);
+
+  const handleTaskClick = (task) => {
+    setSelectedTask(task);
+    setShowModal(true);
+  };
+
+  const handleModalConfirm = () => {
+    setShowSpinner(true);
+    setHideCancel(true);
+    setTimeout(() => {
+      setShowSpinner(false);
+      setShowModal(false);
+      if (selectedTask) {
+        window.location.href = `/task/${selectedTask.id}/${selectedTask.taskName}`;
+      }
+    }, 3000);
+  };
 
   return (
     <Container fluid style={{ paddingLeft: '13%', paddingRight: '1%' }}>
@@ -82,6 +102,7 @@ function HomePage() {
             {tasks.map((task) => (
               <Card
                 key={task.id}
+                onClick={() => handleTaskClick(task)} // Handle click on the task card
                 style={{cursor: "pointer"}}
                 border="warning"
                 className="mt-4 p-3 title-header"
@@ -99,6 +120,24 @@ function HomePage() {
           </Card>
         </Col>
       </Row>
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to answer this question?
+        </Modal.Body>
+        <Modal.Footer>
+          { !hideCancel &&
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
+              Cancel
+            </Button>
+          }
+          <Button variant="primary" onClick={handleModalConfirm}>
+            {showSpinner ? <Spinner animation="border" size="sm" /> : 'Confirm'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }

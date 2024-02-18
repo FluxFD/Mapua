@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Modal, Button, Tab, Tabs, Card, Offcanvas } from 'react-bootstrap'
-import { Link } from 'react-router-dom' // Import Link from React Router
+import { Link } from 'react-router-dom'
 import { database } from '../services/Firebase'
 import { ref, onValue } from 'firebase/database'
 import useAuth from '../services/Auth'
 import ListAltIcon from '@mui/icons-material/ListAlt'
+import CampaignIcon from '@mui/icons-material/Campaign'
+import ArticleIcon from '@mui/icons-material/Article';
 
 function CourseModal({ course, show, handleClose }) {
   const { currentUser } = useAuth()
@@ -14,6 +16,8 @@ function CourseModal({ course, show, handleClose }) {
   const [showScore, setShowScore] = useState(false)
   const [scoreValue, setScoreValue] = useState(0)
   const [taskName, setTaskName] = useState('')
+  const [announcements, setAnnouncements] = useState([])
+  const [reviewers, setReviewers] = useState([])
 
   useEffect(() => {
     if (!currentUser) return
@@ -44,8 +48,36 @@ function CourseModal({ course, show, handleClose }) {
       setTasks(tasksArray)
     })
 
+    const announcementsRef = ref(database, 'Announcement')
+    onValue(announcementsRef, (snapshot) => {
+      const announcementsData = snapshot.val() || {}
+      const announcementsArray = []
+
+      Object.entries(announcementsData).forEach(([announcementId, announcement]) => {
+        if (announcement.Course === course.id) {
+          announcementsArray.push({ id: announcementId, ...announcement })
+        }
+      })
+
+      setAnnouncements(announcementsArray)
+    })
+
+    const reviewersRef = ref(database, 'Reviewer')
+    onValue(reviewersRef, (snapshot) => {
+      const reviewersData = snapshot.val() || {}
+      const reviewersArray = []
+
+      Object.entries(reviewersData).forEach(([reviewerId, reviewer]) => {
+        if (reviewer.Course === course.id) {
+          reviewersArray.push({ id: reviewerId, ...reviewer })
+        }
+      })
+
+      setReviewers(reviewersArray)
+    })
+
     return () => {
-      // Cleanup
+
     }
   }, [course.id, currentUser])
 
@@ -66,6 +98,10 @@ function CourseModal({ course, show, handleClose }) {
     }
   }
 
+  const handleReviewerClick = (fileUrl) => {
+    window.open(fileUrl, '_blank');
+  }
+
   return (
     <>
       <Modal show={show} onHide={handleClose} size="lg">
@@ -82,6 +118,7 @@ function CourseModal({ course, show, handleClose }) {
               <Tab eventKey="home" title="Content">
                 Course Content
                 <hr />
+                {/* Displaying tasks */}
                 {tasks.map((task) => (
                   <Card
                     style={{ cursor: 'pointer' }}
@@ -95,9 +132,34 @@ function CourseModal({ course, show, handleClose }) {
                     </Card.Body>
                   </Card>
                 ))}
+                {/* Displaying reviewers */}
+                {reviewers.map((reviewer) => (
+                  <Card
+                    style={{ cursor: 'pointer' }}
+                    key={reviewer.id}
+                    className="title-header mt-3"
+                    onClick={() => handleReviewerClick(reviewer.file)}
+                  >
+                    <Card.Body>
+                      <ArticleIcon />
+                      {reviewer.title}
+                    </Card.Body>
+                  </Card>
+                ))}
               </Tab>
               <Tab eventKey="profile" title="Announcement">
-                Tab content for Profile
+                {announcements.map((announcement) => (
+                  <Card
+                    style={{ cursor: 'pointer' }}
+                    key={announcement.id}
+                    className="title-header mt-3"
+                  >
+                    <Card.Body>
+                      <CampaignIcon />
+                      {announcement.title} - Date: {announcement.date}
+                    </Card.Body>
+                  </Card>
+                ))}
               </Tab>
               <Tab eventKey="contact" title="Calendar">
                 Tab content for Contact
