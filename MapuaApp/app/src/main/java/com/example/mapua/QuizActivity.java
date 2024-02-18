@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,10 +29,8 @@ public class QuizActivity extends AppCompatActivity {
 
     private TextView questionTextView;
     private RadioButton optionARadioButton, optionBRadioButton, optionCRadioButton, optionDRadioButton;
-    private Button actionButton;
     private List<Quiz> quizList;
     private int currentQuestionIndex;
-    private int score;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +42,10 @@ public class QuizActivity extends AppCompatActivity {
         optionBRadioButton = findViewById(R.id.optionBRadioButton);
         optionCRadioButton = findViewById(R.id.optionCRadioButton);
         optionDRadioButton = findViewById(R.id.optionDRadioButton);
-        actionButton = findViewById(R.id.submitButton);
 
         quizList = new ArrayList<>();
         currentQuestionIndex = 0;
-        score = 0;
+
 
         // Get the taskName from the intent
         String taskName = getIntent().getStringExtra("taskName");
@@ -59,32 +57,23 @@ public class QuizActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot categorySnapshot : dataSnapshot.getChildren()) {
                     for (DataSnapshot questionSnapshot : categorySnapshot.getChildren()) {
-                        Quiz quiz = new Quiz();
-                        for (DataSnapshot answerSnapshot : questionSnapshot.getChildren()) {
-                            String answerKey = answerSnapshot.getKey();
-                            String value = answerSnapshot.getValue(String.class);
+                        String questionKey = questionSnapshot.getKey();
+                        String question = (String) questionSnapshot.child("question").getValue();
+                        String answer = (String) questionSnapshot.child("answer").getValue();
 
-                            switch (answerKey) {
-                                case "question":
-                                    quiz.setQuestion(value);
-                                    break;
-                                case "choiceA":
-                                    quiz.setChoiceA(value);
-                                    break;
-                                case "choiceB":
-                                    quiz.setChoiceB(value);
-                                    break;
-                                case "choiceC":
-                                    quiz.setChoiceC(value);
-                                    break;
-                                case "choiceD":
-                                    quiz.setChoiceD(value);
-                                    break;
-                                case "answer":
-                                    quiz.setAnswer(value);
-                                    break;
-                            }
+                        Map<String, String> choicesMap = new HashMap<>();
+                        DataSnapshot choicesSnapshot = questionSnapshot.child("choices");
+                        for (DataSnapshot choiceSnapshot : choicesSnapshot.getChildren()) {
+                            String choiceKey = choiceSnapshot.getKey();
+                            String choiceValue = (String) choiceSnapshot.getValue();
+                            choicesMap.put(choiceKey, choiceValue);
                         }
+
+                        Log.d(TAG, "Question: " + question);
+                        Log.d(TAG, "Choices: " + choicesMap.toString());
+                        Log.d(TAG, "Answer: " + answer);
+
+                        Quiz quiz = new Quiz(question, choicesMap.get("A"), choicesMap.get("B"), choicesMap.get("C"), choicesMap.get("D"), answer);
                         quizList.add(quiz);
                     }
                 }
@@ -92,29 +81,14 @@ public class QuizActivity extends AppCompatActivity {
                 displayQuestion();
             }
 
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 // Error fetching quizzes
             }
         });
 
-        actionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentQuestionIndex < quizList.size()) {
-                    // Display the next question
-                    displayQuestion();
-                    if (currentQuestionIndex == quizList.size() - 1) {
-                        actionButton.setText("Submit");
-                    } else {
-                        actionButton.setText("Next");
-                    }
-                } else {
-                    // End of quiz, calculate and log the score
-                    logScore();
-                }
-            }
-        });
+
     }
 
     private void displayQuestion() {
@@ -127,10 +101,6 @@ public class QuizActivity extends AppCompatActivity {
         currentQuestionIndex++;
     }
 
-    private void logScore() {
-        Log.d(TAG, "Score: " + score);
-        // You can also save the score to Firebase or perform other actions
-    }
 }
 
 class Quiz {
@@ -140,7 +110,6 @@ class Quiz {
     private String choiceC;
     private String choiceD;
     private String answer;
-    private Map<String, Object> nestedData; // Map to hold nested data
 
     public Quiz() {
         // Default constructor required for calls to DataSnapshot.getValue(Quiz.class)
@@ -155,22 +124,7 @@ class Quiz {
         this.answer = answer;
     }
 
-    public Map<String, Object> getNestedData() {
-        return nestedData;
-    }
 
-    public void setNestedData(Map<String, Object> nestedData) {
-        this.nestedData = nestedData;
-        // Set other fields based on nestedData if needed
-        if (nestedData != null) {
-            this.question = (String) nestedData.get("question");
-            this.choiceA = (String) nestedData.get("choiceA");
-            this.choiceB = (String) nestedData.get("choiceB");
-            this.choiceC = (String) nestedData.get("choiceC");
-            this.choiceD = (String) nestedData.get("choiceD");
-            this.answer = (String) nestedData.get("answer");
-        }
-    }
 
     // Getters and setters
     public String getQuestion() {
