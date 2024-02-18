@@ -37,7 +37,7 @@ function Courses() {
 
     const fetchCourses = () => {
       if (!currentUser) {
-        setCourses([]); // Reset courses if the user is not authenticated
+        setCourses([]);
         return;
       }
       const coursesRef = ref(database, 'Course');
@@ -69,12 +69,12 @@ function Courses() {
 
   return (
     <Container fluid style={{ paddingLeft: '18%', paddingRight: '5%' }}>
-      <h1>Courses</h1>
+      <h1 className="text-white mt-5">Courses</h1>
       <div className="mt-5">
         {currentUser && courses.map((course) => (
           <Row key={course.id} className="mb-4">
             <Col md={12}>
-              <Card className='title-header' onClick={() => handleCardClick(course)}>
+              <Card style={{cursor:"pointer"}} className='title-header' onClick={() => handleCardClick(course)}>
                 <Card.Body>
                   <h3>{course.id}</h3>
                 </Card.Body>

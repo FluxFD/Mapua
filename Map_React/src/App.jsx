@@ -22,7 +22,7 @@ function App() {
           flexDirection: "column",
           minHeight: "100vh",
           fontFamily: "Colon Mono, monospace",
-          backgroundColor: "#ECE3CE",
+          backgroundColor: "#1B365B",
         }}
       >
         <Router>

@@ -7,7 +7,7 @@ import { ref, onValue } from 'firebase/database';
 import useAuth from '../services/Auth';
 
 function HomePage() {
-  const [courses, setCourses] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const { currentUser } = useAuth();
   const [studentData, setStudentData] = useState(null);
 
@@ -21,33 +21,38 @@ function HomePage() {
       });
     };
 
-    const fetchCourses = () => {
+    const fetchTasks = () => {
       if (!currentUser) return;
-      const coursesRef = ref(database, 'Course');
-      onValue(coursesRef, (snapshot) => {
-        const coursesData = snapshot.val();
-        if (coursesData) {
-          const coursesArray = Object.keys(coursesData).map((courseId) => {
-            const course = coursesData[courseId];
-            const studies = Object.keys(course).map((studyId) => ({
-              id: studyId,
-              dueDate: course[studyId].dueDate
-            }));
-            return {
-              id: courseId,
-              studies: studies
-            };
+      const tasksRef = ref(database, 'Task');
+      onValue(tasksRef, (snapshot) => {
+        const tasksData = snapshot.val();
+        if (tasksData) {
+          const tasksArray = [];
+          Object.entries(tasksData).forEach(([taskId, task]) => {
+            const dueDate = new Date(task.dueDate);
+            const currentDate = new Date();
+            const timeDifference = dueDate.getTime() - currentDate.getTime();
+            const daysDifference = timeDifference / (1000 * 3600 * 24);
+
+            if (daysDifference <= 2) {
+              // Only add tasks due within 2 days
+              tasksArray.push({
+                id: taskId,
+                Course: task.Course,
+                dueDate: task.dueDate,
+                taskName: task.taskName
+              });
+            }
           });
-          setCourses(coursesArray);
+          setTasks(tasksArray);
         }
       });
     };
 
     fetchStudentData();
-    fetchCourses();
+    fetchTasks();
 
     return () => {
-      // Cleanup code here if needed
     };
   }, [currentUser]);
 
@@ -72,24 +77,21 @@ function HomePage() {
       </Card>
       <Row className="d-flex align-items-center">
         <Col sm={8}>
-        <Card
-  style={{ width: '90%' }}
-  className="mt-5 ms-5 p-5 title-header bg-light"
->
-  <FilterAltIcon />
-  {courses.map((course) => (
-    <div key={course.id}>
-      {course.studies.map((study) => (
-        <Card style={{cursor:"pointer"}} key={study.id} border="warning" className="mt-4 p-3 title-header">
-          <h5 className="ms-4 mb-1">{course.id}</h5>
-          <h5 className="ms-4 mb-1">{study.id}</h5>
-          <p className="ms-4 mb-1">Due Date: {study.dueDate}</p>
-        </Card>
-      ))}
-    </div>
-  ))}
-</Card>
-
+          <Card style={{ width: '90%' }} className="mt-5 ms-5 p-5 title-header bg-light">
+            <FilterAltIcon />
+            {tasks.map((task) => (
+              <Card
+                key={task.id}
+                style={{cursor: "pointer"}}
+                border="warning"
+                className="mt-4 p-3 title-header"
+              >
+                <h4 className="ms-4 mb-1">{task.Course}</h4>
+                <p className="ms-4 mb-1">Task Name: {task.taskName}</p>
+                <p className="ms-4 mb-1 text-danger">Due Date: {task.dueDate}</p>
+              </Card>
+            ))}
+          </Card>
         </Col>
         <Col sm={4}>
           <Card className="mt-5 ms-5 p-5 title-header bg-light">

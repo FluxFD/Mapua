@@ -51,19 +51,19 @@ const Drawer = styled(MuiDrawer, {
   flexShrink: 0,
   whiteSpace: "nowrap",
   boxSizing: "border-box",
-  backgroundColor: "#739072",
+  backgroundColor: "#36454F",
   ...(open && {
     ...openedMixin(theme),
     "& .MuiDrawer-paper": {
       ...openedMixin(theme),
-      backgroundColor: "#739072",
+      backgroundColor: "#36454F",
     },
   }),
   ...(!open && {
     ...closedMixin(theme),
     "& .MuiDrawer-paper": {
       ...closedMixin(theme),
-      backgroundColor: "#739072",
+      backgroundColor: "#36454F",
     },
   }),
 }));
