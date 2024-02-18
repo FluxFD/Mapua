@@ -14,6 +14,8 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,10 +37,14 @@ public class QuizActivity extends AppCompatActivity {
     private Button submitBtn;
     private int score;
 
+    private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
+
+        mAuth = FirebaseAuth.getInstance();
 
         quizRecyclerView = findViewById(R.id.quizRecyclerView);
         submitBtn = findViewById(R.id.submitBtn);
@@ -85,10 +91,38 @@ public class QuizActivity extends AppCompatActivity {
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Calculate the score
-                score = calculateScore();
-                // Display the score (you can show it in a Toast or a dialog)
-                Toast.makeText(QuizActivity.this, "Your score is: " + score, Toast.LENGTH_SHORT).show();
+                // Check if user is authenticated
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                if (currentUser != null) {
+                    // User is authenticated, proceed with score calculation and storage
+                    score = calculateScore();
+                    Toast.makeText(QuizActivity.this, "Your score is: " + score, Toast.LENGTH_SHORT).show();
+
+                    // Store the score in Firebase
+
+
+                    // Update the score under the student's UID in the "students" collection
+                    DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference("students").child(currentUser.getUid());
+                    studentRef.child("name").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@androidx.annotation.NonNull DataSnapshot snapshot) {
+                            String result = snapshot.getValue().toString();
+                            Log.d("QuizActivity","name logged in " + result);
+                            DatabaseReference scoreRef = FirebaseDatabase.getInstance().getReference("Score").push();
+                            scoreRef.child("score").setValue(score);
+                            scoreRef.child("studentName").setValue(result);
+                            scoreRef.child("taskName").setValue(taskName);
+                        }
+
+                        @Override
+                        public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
+
+                        }
+                    });
+                } else {
+                    // User is not authenticated, show error message
+                    Toast.makeText(QuizActivity.this, "User not logged in", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
