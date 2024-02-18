@@ -1,6 +1,9 @@
 package com.example.mapua;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +12,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.List;
 
 public class CourseContentAdapter extends RecyclerView.Adapter<CourseContentAdapter.CourseViewHolder> {
@@ -41,11 +51,39 @@ public class CourseContentAdapter extends RecyclerView.Adapter<CourseContentAdap
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // Start the next activity here
-                        Intent intent = new Intent(context, QuizActivity.class);
-                        // Pass the task name to the QuizActivity
-                        intent.putExtra("taskName", parts[1]);
-                        context.startActivity(intent);
+                        // Check if parts array has at least 3 elements
+                        if (parts.length >= 3) {
+                            // Get the task name
+                            String taskName = parts[1];
+                            // Check if taskName is not null or empty
+                            if (taskName != null && !taskName.isEmpty()) {
+                                // Fetch quiz based on taskName
+                                DatabaseReference quizRef = FirebaseDatabase.getInstance().getReference("Quiz").child(taskName);
+                                quizRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.exists()) {
+                                            // Quiz data found, start QuizActivity
+                                            Intent intent = new Intent(context, QuizActivity.class);
+                                            intent.putExtra("taskName", taskName);
+                                            context.startActivity(intent);
+                                        } else {
+                                            // Quiz data not found
+                                            Log.e(TAG, "Quiz data not found for taskName: " + taskName);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        Log.e(TAG, "Error fetching quiz", databaseError.toException());
+                                    }
+                                });
+                            } else {
+                                Log.e(TAG, "Invalid taskName: " + taskName);
+                            }
+                        } else {
+                            Log.e(TAG, "Invalid parts length: " + parts.length);
+                        }
                     }
                 });
             }
