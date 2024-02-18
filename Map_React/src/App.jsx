@@ -34,13 +34,8 @@ function App() {
             <Route path="/Home" element={<Home />}></Route>
             <Route path="/Courses" element={<Courses />}></Route>
             <Route path="/CourseContent" element={<CourseContent />}></Route>
-            <Route path="/task/:taskId" component={TaskDetailsPage} />
-             {/* <Route path="/EventPlanning" element={<EventPlanner />}></Route>
-            <Route path="/Applicants" element={<Applicants />}></Route>
-            <Route path="/Letters" element={<DriverLetter />}></Route>
-            <Route path="/Driver" element={<DriverManagement />}></Route>
-            <Route path="/Attendance" element={<AttendanceRecord />}></Route>
-            <Route path="/Maintenance" element={<MaintenanceRecord />}></Route> */}
+            <Route path="/task/:taskId/:taskName" element={<TaskDetailsPage />} />
+
           </Routes>
         </Router>
       </main>

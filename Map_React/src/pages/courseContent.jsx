@@ -22,7 +22,6 @@ function CourseContent() {
             <Card className='title-header'>
                 <Card.Body>
                   <h3>taskName</h3>
-                  {/* Render other details of the course */}
                 </Card.Body>
               </Card>
           </Tab>

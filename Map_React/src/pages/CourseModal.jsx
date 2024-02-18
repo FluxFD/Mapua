@@ -13,20 +13,23 @@ function CourseModal({ course, show, handleClose }) {
 
   useEffect(() => {
     if (!currentUser) return;
-
+  
     const tasksRef = ref(database, 'Task');
     onValue(tasksRef, (snapshot) => {
       const tasksData = snapshot.val();
-      if (tasksData) {
-        const filteredTasks = Object.values(tasksData).filter(task => task.Course === course.id);
-        setTasks(filteredTasks);
-      } else {
-        setTasks([]);
-      }
+      const tasksArray = [];
+  
+      snapshot.forEach((childSnapshot) => {
+        const task = childSnapshot.val();
+        task.id = childSnapshot.key;
+        tasksArray.push(task);
+      });
+  
+      const filteredTasks = tasksArray.filter(task => task.Course === course.id);
+      setTasks(filteredTasks);
     });
-
+  
     return () => {
-      // Cleanup code if needed
     };
   }, [course.id, currentUser]);
 
@@ -49,8 +52,7 @@ function CourseModal({ course, show, handleClose }) {
                 <Card key={task.id} className='title-header mt-3'>
                   <Card.Body>
                     <ListAltIcon />
-                    {/* Wrap task name inside Link */}
-                    <Link to={`/task/${task.taskName}`}>{task.taskName}</Link> - Due Date: {task.dueDate}
+                    <Link to={`/task/${task.id}/${task.taskName}`}>{task.taskName}</Link> - Due Date: {task.dueDate}
                   </Card.Body>
                 </Card>
               ))}
