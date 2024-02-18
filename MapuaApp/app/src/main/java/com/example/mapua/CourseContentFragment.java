@@ -77,6 +77,7 @@ public class CourseContentFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_course_content, container, false);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -84,7 +85,7 @@ public class CourseContentFragment extends Fragment {
 
         courseContentRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        String courseId = getArguments().getString("courseId");
+        String courseId = requireArguments().getString("courseId");
 
         DatabaseReference tasksRef = FirebaseDatabase.getInstance().getReference("Task");
         tasksRef.orderByChild("Course").equalTo(courseId).addListenerForSingleValueEvent(new ValueEventListener() {

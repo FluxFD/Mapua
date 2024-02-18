@@ -66,6 +66,7 @@ public class CourseContentAdapter extends RecyclerView.Adapter<CourseContentAdap
                                             // Quiz data found, start QuizActivity
                                             Intent intent = new Intent(context, QuizActivity.class);
                                             intent.putExtra("taskName", taskName);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                             context.startActivity(intent);
                                         } else {
                                             // Quiz data not found
@@ -86,6 +87,8 @@ public class CourseContentAdapter extends RecyclerView.Adapter<CourseContentAdap
                         }
                     }
                 });
+            } else {
+                Log.e(TAG, "Invalid parts length: " + parts.length);
             }
         }
     }
