@@ -1,129 +1,129 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, Button, Tab, Tabs, Card } from 'react-bootstrap';
-import ScoreOffcanvas from '../components/ScoreOffCanvas';
-import ActivityOptionsOffcanvas from '../components/ActivityOptionOffCanvas';
-import { database } from '../services/Firebase';
-import { ref, onValue } from 'firebase/database';
-import useAuth from '../services/Auth';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import CampaignIcon from '@mui/icons-material/Campaign';
-import ArticleIcon from '@mui/icons-material/Article';
-import GradingIcon from '@mui/icons-material/Grading';
+import React, { useEffect, useState } from 'react'
+import { Modal, Button, Tab, Tabs, Card } from 'react-bootstrap'
+import ScoreOffcanvas from '../components/ScoreOffCanvas'
+import ActivityOptionsOffcanvas from '../components/ActivityOptionOffCanvas'
+import { database } from '../services/Firebase'
+import { ref, onValue } from 'firebase/database'
+import useAuth from '../services/Auth'
+import ListAltIcon from '@mui/icons-material/ListAlt'
+import CampaignIcon from '@mui/icons-material/Campaign'
+import ArticleIcon from '@mui/icons-material/Article'
+import GradingIcon from '@mui/icons-material/Grading'
 
 function CourseModal({ course, show, handleClose }) {
-  const { currentUser } = useAuth();
-  const [tasks, setTasks] = useState([]);
-  const [userScores, setUserScores] = useState({});
-  const [userName, setUserName] = useState('');
-  const [showScore, setShowScore] = useState(false);
-  const [scoreValue, setScoreValue] = useState(0);
-  const [taskName, setTaskName] = useState('');
-  const [announcements, setAnnouncements] = useState([]);
-  const [reviewers, setReviewers] = useState([]);
-  const [reviewerActivities, setReviewerActivities] = useState([]);
-  const [selectedActivity, setSelectedActivity] = useState(null);
+  const { currentUser } = useAuth()
+  const [tasks, setTasks] = useState([])
+  const [userScores, setUserScores] = useState({})
+  const [userName, setUserName] = useState('')
+  const [showScore, setShowScore] = useState(false)
+  const [scoreValue, setScoreValue] = useState(0)
+  const [taskName, setTaskName] = useState('')
+  const [announcements, setAnnouncements] = useState([])
+  const [reviewers, setReviewers] = useState([])
+  const [reviewerActivities, setReviewerActivities] = useState([])
+  const [selectedActivity, setSelectedActivity] = useState(null)
 
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser) return
 
-    const scoresRef = ref(database, 'Score');
+    const scoresRef = ref(database, 'Score')
     onValue(scoresRef, (snapshot) => {
-      const scoresData = snapshot.val() || {};
-      setUserScores(scoresData);
-    });
+      const scoresData = snapshot.val() || {}
+      setUserScores(scoresData)
+    })
 
-    const userRef = ref(database, `students/${currentUser.uid}/name`);
+    const userRef = ref(database, `students/${currentUser.uid}/name`)
     onValue(userRef, (snapshot) => {
-      const name = snapshot.val();
-      setUserName(name);
-    });
+      const name = snapshot.val()
+      setUserName(name)
+    })
 
-    const tasksRef = ref(database, 'Task');
+    const tasksRef = ref(database, 'Task')
     onValue(tasksRef, (snapshot) => {
-      const tasksData = snapshot.val() || {};
-      const tasksArray = [];
+      const tasksData = snapshot.val() || {}
+      const tasksArray = []
 
       Object.entries(tasksData).forEach(([taskId, task]) => {
         if (task.Course === course.id) {
-          tasksArray.push({ id: taskId, ...task });
+          tasksArray.push({ id: taskId, ...task })
         }
-      });
+      })
 
-      setTasks(tasksArray);
-    });
+      setTasks(tasksArray)
+    })
 
-    const announcementsRef = ref(database, 'Announcement');
+    const announcementsRef = ref(database, 'Announcement')
     onValue(announcementsRef, (snapshot) => {
-      const announcementsData = snapshot.val() || {};
-      const announcementsArray = [];
+      const announcementsData = snapshot.val() || {}
+      const announcementsArray = []
 
       Object.entries(announcementsData).forEach(
         ([announcementId, announcement]) => {
           if (announcement.Course === course.id) {
-            announcementsArray.push({ id: announcementId, ...announcement });
+            announcementsArray.push({ id: announcementId, ...announcement })
           }
         }
-      );
+      )
 
-      setAnnouncements(announcementsArray);
-    });
+      setAnnouncements(announcementsArray)
+    })
 
-    const reviewersRef = ref(database, 'Reviewer');
+    const reviewersRef = ref(database, 'Reviewer')
     onValue(reviewersRef, (snapshot) => {
-      const reviewersData = snapshot.val() || {};
-      const reviewersArray = [];
+      const reviewersData = snapshot.val() || {}
+      const reviewersArray = []
 
       Object.entries(reviewersData).forEach(([reviewerId, reviewer]) => {
         if (reviewer.Course === course.id) {
-          reviewersArray.push({ id: reviewerId, ...reviewer });
+          reviewersArray.push({ id: reviewerId, ...reviewer })
         }
-      });
+      })
 
-      setReviewers(reviewersArray);
-    });
+      setReviewers(reviewersArray)
+    })
 
-    const reviewerActivityRef = ref(database, 'ReviewerActivity');
+    const reviewerActivityRef = ref(database, 'ReviewerActivity')
     onValue(reviewerActivityRef, (snapshot) => {
-      const reviewerActivityData = snapshot.val() || {};
-      const reviewerActivityArray = [];
+      const reviewerActivityData = snapshot.val() || {}
+      const reviewerActivityArray = []
 
       Object.entries(reviewerActivityData).forEach(([activityId, activity]) => {
         if (activity.Course === course.id) {
-          reviewerActivityArray.push({ id: activityId, ...activity });
+          reviewerActivityArray.push({ id: activityId, ...activity })
         }
-      });
+      })
 
-      setReviewerActivities(reviewerActivityArray);
-    });
+      setReviewerActivities(reviewerActivityArray)
+    })
 
-    return () => {};
-  }, [course.id, currentUser]);
+    return () => {}
+  }, [course.id, currentUser])
 
   const handleClick = (taskId, taskName) => {
-    const userScoreKeys = Object.keys(userScores);
+    const userScoreKeys = Object.keys(userScores)
     const matchingScore = userScoreKeys.find((uid) => {
-      const score = userScores[uid];
-      return score.taskName === taskName && score.studentName === userName;
-    });
+      const score = userScores[uid]
+      return score.taskName === taskName && score.studentName === userName
+    })
 
     if (matchingScore) {
-      setShowScore(true);
-      setScoreValue(userScores[matchingScore].score);
-      setTaskName(taskName);
-      handleClose();
+      setShowScore(true)
+      setScoreValue(userScores[matchingScore].score)
+      setTaskName(taskName)
+      handleClose()
     } else {
-      window.location.href = `/task/${taskId}/${taskName}`;
+      window.location.href = `/task/${taskId}/${taskName}`
     }
-  };
+  }
 
   const handleReviewerClick = (fileUrl) => {
-    window.open(fileUrl, '_blank');
-  };
+    window.open(fileUrl, '_blank')
+  }
 
   const handleActivityClick = (activity) => {
-    setSelectedActivity(activity);
-    handleClose();
-  };
+    setSelectedActivity(activity)
+    handleClose()
+  }
 
   return (
     <>
@@ -227,7 +227,7 @@ function CourseModal({ course, show, handleClose }) {
         selectedActivity={selectedActivity}
       />
     </>
-  );
+  )
 }
 
-export default CourseModal;
+export default CourseModal

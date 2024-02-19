@@ -1,43 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom'; 
-import { database } from '../services/Firebase';
-import { ref, get, child } from 'firebase/database';
-import Flashcard from '../components/FlashCard';
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import { database } from '../services/Firebase'
+import { ref, get, child } from 'firebase/database'
+import Flashcard from '../components/FlashCard'
 
 function FlashcardPage() {
-  const { activityId } = useParams(); 
-  const [activities, setActivities] = useState([]);
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [showAnswer, setShowAnswer] = useState(false); 
+  const { activityId } = useParams()
+  const [activities, setActivities] = useState([])
+  const [currentCardIndex, setCurrentCardIndex] = useState(0)
+  const [showAnswer, setShowAnswer] = useState(false)
 
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const snapshot = await get(child(ref(database), `ReviewerActivity/${activityId}/activities`));
+        const snapshot = await get(
+          child(ref(database), `ReviewerActivity/${activityId}/activities`)
+        )
         if (snapshot.exists()) {
-          setActivities(Object.values(snapshot.val()));
+          setActivities(Object.values(snapshot.val()))
         }
       } catch (error) {
-        console.error('Error fetching activities:', error);
+        console.error('Error fetching activities:', error)
       }
-    };
+    }
 
-    fetchActivities();
-  }, [activityId]);
+    fetchActivities()
+  }, [activityId])
 
   const handleNext = () => {
-    setCurrentCardIndex((prevIndex) => (prevIndex + 1) % activities.length);
-    setShowAnswer(false);
-  };
+    setCurrentCardIndex((prevIndex) => (prevIndex + 1) % activities.length)
+    setShowAnswer(false)
+  }
 
   const handlePrev = () => {
-    setCurrentCardIndex((prevIndex) => (prevIndex - 1 + activities.length) % activities.length);
-    setShowAnswer(false);
-  };
+    setCurrentCardIndex(
+      (prevIndex) => (prevIndex - 1 + activities.length) % activities.length
+    )
+    setShowAnswer(false)
+  }
 
   const handleFlip = () => {
-    setShowAnswer((prevState) => !prevState);
-  };
+    setShowAnswer((prevState) => !prevState)
+  }
 
   return (
     <div>
@@ -52,7 +56,7 @@ function FlashcardPage() {
         />
       )}
     </div>
-  );
+  )
 }
 
-export default FlashcardPage;
+export default FlashcardPage

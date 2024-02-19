@@ -1,29 +1,35 @@
-import React, { useState } from 'react';
-import { Card, Container, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
-import { useNavigate } from 'react-router-dom';
-import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
-import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+import React, { useState } from 'react'
+import {
+  Card,
+  Container,
+  Button,
+  OverlayTrigger,
+  Tooltip,
+} from 'react-bootstrap'
+import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft'
+import { useNavigate } from 'react-router-dom'
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
 
 function Flashcard({ question, answer, onFlip, showAnswer, onNext, onPrev }) {
-  const [showTooltip, setShowTooltip] = useState(true);
-  const navigate = useNavigate();
+  const [showTooltip, setShowTooltip] = useState(true)
+  const navigate = useNavigate()
 
   const navigateToMain = () => {
-    navigate('/main');
-  };
+    navigate('/main')
+  }
 
   const handleFlip = () => {
-    onFlip();
-    setShowTooltip(false);
-  };
+    onFlip()
+    setShowTooltip(false)
+  }
 
   return (
     <Container style={{ height: '100vh' }}>
       <div>
-<Button className="mt-2" onClick={navigateToMain}>
-        <ArrowCircleLeftIcon />
-      </Button>
+        <Button className="mt-2" onClick={navigateToMain}>
+          <ArrowCircleLeftIcon />
+        </Button>
       </div>
 
       <div
@@ -90,7 +96,7 @@ function Flashcard({ question, answer, onFlip, showAnswer, onNext, onPrev }) {
         </div>
       </div>
     </Container>
-  );
+  )
 }
 
-export default Flashcard;
+export default Flashcard
