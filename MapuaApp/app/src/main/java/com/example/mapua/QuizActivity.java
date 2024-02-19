@@ -98,7 +98,6 @@ public class QuizActivity extends AppCompatActivity {
                     score = calculateScore();
                     Toast.makeText(QuizActivity.this, "Your score is: " + score, Toast.LENGTH_SHORT).show();
 
-                    // Store the score in Firebase
 
 
                     // Update the score under the student's UID in the "students" collection
@@ -109,6 +108,7 @@ public class QuizActivity extends AppCompatActivity {
                             String result = snapshot.getValue().toString();
                             Log.d("QuizActivity","name logged in " + result);
                             DatabaseReference scoreRef = FirebaseDatabase.getInstance().getReference("Score").push();
+                            scoreRef.child("studentId").setValue(currentUser.getUid());
                             scoreRef.child("score").setValue(score);
                             scoreRef.child("studentName").setValue(result);
                             scoreRef.child("taskName").setValue(taskName);

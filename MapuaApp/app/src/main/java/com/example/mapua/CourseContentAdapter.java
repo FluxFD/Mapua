@@ -12,11 +12,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
@@ -24,10 +27,12 @@ import java.util.List;
 public class CourseContentAdapter extends RecyclerView.Adapter<CourseContentAdapter.CourseViewHolder> {
     private List<String> courseContent;
     private Context context;
+    private FirebaseAuth mAuth;
 
     public CourseContentAdapter(Context context, List<String> courseContent) {
         this.context = context;
         this.courseContent = courseContent;
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @NonNull
@@ -51,34 +56,10 @@ public class CourseContentAdapter extends RecyclerView.Adapter<CourseContentAdap
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // Check if parts array has at least 3 elements
                         if (parts.length >= 3) {
-                            // Get the task name
                             String taskName = parts[1];
-                            // Check if taskName is not null or empty
                             if (taskName != null && !taskName.isEmpty()) {
-                                // Fetch quiz based on taskName
-                                DatabaseReference quizRef = FirebaseDatabase.getInstance().getReference("Quiz").child(taskName);
-                                quizRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.exists()) {
-                                            // Quiz data found, start QuizActivity
-                                            Intent intent = new Intent(context, QuizActivity.class);
-                                            intent.putExtra("taskName", taskName);
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            context.startActivity(intent);
-                                        } else {
-                                            // Quiz data not found
-                                            Log.e(TAG, "Quiz data not found for taskName: " + taskName);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                                        Log.e(TAG, "Error fetching quiz", databaseError.toException());
-                                    }
-                                });
+                                checkIfUserHasTakenTask(taskName, context);
                             } else {
                                 Log.e(TAG, "Invalid taskName: " + taskName);
                             }
@@ -109,6 +90,46 @@ public class CourseContentAdapter extends RecyclerView.Adapter<CourseContentAdap
             courseTaskNameTextView = itemView.findViewById(R.id.courseTaskName);
             courseDueDateTextView = itemView.findViewById(R.id.courseDueDate);
         }
+    }
+
+    private void checkIfUserHasTakenTask(String taskName, Context context) {
+        String currentUserId = mAuth.getCurrentUser().getUid();
+        DatabaseReference scoreRef = FirebaseDatabase.getInstance().getReference("Score");
+        Query query = scoreRef.orderByChild("studentId").equalTo(currentUserId);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int score = -1;
+                boolean hasTakenTask = false;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String scoreTaskName = snapshot.child("taskName").getValue(String.class);
+                    if (scoreTaskName != null && scoreTaskName.equals(taskName)) {
+                        score = snapshot.child("score").getValue(Integer.class);
+                        hasTakenTask = true;
+                        break;
+                    }
+                }
+
+                if (hasTakenTask) {
+                    Log.d(TAG, "User has already taken the task");
+                    Toast.makeText(context, "Already taken test, Score:" + score,Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Log.d(TAG, "User has not taken the task");
+                    // Proceed to the QuizActivity
+                    Intent intent = new Intent(context, QuizActivity.class);
+                    intent.putExtra("taskName", taskName);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Error checking if user has taken the task", databaseError.toException());
+            }
+        });
     }
 }
 
