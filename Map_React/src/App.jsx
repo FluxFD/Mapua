@@ -12,6 +12,7 @@ import Main from "./pages/Main";
 import Courses from "./pages/Courses";
 import CourseContent from "./pages/courseContent";
 import TaskDetailsPage from "./pages/TaskDetailsPage";
+import FlashcardsPage from "./pages/FlashCardsPage";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path="/Courses" element={<Courses />}></Route>
             <Route path="/CourseContent" element={<CourseContent />}></Route>
             <Route path="/task/:taskId/:taskName" element={<TaskDetailsPage />} />
+            <Route path="/flashcards/:activityId" element={<FlashcardsPage/>}/>
 
           </Routes>
         </Router>
