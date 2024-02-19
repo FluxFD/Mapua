@@ -1,29 +1,22 @@
 package com.example.mapua;
 
-import static android.content.ContentValues.TAG;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.annotations.Nullable;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -81,54 +74,19 @@ public class CourseContentFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        RecyclerView courseContentRecyclerView = view.findViewById(R.id.courseContentRecyclerView);
 
-        courseContentRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-
+        TabLayout tabLayout = view.findViewById(R.id.tabLayout);
+        ViewPager viewPager = view.findViewById(R.id.viewPager);
         String courseId = requireArguments().getString("courseId");
+        // Create an instance of PagerAdapter
+        PagerAdapter pagerAdapter = new CustomPagerAdapter(getChildFragmentManager(), courseId);
 
-        DatabaseReference tasksRef = FirebaseDatabase.getInstance().getReference("Task");
-        tasksRef.orderByChild("Course").equalTo(courseId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DatabaseReference courseRef = FirebaseDatabase.getInstance().getReference("Course").child(courseId);
-                courseRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot courseSnapshot) {
-                        if (courseSnapshot.exists()) {
-                            Log.d(TAG, "Course Snapshot: " + courseSnapshot.toString());
+        // Set the PagerAdapter to the ViewPager
+        viewPager.setAdapter(pagerAdapter);
 
-                            List<String> courseContentList = new ArrayList<>();
+        // Connect the TabLayout with the ViewPager
+        tabLayout.setupWithViewPager(viewPager);
 
-                            for (DataSnapshot taskSnapshot : dataSnapshot.getChildren()) {
-                                String courseTitle = taskSnapshot.child("Course").getValue(String.class);
-                                String taskName = taskSnapshot.child("taskName").getValue(String.class);
-                                String dueDate = taskSnapshot.child("dueDate").getValue(String.class);
-
-                                String courseContent = courseTitle + "," + taskName + "," + dueDate;
-                                courseContentList.add(courseContent);
-                            }
-
-                            // Pass the context to the adapter
-                            CourseContentAdapter adapter = new CourseContentAdapter(requireContext(), courseContentList);
-                            courseContentRecyclerView.setAdapter(adapter);
-                        } else {
-                            Log.e(TAG, "Course not found for ID: " + courseId);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.e(TAG, "Error fetching course", databaseError.toException());
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e(TAG, "Error fetching tasks", databaseError.toException());
-            }
-        });
     }
 
 }
