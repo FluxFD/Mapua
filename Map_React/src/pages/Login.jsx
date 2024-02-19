@@ -1,38 +1,33 @@
-import React, { useState } from 'react';
-import { Container, Card, Form, Button, Image } from 'react-bootstrap';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../services/Firebase';
-import { useNavigate } from 'react-router-dom';
-import Logo from '../../public/logo.png';
+import React, { useState } from "react";
+import { Container, Card, Form, Button, Image } from "react-bootstrap";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../services/Firebase";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // Prevent the form from submitting normally
+    e.preventDefault();
 
     try {
-      // Sign in user with email and password
       await signInWithEmailAndPassword(auth, email, password);
-      
-      // If successful, redirect to another page (e.g., dashboard)
-      navigate('/main');
+
+      navigate("/main");
     } catch (error) {
-      // Handle any authentication errors
-      console.error('Authentication Error:', error.message);
-      // You can also show a toast or error message to the user
+      console.error("Authentication Error:", error.message);
     }
   };
 
   return (
     <div className="login-bg">
       <Container className="centered">
-        <Card className="glass-morphism py-5" style={{ width: '28rem' }}>
+        <Card className="glass-morphism py-5" style={{ width: "28rem" }}>
           <Card.Body>
             <Card.Title className="text-center text-dark mb-5">
-              <Image className="" src={Logo} style={{ width: '40%' }} />
+              <Image className="" src="/logo.png" style={{ width: "40%" }} />
             </Card.Title>
             <Form onSubmit={handleLogin}>
               <Form.Group className="mb-3" controlId="formBasicEmail">
