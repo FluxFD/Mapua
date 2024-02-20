@@ -69,6 +69,9 @@ public class ContentFragment extends Fragment {
         RecyclerView courseContentRecyclerView = view.findViewById(R.id.courseContentRecyclerView);
         courseContentRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+        RecyclerView courseReviewertRecyclerView = view.findViewById(R.id.courseReviewerRecyclerView);
+        courseReviewertRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+
         String courseId = requireArguments().getString("courseId");
         if (courseId == null) {
             Log.e(TAG, "CourseId is null");
@@ -89,12 +92,11 @@ public class ContentFragment extends Fragment {
                             List<String> courseContentList = new ArrayList<>();
 
                             for (DataSnapshot taskSnapshot : dataSnapshot.getChildren()) {
-                                String courseTitle = taskSnapshot.child("Course").getValue(String.class);
-                                String taskName = taskSnapshot.child("taskName").getValue(String.class);
-                                String dueDate = taskSnapshot.child("dueDate").getValue(String.class);
-
-                                String courseContent = courseTitle + "," + taskName + "," + dueDate;
-                                courseContentList.add(courseContent);
+                                Task task = taskSnapshot.getValue(Task.class);
+                                if (task != null) {
+                                    String courseContent = task.getCourse() + "," + task.getTaskName() + "," + task.getDueDate();
+                                    courseContentList.add(courseContent);
+                                }
                             }
 
                             // Pass the context to the adapter
@@ -117,6 +119,120 @@ public class ContentFragment extends Fragment {
                 Log.e(TAG, "Error fetching tasks", databaseError.toException());
             }
         });
+
+        DatabaseReference reviewersRef = FirebaseDatabase.getInstance().getReference("Reviewer");
+        reviewersRef.orderByChild("Course").equalTo(courseId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Reviewer> reviewersList = new ArrayList<>();
+
+                for (DataSnapshot reviewerSnapshot : dataSnapshot.getChildren()) {
+                    Reviewer reviewer = reviewerSnapshot.getValue(Reviewer.class);
+                    if (reviewer != null) {
+                        reviewersList.add(reviewer);
+                    }
+                }
+                Log.d(TAG, "Reviewers DataSnapshot: " + dataSnapshot.getValue());
+                // Pass the context and reviewers list to the adapter
+                ReviewerAdapter adapter = new ReviewerAdapter(requireContext(), reviewersList);
+                courseReviewertRecyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Error fetching reviewers", databaseError.toException());
+            }
+        });
     }
 
+}
+
+class Task {
+    private String Course;
+    private String dueDate;
+    private String taskName;
+
+    public Task() {
+        // Default constructor required for calls to DataSnapshot.getValue(Task.class)
+    }
+
+    public Task(String course, String dueDate, String taskName) {
+        this.Course = course;
+        this.dueDate = dueDate;
+        this.taskName = taskName;
+    }
+
+    public String getCourse() {
+        return Course;
+    }
+
+    public void setCourse(String course) {
+        this.Course = course;
+    }
+
+    public String getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(String dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+}
+
+class Reviewer {
+    private String Course;
+    private String createdBy;
+    private String file;
+    private String title;
+
+    public Reviewer() {
+        // Default constructor required for calls to DataSnapshot.getValue(Reviewer.class)
+    }
+
+    public Reviewer(String course, String createdBy, String file, String title) {
+        this.Course = course;
+        this.createdBy = createdBy;
+        this.file = file;
+        this.title = title;
+    }
+
+    public String getCourse() {
+        return Course;
+    }
+
+    public void setCourse(String course) {
+        this.Course = course;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }
