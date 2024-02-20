@@ -125,19 +125,14 @@ public class CoursesFragment extends Fragment implements CoursesAdapter.OnCourse
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // Get the first task found for the selected course
-                    String taskId = dataSnapshot.getChildren().iterator().next().getKey();
-                    // Open CourseContentFragment with the courseId and taskId
-                    CourseContentFragment fragment = CourseContentFragment.newInstance(courseId, taskId);
-                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                    transaction.replace(R.id.cons_layout_dashboard, fragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                } else {
-                    Log.e(TAG, "No tasks found for course: " + courseId);
-                }
+                // Open CourseContentFragment with the courseId and null taskId (no tasks found)
+                CourseContentFragment fragment = CourseContentFragment.newInstance(courseId, null);
+                FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.cons_layout_dashboard, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -146,5 +141,7 @@ public class CoursesFragment extends Fragment implements CoursesAdapter.OnCourse
             }
         });
     }
+
+
 
 }
