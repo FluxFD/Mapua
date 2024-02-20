@@ -55,13 +55,13 @@ class CustomPagerAdapter extends FragmentPagerAdapter {
         switch (position) {
             case 0:
                 ContentFragment contentFragment = new ContentFragment();
-                Bundle args = new Bundle();
-                args.putString("courseId", courseId);
-                contentFragment.setArguments(args);
+                Bundle contentArgs = new Bundle();
+                contentArgs.putString("courseId", courseId);
+                contentFragment.setArguments(contentArgs);
                 return contentFragment;
             case 1:
-                // Assuming you want to show another fragment for position 1
-                return AnnouncementFragment.newInstance();
+                AnnouncementFragment announcementFragment = AnnouncementFragment.newInstance(courseId);
+                return announcementFragment;
             default:
                 throw new IllegalArgumentException("Invalid position: " + position);
         }
@@ -69,13 +69,11 @@ class CustomPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        // Update to return the number of fragments in your ViewPager
         return 2;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        // Set tab titles if needed
         switch (position) {
             case 0:
                 return "Content";
@@ -86,6 +84,8 @@ class CustomPagerAdapter extends FragmentPagerAdapter {
         }
     }
 }
+
+
 
 
 
