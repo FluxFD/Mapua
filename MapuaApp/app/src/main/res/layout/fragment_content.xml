@@ -4,19 +4,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ContentFragment">
+    tools:context=".ContentFragment"
+    android:background="@color/blue">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/courseContentRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:background="@color/gray"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginTop="2dp"
         android:id="@+id/courseReviewerRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:background="@color/gray"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="2dp"
+        android:id="@+id/courseReviewerCardRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@color/gray"/>
+
+
 
 </LinearLayout>

@@ -72,6 +72,9 @@ public class ContentFragment extends Fragment {
         RecyclerView courseReviewertRecyclerView = view.findViewById(R.id.courseReviewerRecyclerView);
         courseReviewertRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+        RecyclerView courseReviewerCardRecyclerView = view.findViewById(R.id.courseReviewerCardRecyclerView);
+        courseReviewerCardRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+
         String courseId = requireArguments().getString("courseId");
         if (courseId == null) {
             Log.e(TAG, "CourseId is null");
@@ -143,9 +146,46 @@ public class ContentFragment extends Fragment {
                 Log.e(TAG, "Error fetching reviewers", databaseError.toException());
             }
         });
+
+        DatabaseReference reviewerActivityRef = FirebaseDatabase.getInstance().getReference("ReviewerActivity");
+        reviewerActivityRef.orderByChild("Course").equalTo(courseId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<ReviewerActivityHelpers.Reviewer> reviewers = new ArrayList<>();
+                for (DataSnapshot reviewerSnapshot : snapshot.getChildren()) {
+
+                    String reviewerId = reviewerSnapshot.getKey(); // Get the reviewer ID
+                    String course = reviewerSnapshot.child("Course").getValue(String.class); // Get the course
+                    String date = reviewerSnapshot.child("date").getValue(String.class); // Get the date
+                    String title = reviewerSnapshot.child("title").getValue(String.class); // Get the title
+                    Log.d("ReviewActivity", "Reviewer ID: " + reviewerId + ", Course: " + course + ", Date: " + date + ", Title: " + title);
+                    List<ReviewerActivityHelpers.Activities> activities = new ArrayList<>();
+                    // Iterate over the activities
+                    for (DataSnapshot activitySnapshot : reviewerSnapshot.child("activities").getChildren()) {
+                        String activityId = activitySnapshot.getKey(); // Get the activity ID
+                        String question = activitySnapshot.child("question").getValue(String.class); // Get the question
+                        String answer = activitySnapshot.child("answer").getValue(String.class); // Get the answer
+                        Log.d("ReviewActivity", "  Activity ID: " + activityId + ", Question: " + question + ", Answer: " + answer);
+                        activities.add(new ReviewerActivityHelpers.Activities(activityId, question, answer));
+                        // Process the data as needed
+                    }
+                    reviewers.add(new ReviewerActivityHelpers.Reviewer(reviewerId, course, date, title, activities));
+                }
+                ReviewerActivityAdapter adapter = new ReviewerActivityAdapter(reviewers);
+                courseReviewerCardRecyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("ReviewActivity", "Database error: " + error.getMessage());
+            }
+        });
+
     }
 
 }
+
+
 
 class Task {
     private String Course;
