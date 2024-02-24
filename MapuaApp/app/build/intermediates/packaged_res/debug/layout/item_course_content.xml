@@ -1,0 +1,42 @@
+<!-- res/layout/item_reviewer_activities.xml -->
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/courseTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Course Title"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/courseTaskName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Activity Title"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/courseDueDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Due Date"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

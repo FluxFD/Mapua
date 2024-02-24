@@ -1,0 +1,78 @@
+[
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\fragment_announcement.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\fragment_announcement.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\fragment_calendar.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\fragment_calendar.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\item_reviewer_activites.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\item_reviewer_activites.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\activity_dashboard.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\activity_dashboard.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\fragment_more.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\fragment_more.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\item_quiz_question.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\item_quiz_question.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\item_reviewer.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\item_reviewer.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\fragment_courses.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\fragment_courses.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\fragment_content.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\fragment_content.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\activity_quiz.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\activity_quiz.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\activity_main.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\item_course_content.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\item_course_content.xml"
+    },
+    {
+        "merged": "com.example.mapua.app-mergeDebugResources-35:/layout/item_reviewer.xml",
+        "source": "com.example.mapua.app-main-38:/layout/item_reviewer.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\fragment_course_content.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\fragment_course_content.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\item_course.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\item_course.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\fragment_timeline.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\fragment_timeline.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\item_announcement.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\item_announcement.xml"
+    },
+    {
+        "merged": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-mergeDebugResources-35:\\layout\\sort_bottom_sheet.xml",
+        "source": "C:\\Users\\Anot\\.gradle\\daemon\\8.0\\com.example.mapua.app-main-38:\\layout\\sort_bottom_sheet.xml"
+    },
+    {
+        "merged": "com.example.mapua.app-mergeDebugResources-35:/layout/item_reviewer_activites.xml",
+        "source": "com.example.mapua.app-main-38:/layout/item_reviewer_activites.xml"
+    }
+]
