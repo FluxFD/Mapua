@@ -1,5 +1,8 @@
 package com.example.mapua;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 class ReviewerActivities extends BaseCourseContent {
@@ -58,7 +61,8 @@ class ReviewerActivities extends BaseCourseContent {
     }
 }
 
-class ActivitiesReviewerListItem extends BaseCourseContent {
+
+class ActivitiesReviewerListItem extends BaseCourseContent implements Parcelable {
     private String activityId;
     private String question;
     private String answer;
@@ -91,5 +95,35 @@ class ActivitiesReviewerListItem extends BaseCourseContent {
 
     public void setAnswer(String answer) {
         this.answer = answer;
+    }
+
+    protected ActivitiesReviewerListItem(Parcel in) {
+        activityId = in.readString();
+        question = in.readString();
+        answer = in.readString();
+    }
+
+    public static final Creator<ActivitiesReviewerListItem> CREATOR = new Creator<ActivitiesReviewerListItem>() {
+        @Override
+        public ActivitiesReviewerListItem createFromParcel(Parcel in) {
+            return new ActivitiesReviewerListItem(in);
+        }
+
+        @Override
+        public ActivitiesReviewerListItem[] newArray(int size) {
+            return new ActivitiesReviewerListItem[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(activityId);
+        dest.writeString(question);
+        dest.writeString(answer);
     }
 }

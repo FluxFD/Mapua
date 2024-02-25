@@ -20,6 +20,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="34">
         <activity
+            android:name=".FlashCard"
+            android:exported="false" />
+        <activity
+            android:name=".CardReviewerActivity"
+            android:exported="false" />
+        <activity
             android:name=".QuizActivity"
             android:exported="false" />
         <activity
