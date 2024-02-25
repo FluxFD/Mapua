@@ -13,6 +13,8 @@ import Courses from "./pages/Courses";
 import CourseContent from "./pages/courseContent";
 import TaskDetailsPage from "./pages/TaskDetailsPage";
 import FlashcardsPage from "./pages/FlashCardsPage";
+import MultipleChoice from "./pages/MultipleChoice";
+import Identification from "./pages/Identification";
 
 // Moderator
 import ModeratorDashboard from "./pages/Moderator/ModeratorDash";
@@ -51,6 +53,16 @@ function App() {
             <Route
               path="/flashcards/:activityId"
               element={<FlashcardsPage />}
+            />
+
+            <Route
+              path="/multiplechoice/:activityId"
+              element={<MultipleChoice />}
+            />
+
+            <Route
+              path="/identification/:activityId"
+              element={<Identification />}
             />
 
             <Route
