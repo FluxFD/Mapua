@@ -18,6 +18,11 @@ import FlashcardsPage from "./pages/FlashCardsPage";
 import ModeratorDashboard from "./pages/Moderator/ModeratorDash";
 import ModeratorMainPage from "./pages/Moderator/ModeratorMain";
 
+//Professor
+import ProfessorMainPage from "./pages/Professor/ProfessorMain";
+import ProfessorDashboard from "./pages/Professor/ProfessorDash";
+import ProfessorCourse from "./pages/Professor/ProfessorCourses";
+
 function App() {
   return (
     <>
@@ -55,6 +60,19 @@ function App() {
             <Route
               path="/ModeratorMain"
               element={<ModeratorMainPage />}
+            ></Route>
+
+            <Route
+              path="/ProfessorMain"
+              element={<ProfessorMainPage />}
+            ></Route>
+            <Route
+              path="/ProfessorDashboard"
+              element={<ProfessorDashboard />}
+            ></Route>
+            <Route
+              path="/ProfessorCourse"
+              element={<ProfessorCourse />}
             ></Route>
           </Routes>
         </Router>
