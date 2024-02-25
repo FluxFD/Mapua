@@ -10,23 +10,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/courseContentRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="@color/gray"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="2dp"
-        android:id="@+id/courseReviewerRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="@color/gray"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="2dp"
-        android:id="@+id/courseReviewerCardRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="@color/gray"/>
-
+        android:layout_height="588dp"
+        android:background="@color/gray" />
 
 
 </LinearLayout>

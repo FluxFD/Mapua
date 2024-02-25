@@ -54,10 +54,7 @@ class CustomPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                ContentFragment contentFragment = new ContentFragment();
-                Bundle contentArgs = new Bundle();
-                contentArgs.putString("courseId", courseId);
-                contentFragment.setArguments(contentArgs);
+                ContentFragment contentFragment = ContentFragment.newInstance(courseId);
                 return contentFragment;
             case 1:
                 AnnouncementFragment announcementFragment = AnnouncementFragment.newInstance(courseId);

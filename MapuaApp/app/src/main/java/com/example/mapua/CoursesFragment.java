@@ -1,7 +1,5 @@
 package com.example.mapua;
 
-import static android.content.ContentValues.TAG;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -118,21 +116,28 @@ public class CoursesFragment extends Fragment implements CoursesAdapter.OnCourse
 
     @Override
     public void onCourseClick(String courseId) {
-        // Get a reference to the Task collection for the selected course
         DatabaseReference tasksRef = FirebaseDatabase.getInstance().getReference("Task");
         Query query = tasksRef.orderByChild("Course").equalTo(courseId).limitToFirst(1);
-
+        Log.d("Query", "CourseID" + courseId);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Open CourseContentFragment with the courseId and null taskId (no tasks found)
-                CourseContentFragment fragment = CourseContentFragment.newInstance(courseId, null);
-                FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.cons_layout_dashboard, fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                if (dataSnapshot.exists()) {
+                    // Get the first task ID for the course
+                    CourseContentFragment fragment = CourseContentFragment.newInstance(courseId);
+                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.cons_layout_dashboard, fragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                } else {
+                    // No tasks found for the course
+                    CourseContentFragment fragment = CourseContentFragment.newInstance(courseId);
+                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.cons_layout_dashboard, fragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
             }
-
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -141,6 +146,8 @@ public class CoursesFragment extends Fragment implements CoursesAdapter.OnCourse
             }
         });
     }
+
+
 
 
 
