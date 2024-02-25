@@ -5,6 +5,9 @@ import {
   Button,
   OverlayTrigger,
   Tooltip,
+  Row,
+  Col,
+  Image,
 } from 'react-bootstrap'
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft'
 import { useNavigate } from 'react-router-dom'
@@ -27,20 +30,25 @@ function Flashcard({ question, answer, onFlip, showAnswer, onNext, onPrev }) {
   return (
     <Container style={{ height: '100vh' }}>
       <div>
-        <Button className="mt-2" onClick={navigateToMain}>
+        <Button className="mt-5" onClick={navigateToMain}>
           <ArrowCircleLeftIcon />
         </Button>
+        <div className='mb-5 d-flex justify-content-center'>
+            <Image className="" src="/logo.png" style={{ width: "15%" }} />
       </div>
+      </div>
+
 
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
           alignItems: 'center',
-          height: '90vh',
+          height: '60vh',
         }}
       >
+
+        
         <OverlayTrigger
           show={showTooltip}
           target=".card"
@@ -49,7 +57,7 @@ function Flashcard({ question, answer, onFlip, showAnswer, onNext, onPrev }) {
         >
           <Card
             style={{
-              height: '50%',
+              height: '80%',
               width: '28rem',
               textAlign: 'center',
               cursor: 'pointer',

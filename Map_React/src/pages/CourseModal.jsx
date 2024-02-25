@@ -127,7 +127,7 @@ function CourseModal({ course, show, handleClose }) {
 
   return (
     <>
-      <Modal show={show} onHide={handleClose} size="lg">
+      <Modal show={show} onHide={handleClose} size="xl" backdrop="static">
         <Modal.Header closeButton>
           <Modal.Title>{course.id}</Modal.Title>
         </Modal.Header>
