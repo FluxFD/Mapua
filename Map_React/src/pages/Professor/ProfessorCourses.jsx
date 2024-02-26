@@ -11,7 +11,7 @@ import {
 import "../../index.css";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Typography from "@mui/material/Typography";
-import ProfessorModal from "./ProfessorModal";
+import ProfessorOffcanvas from "./ProfessorCanvas";
 
 // Firebase
 import { database } from "../../services/Firebase";
@@ -27,6 +27,7 @@ function ProfessorCourse() {
   const [courseName, setCourseName] = useState("");
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [showModalContent, setShowModalContent] = useState(false);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     const coursesRef = ref(database, "Course");
@@ -106,7 +107,7 @@ function ProfessorCourse() {
       </Row>
 
       {selectedCourse && (
-        <ProfessorModal
+        <ProfessorOffcanvas
           show={showModalContent}
           onHide={() => setShowModalContent(false)}
           selectedCourse={selectedCourse}
