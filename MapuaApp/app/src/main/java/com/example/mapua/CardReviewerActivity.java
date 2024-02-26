@@ -119,6 +119,7 @@ public class CardReviewerActivity extends AppCompatActivity {
             if (!reviewerActivities.isEmpty()) {
                 Intent intent = new Intent(CardReviewerActivity.this, Identification.class);
                 intent.putExtra("reviewerActivities", new ArrayList<>(reviewerActivities));
+                intent.putExtra("title", title);
                 startActivity(intent);
             }
         });
