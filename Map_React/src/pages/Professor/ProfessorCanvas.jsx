@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Container,
+  Form,
   Button,
   Modal,
   Tab,
@@ -10,23 +10,31 @@ import {
 } from "react-bootstrap";
 import "../../index.css";
 import ListAltIcon from "@mui/icons-material/ListAlt";
+import ArticleIcon from "@mui/icons-material/Article";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-
-import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import AddIcon from "@mui/icons-material/Add";
 
 // Firebase
-import { database } from "../../services/Firebase";
+import { database, storage, auth } from "../../services/Firebase";
 import { ref, onValue, off, set, update, push } from "firebase/database";
+import {
+  getStorage,
+  ref as storageRef,
+  getDownloadURL,
+  uploadBytes,
+} from "firebase/storage";
 
 function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [tasks, setTasks] = useState([]);
   const [reviewers, setReviewers] = useState([]);
   const [reviewerActivity, setReviewerActivity] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const fileInputRef = useRef(null);
+  const [title, setTitle] = useState(""); // State to store the file name
 
   useEffect(() => {
     const tasksRef = ref(database, "Task");
@@ -84,7 +92,6 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
 
       Object.entries(announcementsData).forEach(
         ([announcementId, announcement]) => {
-          // Filter announcements based on the selected course
           if (announcement.Course === selectedCourse.uid) {
             announcementsArray.push({
               id: announcementId,
@@ -104,6 +111,81 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
       unsubscribeAnnouncements();
     };
   }, [selectedCourse.uid]);
+
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleFileUpload = async () => {
+    const file = fileInputRef.current.files[0];
+    const fileName = document.getElementById("fileName").value;
+    const user = auth.currentUser;
+
+    if (user) {
+      const createdBy = user.email;
+      const months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+
+      const currentDate = new Date();
+      const month = currentDate.getMonth() + 1; // Adding 1 because getMonth() returns a zero-based index
+      const date = currentDate.getDate();
+      const year = currentDate.getFullYear();
+
+      const formattedDate = `${month}/${date}/${year}`;
+
+      try {
+        // Upload the file to storage
+        const fileRef = storageRef(storage, file.name);
+        await uploadBytes(fileRef, file);
+        console.log("File uploaded successfully");
+
+        // Get download URL
+        const downloadURL = await getDownloadURL(fileRef);
+
+        // Save file details to the database
+        const reviewerRef = ref(database, `Reviewer/${selectedCourse.uid}`);
+        const newFileKey = push(reviewerRef).key;
+        update(ref(database), {
+          [`Reviewer/${newFileKey}`]: {
+            Course: selectedCourse.uid,
+            title: fileName,
+            createdBy: createdBy,
+            date: formattedDate,
+            file: downloadURL, // Include download URL in the database
+          },
+        });
+        console.log("File details saved to the database");
+        fileInputRef.current.value = null;
+        setTitle("");
+        handleCloseModal();
+      } catch (error) {
+        console.error("Error uploading file: ", error);
+      }
+    } else {
+      console.error("No user is logged in");
+      return;
+    }
+  };
+
+  const handleFileNameChange = (event) => {
+    setTitle(event.target.value);
+  };
 
   return (
     <>
@@ -130,12 +212,15 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                 className="mb-3"
               >
                 <Tab eventKey="content" title="Course Content">
-                  <Breadcrumbs aria-label="breadcrumb">
+                  <Breadcrumbs
+                    aria-label="breadcrumb"
+                    style={{ cursor: "pointer" }}
+                  >
                     <Link
                       className="d-flex align-items-center"
                       underline="hover"
                       color="text.primary"
-                      href="/"
+                      onClick={handleOpenModal}
                     >
                       <AttachFileIcon /> Upload File
                     </Link>
@@ -143,9 +228,8 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       className="d-flex align-items-center"
                       underline="hover"
                       color="text.primary"
-                      href=""
                     >
-                      <AddIcon /> Create Task
+                      <AddIcon /> Create Content
                     </Link>
                   </Breadcrumbs>
                   <hr />
@@ -171,8 +255,8 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     >
                       <Card.Body>
                         <div className="d-flex align-items-center">
-                          <ListAltIcon className="me-2" />
-                          {reviewer.title}
+                          <ArticleIcon className="me-2" />
+                          {reviewer.title} - Due Date: {reviewer.date}
                         </div>
                       </Card.Body>
                     </Card>
@@ -221,6 +305,36 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
           </Offcanvas.Body>
         </Offcanvas>
       )}
+
+      {/* Modal */}
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Upload File</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="fileName">
+              <Form.Control
+                type="text"
+                placeholder="File name"
+                value={title}
+                onChange={handleFileNameChange} // Handle input change
+              />
+            </Form.Group>
+            <Form.Group controlId="fileUpload" className="mb-3">
+              <Form.Control type="file" ref={fileInputRef} />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline-secondary" onClick={handleCloseModal}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleFileUpload}>
+            Upload File
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }
