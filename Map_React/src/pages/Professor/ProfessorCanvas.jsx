@@ -1,14 +1,28 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Container, Button, Modal, Tab, Tabs, Card } from "react-bootstrap";
+import {
+  Container,
+  Button,
+  Modal,
+  Tab,
+  Tabs,
+  Card,
+  Offcanvas,
+} from "react-bootstrap";
 import "../../index.css";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import CampaignIcon from "@mui/icons-material/Campaign";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+
+import Typography from "@mui/material/Typography";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Link from "@mui/material/Link";
+import AddIcon from "@mui/icons-material/Add";
 
 // Firebase
 import { database } from "../../services/Firebase";
 import { ref, onValue, off, set, update, push } from "firebase/database";
 
-function ProfessorModal({ show, onHide, selectedCourse }) {
+function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [tasks, setTasks] = useState([]);
   const [reviewers, setReviewers] = useState([]);
   const [reviewerActivity, setReviewerActivity] = useState([]);
@@ -94,16 +108,21 @@ function ProfessorModal({ show, onHide, selectedCourse }) {
   return (
     <>
       {selectedCourse && (
-        <Modal
+        <Offcanvas
           show={show}
           onHide={onHide}
+          placement="end"
           backdrop="static"
-          className="modal-xl"
+          style={{
+            width: "85%",
+            borderTopLeftRadius: "20px",
+            borderBottomLeftRadius: "20px",
+          }}
         >
-          <Modal.Header closeButton>
-            <Modal.Title>{selectedCourse.uid}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
+          <Offcanvas.Header closeButton>
+            <Offcanvas.Title>{selectedCourse.uid}</Offcanvas.Title>
+          </Offcanvas.Header>
+          <Offcanvas.Body>
             <div className="mt-1">
               <Tabs
                 defaultActiveKey="content"
@@ -111,7 +130,24 @@ function ProfessorModal({ show, onHide, selectedCourse }) {
                 className="mb-3"
               >
                 <Tab eventKey="content" title="Course Content">
-                  Course Content
+                  <Breadcrumbs aria-label="breadcrumb">
+                    <Link
+                      className="d-flex align-items-center"
+                      underline="hover"
+                      color="text.primary"
+                      href="/"
+                    >
+                      <AttachFileIcon /> Upload File
+                    </Link>
+                    <Link
+                      className="d-flex align-items-center"
+                      underline="hover"
+                      color="text.primary"
+                      href=""
+                    >
+                      <AddIcon /> Create Task
+                    </Link>
+                  </Breadcrumbs>
                   <hr />
                   {tasks.map((task) => (
                     <Card
@@ -182,11 +218,11 @@ function ProfessorModal({ show, onHide, selectedCourse }) {
                 </Tab>
               </Tabs>
             </div>
-          </Modal.Body>
-        </Modal>
+          </Offcanvas.Body>
+        </Offcanvas>
       )}
     </>
   );
 }
 
-export default ProfessorModal;
+export default ProfessorOffcanvas;
