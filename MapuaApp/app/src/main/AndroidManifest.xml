@@ -20,6 +20,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="34">
         <activity
+            android:name=".Identification"
+            android:exported="false" />
+        <activity
             android:name=".MultipleChoice"
             android:exported="false" />
         <activity

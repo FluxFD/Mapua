@@ -107,8 +107,7 @@ public class CardReviewerActivity extends AppCompatActivity {
         multiChoiceBtn.setOnClickListener(view -> {
             // Pass data for multiple choice activity
             if (!reviewerActivities.isEmpty()) {
-                ActivitiesReviewerListItem activity = reviewerActivities.get(1);
-                Intent intent = new Intent(CardReviewerActivity.this, MultipleChoice.class);// Assuming the second activity
+                Intent intent = new Intent(CardReviewerActivity.this, MultipleChoice.class);
                 intent.putExtra("reviewerActivities", new ArrayList<>(reviewerActivities));
                 startActivity(intent);
             }
@@ -117,15 +116,16 @@ public class CardReviewerActivity extends AppCompatActivity {
         identifyBtn.setOnClickListener(view -> {
             // Pass data for identification activity
             if (!reviewerActivities.isEmpty()) {
-                ActivitiesReviewerListItem activity = reviewerActivities.get(2); // Assuming the third activity
-                // Pass activity data here
+                Intent intent = new Intent(CardReviewerActivity.this, Identification.class);
+                intent.putExtra("reviewerActivities", new ArrayList<>(reviewerActivities));
+                startActivity(intent);
             }
         });
 
         practiceBtn.setOnClickListener(view -> {
             // Pass data for practice question activity
             if (!reviewerActivities.isEmpty()) {
-                ActivitiesReviewerListItem activity = reviewerActivities.get(3); // Assuming the fourth activity
+                ActivitiesReviewerListItem activity = reviewerActivities.get(3);
                 // Pass activity data here
             }
         });
