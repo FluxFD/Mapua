@@ -18,7 +18,9 @@ import com.google.firebase.database.ValueEventListener;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CardReviewerActivity extends AppCompatActivity {
 
@@ -73,16 +75,16 @@ public class CardReviewerActivity extends AppCompatActivity {
 
                         // Retrieve choices
                         DataSnapshot choicesSnapshot = activitySnapshot.child("choices");
-                        List<String> choicesList = new ArrayList<>();
+                        Map<String, String> choicesMap = new HashMap<>();
                         for (DataSnapshot choiceSnapshot : choicesSnapshot.getChildren()) {
-                            String choice = choiceSnapshot.getValue(String.class);
-                            choicesList.add(choice);
+                            String choiceKey = choiceSnapshot.getKey();
+                            String choiceValue = choiceSnapshot.getValue(String.class);
+                            choicesMap.put(choiceKey, choiceValue);
                         }
-                        String choices = TextUtils.join(", ", choicesList);
 
-                        ActivitiesReviewerListItem reviewerActivity = new ActivitiesReviewerListItem(activityId, question, answer);
+                        ActivitiesReviewerListItem reviewerActivity = new ActivitiesReviewerListItem(activityId, question, answer, choicesMap);
                         reviewerActivities.add(reviewerActivity);
-                        Log.d("Activity", "Question: " + question + ", Answer: " + answer + ", Choices: " + choices);
+                        Log.d("Activity", "Question: " + question + ", Answer: " + answer + ", Choices: " + choicesMap);
                     }
                 }
             }
@@ -105,8 +107,10 @@ public class CardReviewerActivity extends AppCompatActivity {
         multiChoiceBtn.setOnClickListener(view -> {
             // Pass data for multiple choice activity
             if (!reviewerActivities.isEmpty()) {
-                ActivitiesReviewerListItem activity = reviewerActivities.get(1); // Assuming the second activity
-                // Pass activity data here
+                ActivitiesReviewerListItem activity = reviewerActivities.get(1);
+                Intent intent = new Intent(CardReviewerActivity.this, MultipleChoice.class);// Assuming the second activity
+                intent.putExtra("reviewerActivities", new ArrayList<>(reviewerActivities));
+                startActivity(intent);
             }
         });
 

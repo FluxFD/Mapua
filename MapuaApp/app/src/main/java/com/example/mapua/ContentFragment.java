@@ -22,7 +22,9 @@ import com.google.firebase.database.ValueEventListener;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ContentFragment extends Fragment {
 
@@ -108,7 +110,17 @@ public class ContentFragment extends Fragment {
                             String activityId = activitySnapshot.getKey();
                             String question = activitySnapshot.child("question").getValue(String.class);
                             String answer = activitySnapshot.child("answer").getValue(String.class);
-                            activitiesReviewerListItemList.add(new ActivitiesReviewerListItem(activityId, question, answer));
+
+                            // Fetch choices
+                            Map<String, String> choicesMap = new HashMap<>();
+                            for (DataSnapshot choiceSnapshot : activitySnapshot.child("choices").getChildren()) {
+                                String choiceKey = choiceSnapshot.getKey();
+                                String choiceValue = choiceSnapshot.getValue(String.class);
+                                choicesMap.put(choiceKey, choiceValue);
+                            }
+
+                            ActivitiesReviewerListItem activity = new ActivitiesReviewerListItem(activityId, question, answer, choicesMap);
+                            activitiesReviewerListItemList.add(activity);
                         }
                         ReviewerActivities reviewerActivities = new ReviewerActivities(reviewerId, course, date, title);
                         reviewerActivities.setActivities(activitiesReviewerListItemList);

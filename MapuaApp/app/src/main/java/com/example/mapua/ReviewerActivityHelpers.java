@@ -3,7 +3,9 @@ package com.example.mapua;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class ReviewerActivities extends BaseCourseContent {
     private String reviewerId;
@@ -66,11 +68,13 @@ class ActivitiesReviewerListItem extends BaseCourseContent implements Parcelable
     private String activityId;
     private String question;
     private String answer;
+    private Map<String, String> choices;
 
-    public ActivitiesReviewerListItem(String activityId, String question, String answer) {
+    public ActivitiesReviewerListItem(String activityId, String question, String answer, Map<String, String> choices) {
         this.activityId = activityId;
         this.question = question;
         this.answer = answer;
+        this.choices = choices;
     }
 
     public String getActivityId() {
@@ -97,10 +101,20 @@ class ActivitiesReviewerListItem extends BaseCourseContent implements Parcelable
         this.answer = answer;
     }
 
+    public Map<String, String> getChoices() {
+        return choices;
+    }
+
+    public void setChoices(Map<String, String> choices) {
+        this.choices = choices;
+    }
+
     protected ActivitiesReviewerListItem(Parcel in) {
         activityId = in.readString();
         question = in.readString();
         answer = in.readString();
+        choices = new HashMap<>();
+        in.readMap(choices, String.class.getClassLoader());
     }
 
     public static final Creator<ActivitiesReviewerListItem> CREATOR = new Creator<ActivitiesReviewerListItem>() {
@@ -125,5 +139,7 @@ class ActivitiesReviewerListItem extends BaseCourseContent implements Parcelable
         dest.writeString(activityId);
         dest.writeString(question);
         dest.writeString(answer);
+        dest.writeMap(choices);
     }
 }
+
