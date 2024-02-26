@@ -109,7 +109,7 @@ export default function MiniDrawer({ onItemClick, selectedItem }) {
             { text: "Calendar" },
             { text: "Applicants" },
             { text: "Message" },
-            { text: "Settings" },
+            { text: "Profile" },
             { text: "Logout" },
           ].map((item, index) => (
             <ListItem

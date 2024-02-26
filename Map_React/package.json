@@ -10,10 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@digitalpersona/core": "^0.2.6",
+    "@digitalpersona/devices": "^0.2.6",
+    "@digitalpersona/services": "^0.2.8",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.7",
     "@mui/material": "^5.15.7",
+    "bootstrap-icons": "^1.11.3",
     "firebase": "^10.7.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.0",

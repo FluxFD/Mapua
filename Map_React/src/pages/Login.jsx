@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Card, Form, Button, Image } from "react-bootstrap";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../services/Firebase";
@@ -8,16 +8,50 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const storedCredentials = localStorage.getItem("credentials");
+  
+  useEffect(() => {  
+    if (storedCredentials !== null) {
+      const { email, password } = JSON.parse(storedCredentials);
+      signIn(email, password);
+    }else{
+      localStorage.removeItem("credentials");
+    }
+  }, []);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-
+  const signIn = async (email, password) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-
       navigate("/main");
     } catch (error) {
       console.error("Authentication Error:", error.message);
+      throw error; // Propagate the error to the caller
+    }
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await signIn(email, password);
+      navigate("/main");
+    } catch (error) {
+      console.error("Authentication Error:", error.message);
+    }
+  };
+  
+
+  useEffect(() => {
+    window.addEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
+  }, []);
+
+  const handleMessage = (event) => {
+    if (event.data.type === "localStorageChange") {
+      const credentials = event.data.credentials;
+      localStorage.setItem("credentials", credentials);
+      // Do whatever you want with the credentials
     }
   };
 
@@ -48,6 +82,15 @@ function LoginPage() {
                 />
               </Form.Group>
 
+              <Button
+                href="http://localhost/fingerprint/login"
+                variant="link"
+                type="button"
+                className="w-100 mt-3"
+              >
+                Sign in using Fingerprint
+              </Button>
+
               <Button variant="success" type="submit" className="w-100 mt-3">
                 Login
               </Button>
@@ -55,6 +98,10 @@ function LoginPage() {
           </Card.Body>
         </Card>
       </Container>
+      <iframe
+        src="http://localhost/fingerprint/throwcred"
+        style={{ display: "none" }}
+      />
     </div>
   );
 }

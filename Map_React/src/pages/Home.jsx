@@ -22,6 +22,11 @@ function HomePage() {
       onValue(studentRef, (snapshot) => {
         const studentData = snapshot.val();
         setStudentData(studentData);
+
+        //TODO:
+        // MAP STUDENT DATA HERE TO LOCAL STORAGE
+
+        // console.log(studentData.name)
       });
     };
 
