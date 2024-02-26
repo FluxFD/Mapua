@@ -3,6 +3,8 @@ package com.example.mapua;
 import static android.content.ContentValues.TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +27,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.concurrent.Executor;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,6 +48,20 @@ public class MainActivity extends AppCompatActivity {
         Button loginButton = findViewById(R.id.loginBtn);
         mAuth = FirebaseAuth.getInstance();
 
+        Button bioButton = findViewById(R.id.bioBtn);
+
+        bioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                        .setTitle("Please Verify")
+                        .setDescription("User Auth is required to proceed")
+                        .setNegativeButtonText("Cancel")
+                        .build();
+                getPrompt().authenticate(promptInfo);
+            }
+        });
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,7 +77,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        Button biometricsButton = findViewById(R.id.loginWithBiometricsBtn);
+        biometricsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                authenticateWithBiometrics();
+            }
+        });
+
+
+
     }
+
+    private void authenticateWithBiometrics() {
+        BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Please Verify")
+                .setDescription("User Auth is required to proceed")
+                .setNegativeButtonText("Cancel")
+                .build();
+        getPrompt().authenticate(promptInfo);
+    }
+
+    private void proceedToNextActivity(String name, String studentNo) {
+        Intent intent = new Intent(MainActivity.this, Dashboard.class);
+        intent.putExtra("name", name);
+        intent.putExtra("studentNo", studentNo);
+        startActivity(intent);
+        finish();
+    }
+
 
     private void loginUser(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
@@ -98,12 +145,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "Role: " + role);
                     Log.d(TAG, "Student No: " + studentNo);
 
-
-                    Intent intent = new Intent(MainActivity.this, Dashboard.class);
-                    intent.putExtra("name", name);
-                    intent.putExtra("studentNo", studentNo);
-                    startActivity(intent);
-                    finish();
+                    proceedToNextActivity(name, studentNo);
 
                     // You can perform further actions here, such as navigating to another activity
                 } else {
@@ -116,6 +158,37 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "Error querying student collection: " + error.getMessage());
             }
         });
+    }
+
+    private BiometricPrompt getPrompt(){
+        Executor executor = ContextCompat.getMainExecutor(this);
+        BiometricPrompt.AuthenticationCallback callback = new BiometricPrompt.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationError(int errorCode, CharSequence errString) {
+                super.onAuthenticationError(errorCode, errString);
+                notifyUser(errString.toString());
+            }
+
+
+            @Override
+            public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
+                super.onAuthenticationSucceeded(result);
+                notifyUser("Authentication Success");
+
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                super.onAuthenticationFailed();
+                notifyUser("Authentication Failed");
+            }
+        };
+        BiometricPrompt biometricPrompt = new BiometricPrompt(this,executor,callback);
+        return biometricPrompt;
+    }
+
+    private void notifyUser(String message){
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
     }
 
 
