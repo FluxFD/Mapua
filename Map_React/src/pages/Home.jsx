@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Card, Col, Row, Modal, Button, Spinner } from 'react-bootstrap'; // Import Spinner from react-bootstrap
+import { Container, Card, Col, Row, Modal, Button, Spinner, Image } from 'react-bootstrap'; // Import Spinner from react-bootstrap
 import AddIcon from '@mui/icons-material/Add';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { database } from '../services/Firebase';
@@ -83,9 +83,12 @@ function HomePage() {
 
   return (
     <Container fluid style={{ paddingLeft: '13%', paddingRight: '1%' }}>
-      <Card style={{ width: '40%' }} className="mt-5 ms-5 p-3 title-header">
+      <div style={{ width: '100%' }}>
+      <Card style={{ width: '40%' }} className="d-flex mt-5 ms-5 p-3 title-header">
         <Row className="d-flex justify-content-evenly align-items-center ">
-          <Col sm={1}></Col>
+          <Col sm={1}>
+          <Image className="" src="/profile.png" style={{ width: '350%' }} />
+          </Col>
           <Col sm={10}>
             <div className="ms-5">
               {studentData && (
@@ -100,6 +103,7 @@ function HomePage() {
           </Col>
         </Row>
       </Card>
+      </div>
       <Row className="d-flex align-items-center">
         <Col sm={8}>
           <Card style={{ width: '90%' }} className="mt-5 ms-5 p-5 title-header bg-light">

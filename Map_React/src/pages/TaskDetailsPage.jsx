@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { Container, Form, Button, Spinner, Card } from 'react-bootstrap';
+import { Container, Form, Button, Spinner, Card, Image, Row, Col } from 'react-bootstrap';
 import { database } from '../services/Firebase';
 import { ref, get, set, push } from 'firebase/database';
 import useAuth from '../services/Auth';
@@ -93,17 +93,30 @@ const TaskDetailsPage = () => {
   return (
     <Container>
       <div style={{paddingLeft:"15%", paddingRight:"15%"}} className='text-white mt-5'>
-        <h2>Task: {taskName}</h2>
+
         <Card className='mt-5 p-4'>
+          <Row>
+            <Col className='col-md-2 d-flex align-items-center'>
+            <Image className="" src="/logo.png" style={{ width: "80%" }} />
+            </Col>
+            <Col className="d-flex align-items-center">
+            <h2>Task: {taskName}</h2></Col>
+
+
+          </Row>
+
         {questionData && questionData.length > 0 && (
-          <div className=''>
+          <div className='mt-4'>
             {questionData.map((question, index) => (
               <div key={index}>
-                <h5 className="mb-2" >{index + 1}. {question.question}</h5>
-                <Form className="mb-3" >
+                <p>Question {index+1}</p>
+                <h5 className="mb-3" >{index + 1}. {question.question}</h5>
+                <Form className="mb-4" >
                   {question.choices &&
                     Object.entries(question.choices).map(([key, choice]) => (
+                      <Card className='mb-3 title-header d-flex justify-content-center' style={{height:"40px"}}>
                       <Form.Check
+                      className='ms-2'
                         key={key}
                         type="radio"
                         id={`${key}-${index}`}
@@ -111,6 +124,7 @@ const TaskDetailsPage = () => {
                         checked={selectedOptions[index] === key}
                         onChange={() => handleOptionChange(index, key)}
                       />
+                      </Card>
                     ))}
                 </Form>
               </div>
