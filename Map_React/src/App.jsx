@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import Main from "./pages/Main";
 import Courses from "./pages/Courses";
 import Profile from "./pages/Profile";
+import Calendar from "./pages/Calendar";
 import CourseContent from "./pages/courseContent";
 import TaskDetailsPage from "./pages/TaskDetailsPage";
 import FlashcardsPage from "./pages/FlashCardsPage";
@@ -46,6 +47,7 @@ function App() {
             <Route path="/Main" element={<Main />}></Route>
             <Route path="/Home" element={<Home />}></Route>
             <Route path="/Profile" element={<Profile />}></Route>
+            <Route path="/Calendar" element={<Calendar />}></Route>
             <Route path="/Courses" element={<Courses />}></Route>
             <Route path="/CourseContent" element={<CourseContent />}></Route>
             <Route

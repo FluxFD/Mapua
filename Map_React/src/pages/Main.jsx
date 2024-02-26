@@ -7,6 +7,7 @@ import MiniDrawer from "../components/Drawer";
 import HomePage from "../pages/Home";
 import Courses from "../pages/Courses";
 import Profile from "../pages/Profile";
+import Calendar from "../pages/Calendar";
 
 // Firebase
 import { auth } from "../services/Firebase";
@@ -23,6 +24,7 @@ const MainPage = () => {
       );
       localStorage.removeItem("credentials");
       localStorage.removeItem("studentNo");
+      localStorage.removeItem("studentData");
       navigate("/");
     } catch (error) {
       console.error("Error during logout:", error);
@@ -41,6 +43,8 @@ const MainPage = () => {
         return <Courses />;
       case "Profile":
         return <Profile />;
+      case "Calendar":
+        return <Calendar />;
       case "Logout":
         handleLogout();
         return null;
