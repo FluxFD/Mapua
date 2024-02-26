@@ -72,6 +72,8 @@ public class CardReviewerActivity extends AppCompatActivity {
                         String activityId = activitySnapshot.getKey();
                         String question = activitySnapshot.child("question").getValue(String.class);
                         String answer = activitySnapshot.child("answer").getValue(String.class);
+                        String questionType = activitySnapshot.child("questionType").getValue(String.class);
+                        Log.d("CardReviewerActivity", "Question Type: " + questionType);
 
                         // Retrieve choices
                         DataSnapshot choicesSnapshot = activitySnapshot.child("choices");
@@ -82,9 +84,10 @@ public class CardReviewerActivity extends AppCompatActivity {
                             choicesMap.put(choiceKey, choiceValue);
                         }
 
-                        ActivitiesReviewerListItem reviewerActivity = new ActivitiesReviewerListItem(activityId, question, answer, choicesMap);
+                        ActivitiesReviewerListItem reviewerActivity = new ActivitiesReviewerListItem(activityId, question, questionType, answer, choicesMap);
+
                         reviewerActivities.add(reviewerActivity);
-                        Log.d("Activity", "Question: " + question + ", Answer: " + answer + ", Choices: " + choicesMap);
+                        Log.d("Activity", "Question: " + question + ", Answer: " + answer + ", Choices: " + choicesMap + ", Question Type: " + questionType);
                     }
                 }
             }
@@ -127,8 +130,10 @@ public class CardReviewerActivity extends AppCompatActivity {
         practiceBtn.setOnClickListener(view -> {
             // Pass data for practice question activity
             if (!reviewerActivities.isEmpty()) {
-                ActivitiesReviewerListItem activity = reviewerActivities.get(3);
-                // Pass activity data here
+                Intent intent = new Intent(CardReviewerActivity.this, PracticeQnA.class);
+                intent.putExtra("reviewerActivities", new ArrayList<>(reviewerActivities));
+                intent.putExtra("title", title);
+                startActivity(intent);
             }
         });
 

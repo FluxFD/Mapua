@@ -110,6 +110,9 @@ public class ContentFragment extends Fragment {
                             String activityId = activitySnapshot.getKey();
                             String question = activitySnapshot.child("question").getValue(String.class);
                             String answer = activitySnapshot.child("answer").getValue(String.class);
+                            String questionType = activitySnapshot.child("questionType").getValue(String.class);
+                            Log.d("Activity", "Question Type: " + questionType);
+
 
                             // Fetch choices
                             Map<String, String> choicesMap = new HashMap<>();
@@ -119,7 +122,7 @@ public class ContentFragment extends Fragment {
                                 choicesMap.put(choiceKey, choiceValue);
                             }
 
-                            ActivitiesReviewerListItem activity = new ActivitiesReviewerListItem(activityId, question, answer, choicesMap);
+                            ActivitiesReviewerListItem activity = new ActivitiesReviewerListItem(activityId, question, answer, questionType, choicesMap);
                             activitiesReviewerListItemList.add(activity);
                         }
                         ReviewerActivities reviewerActivities = new ReviewerActivities(reviewerId, course, date, title);

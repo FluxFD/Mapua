@@ -12,6 +12,8 @@ class ReviewerActivities extends BaseCourseContent {
     private String course;
     private String date;
     private String title;
+
+
     private List<ActivitiesReviewerListItem> activities;
 
     public ReviewerActivities(String reviewerId, String course, String date, String title) {
@@ -67,13 +69,15 @@ class ReviewerActivities extends BaseCourseContent {
 class ActivitiesReviewerListItem extends BaseCourseContent implements Parcelable {
     private String activityId;
     private String question;
+    private String questionType;
     private String answer;
     private Map<String, String> choices;
 
-    public ActivitiesReviewerListItem(String activityId, String question, String answer, Map<String, String> choices) {
+    public ActivitiesReviewerListItem(String activityId, String question,String questionType, String answer, Map<String, String> choices) {
         this.activityId = activityId;
         this.question = question;
         this.answer = answer;
+        this.questionType = questionType;
         this.choices = choices;
     }
 
@@ -92,6 +96,10 @@ class ActivitiesReviewerListItem extends BaseCourseContent implements Parcelable
     public void setQuestion(String question) {
         this.question = question;
     }
+
+    public String getQuestionType() {return questionType;}
+
+    public void setQuestionType(String questionType) {this.questionType = questionType;}
 
     public String getAnswer() {
         return answer;
@@ -113,9 +121,16 @@ class ActivitiesReviewerListItem extends BaseCourseContent implements Parcelable
         activityId = in.readString();
         question = in.readString();
         answer = in.readString();
+        questionType = in.readString();
+        int size = in.readInt();
         choices = new HashMap<>();
-        in.readMap(choices, String.class.getClassLoader());
+        for (int i = 0; i < size; i++) {
+            String key = in.readString();
+            String value = in.readString();
+            choices.put(key, value);
+        }
     }
+
 
     public static final Creator<ActivitiesReviewerListItem> CREATOR = new Creator<ActivitiesReviewerListItem>() {
         @Override
@@ -139,7 +154,12 @@ class ActivitiesReviewerListItem extends BaseCourseContent implements Parcelable
         dest.writeString(activityId);
         dest.writeString(question);
         dest.writeString(answer);
-        dest.writeMap(choices);
+        dest.writeString(questionType);
+        dest.writeInt(choices.size());
+        for (Map.Entry<String, String> entry : choices.entrySet()) {
+            dest.writeString(entry.getKey());
+            dest.writeString(entry.getValue());
+        }
     }
 }
 

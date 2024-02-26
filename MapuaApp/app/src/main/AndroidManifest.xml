@@ -20,6 +20,15 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="34">
         <activity
+            android:name=".PracticeWithoutTime"
+            android:exported="false" />
+        <activity
+            android:name=".PracticeWithTime"
+            android:exported="false" />
+        <activity
+            android:name=".PracticeQnA"
+            android:exported="false" />
+        <activity
             android:name=".Identification"
             android:exported="false" />
         <activity
