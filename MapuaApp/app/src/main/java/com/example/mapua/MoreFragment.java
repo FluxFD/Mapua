@@ -1,5 +1,6 @@
 package com.example.mapua;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,13 +8,12 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MoreFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.google.firebase.auth.FirebaseAuth;
+
+
 public class MoreFragment extends Fragment {
 
     private static final String ARG_USERNAME = "username";
@@ -52,11 +52,33 @@ public class MoreFragment extends Fragment {
         // Access TextViews in the layout
         TextView studentNameTextView = view.findViewById(R.id.studentName);
         TextView studentNumberTextView = view.findViewById(R.id.studentNumber);
+        Button logoutButton = view.findViewById(R.id.logoutBtn);
 
         // Set text values with username and usertype
         studentNameTextView.setText(username);
         studentNumberTextView.setText(usernum);
 
+
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle logout here
+                logout();
+            }
+        });
+
+
         return view;
+    }
+
+    private void logout() {
+        // Add logout logic here, for example, sign out from Firebase Authentication
+        FirebaseAuth.getInstance().signOut();
+
+        // Redirect to login activity or any other appropriate action
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear back stack
+        startActivity(intent);
+        getActivity().finish();
     }
 }

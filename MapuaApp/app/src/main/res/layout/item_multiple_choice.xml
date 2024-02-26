@@ -14,12 +14,12 @@
         android:padding="8dp" />
 
     <RadioGroup
-        android:id="@+id/choicesRadioGroup"
+        android:id="@+id/optionsRadioGroupMultipleChoice"
         android:layout_width="match_parent"
-        android:text="Choices"
-        android:layout_height="53dp"
-        android:orientation="vertical"
-        android:paddingStart="8dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
 
     </RadioGroup>
+
 </LinearLayout>

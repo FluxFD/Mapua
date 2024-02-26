@@ -63,42 +63,61 @@ public class MainActivity extends AppCompatActivity {
 
     private void loginUser(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-
-                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://mapua-f1526-default-rtdb.firebaseio.com/students");
-                            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                        String name = snapshot.child("name").getValue(String.class);
-                                        String studentNo = snapshot.child("studentNo").getValue(String.class);
-                                        Log.d(TAG, "Student Name: " + name + ", Student No: " + studentNo);
-                                        // Pass data to the next activity
-                                        Intent intent = new Intent(MainActivity.this, Dashboard.class);
-                                        intent.putExtra("name", name);
-                                        intent.putExtra("studentNo", studentNo);
-                                        startActivity(intent);
-                                        finish(); // Finish current activity
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                                }
-                            });
+                            String uid = user.getUid();
+                            checkStudentCollection(uid);
                         } else {
+                            // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
+
+    private void checkStudentCollection(String uid) {
+        DatabaseReference studentsRef = FirebaseDatabase.getInstance().getReference("students").child(uid);
+        studentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String email = snapshot.child("email").getValue(String.class);
+                    String name = snapshot.child("name").getValue(String.class);
+                    String role = snapshot.child("role").getValue(String.class);
+                    String studentNo = snapshot.child("studentNo").getValue(String.class);
+
+                    Log.d(TAG, "Email: " + email);
+                    Log.d(TAG, "Name: " + name);
+                    Log.d(TAG, "Role: " + role);
+                    Log.d(TAG, "Student No: " + studentNo);
+
+
+                    Intent intent = new Intent(MainActivity.this, Dashboard.class);
+                    intent.putExtra("name", name);
+                    intent.putExtra("studentNo", studentNo);
+                    startActivity(intent);
+                    finish();
+
+                    // You can perform further actions here, such as navigating to another activity
+                } else {
+                    Log.d(TAG, "User not found in student collection");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error querying student collection: " + error.getMessage());
+            }
+        });
+    }
+
 
 
 }

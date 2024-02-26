@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -43,6 +44,12 @@ public class Dashboard extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        Intent intent = getIntent();
+        if (intent != null) {
+            name = intent.getStringExtra("name");
+            studentNo = intent.getStringExtra("studentNo");
+        }
+
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
@@ -61,26 +68,7 @@ public class Dashboard extends AppCompatActivity {
             return true;
         });
 
-        // Retrieve data from Realtime Database
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://mapua-f1526-default-rtdb.firebaseio.com/students");
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Assuming there's only one student's data
-                DataSnapshot studentSnapshot = dataSnapshot.getChildren().iterator().next();
-                // Get field name and studentNo
-                name = studentSnapshot.child("name").getValue(String.class);
-                studentNo = studentSnapshot.child("studentNo").getValue(String.class);
-                Log.d(TAG, "Student Name: " + name + ", Student No: " + studentNo);
-                // You can use the retrieved data here as needed
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle potential errors here
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        });
     }
 
     private void replaceFragment(Fragment fragment) {

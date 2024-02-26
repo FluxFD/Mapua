@@ -7,12 +7,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.List;
-import java.util.Map;
 
 public class MultipleChoiceAdapter extends RecyclerView.Adapter<MultipleChoiceAdapter.ViewHolder> {
 
@@ -34,16 +32,22 @@ public class MultipleChoiceAdapter extends RecyclerView.Adapter<MultipleChoiceAd
         ActivitiesReviewerListItem item = mItems.get(position);
         holder.questionTextView.setText(item.getQuestion());
 
-        // Clear existing radio buttons
-        holder.choicesRadioGroup.removeAllViews();
+        holder.choicesRadioGroup.setOnCheckedChangeListener(null); // Clear previous listeners
 
         // Add radio buttons for choices
-        for (Map.Entry<String, String> entry : item.getChoices().entrySet()) {
+        for (String key : item.getChoices().keySet()) {
             RadioButton radioButton = new RadioButton(holder.itemView.getContext());
-            radioButton.setText(entry.getValue());
-            radioButton.setTag(entry.getKey());
+            radioButton.setText("Choice " + key + ": " + item.getChoices().get(key));
+            radioButton.setTag(key);
             holder.choicesRadioGroup.addView(radioButton);
         }
+
+        holder.choicesRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            RadioButton selectedRadioButton = group.findViewById(checkedId);
+            if (selectedRadioButton != null) {
+                item.setAnswer((String) selectedRadioButton.getTag());
+            }
+        });
     }
 
     @Override
@@ -58,7 +62,7 @@ public class MultipleChoiceAdapter extends RecyclerView.Adapter<MultipleChoiceAd
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             questionTextView = itemView.findViewById(R.id.questionTextView);
-            choicesRadioGroup = itemView.findViewById(R.id.choicesRadioGroup);
+            choicesRadioGroup = itemView.findViewById(R.id.optionsRadioGroupMultipleChoice);
         }
     }
 }
