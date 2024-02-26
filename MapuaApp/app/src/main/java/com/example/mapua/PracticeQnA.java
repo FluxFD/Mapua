@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class PracticeQnA extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-
+    private String title;
     private ArrayList<ActivitiesReviewerListItem> reviewerActivities;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +25,9 @@ public class PracticeQnA extends AppCompatActivity {
         reviewerActivities = (ArrayList<ActivitiesReviewerListItem>) getIntent().getSerializableExtra("reviewerActivities");
         mAuth = FirebaseAuth.getInstance();
         Bundle extras = getIntent().getExtras();
+
         if (extras != null) {
+            title = extras.getString("title");
             for (String key : extras.keySet()) {
                 Object value = extras.get(key);
                 Log.d("PracticeQnA", "Key: " + key + ", Value: " + value);
@@ -63,12 +65,14 @@ public class PracticeQnA extends AppCompatActivity {
     private void startWithoutTimer() {
         Intent intent = new Intent(PracticeQnA.this, PracticeWithoutTime.class);
         intent.putExtra("reviewerActivities", reviewerActivities);
+        intent.putExtra("title", title);
         startActivity(intent);
     }
 
     private void startWithTimer() {
         Intent intent = new Intent(PracticeQnA.this, PracticeWithTime.class);
         intent.putExtra("reviewerActivities", reviewerActivities);
+        intent.putExtra("title", title);
         startActivity(intent);
     }
 
