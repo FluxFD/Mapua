@@ -51,22 +51,20 @@ function HomePage() {
         setCourses([]);
         return;
       }
-      const coursesRef = ref(database, "Course");
+      const coursesRef = ref(database, 'Course');
       onValue(coursesRef, (snapshot) => {
         const coursesData = snapshot.val();
         if (coursesData) {
           const coursesArray = Object.keys(coursesData).map((courseId) => {
-            const course = coursesData[courseId];
-            const studies = Object.keys(course).map((studyId) => ({
-              id: studyId,
-              dueDate: course[studyId].dueDate,
-            }));
             return {
               id: courseId,
-              studies: studies,
+              ...coursesData[courseId]
             };
           });
+          console.log(coursesArray,"array")
           setCourses(coursesArray);
+        } else {
+          setCourses([]);
         }
       });
     };
@@ -207,7 +205,7 @@ function HomePage() {
                 }}
               >
                 <div id="module-count">
-                  Modules: {course.studies.length}
+                  Modules:  00/10
                 </div>
                 <div id="excercises-count">Excercises: 00/10</div>
                 <div id="assessment-count">Assessment: 00/10</div>
