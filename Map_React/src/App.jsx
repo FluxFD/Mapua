@@ -1,7 +1,6 @@
 import React from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
 // Declaration of components
 import Toastify from "./components/Toastify";
 
@@ -19,6 +18,7 @@ import MultipleChoice from "./pages/MultipleChoice";
 import Identification from "./pages/Identification";
 import PracticeQuestion from "./pages/PracticeQuestion";
 import Message from "./pages/Message";
+import PdfViewer from "./components/pdfViewer";
 
 
 // Moderator
@@ -54,6 +54,7 @@ function App() {
             <Route path="/Courses" element={<Courses />}></Route>
             <Route path="/CourseContent" element={<CourseContent />}></Route>
             <Route path="/Message" element={<Message />}></Route>
+            <Route path="/preview/:url" element= {<PdfViewer />}></Route>
             <Route
               path="/task/:taskId/:taskName"
               element={<TaskDetailsPage />}

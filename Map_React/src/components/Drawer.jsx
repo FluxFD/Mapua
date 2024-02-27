@@ -107,7 +107,6 @@ export default function MiniDrawer({ onItemClick, selectedItem }) {
             { text: "Dashboard" },
             { text: "Courses" },
             { text: "Calendar" },
-            { text: "Applicants" },
             { text: "Message" },
             { text: "Profile" },
             { text: "Logout" },

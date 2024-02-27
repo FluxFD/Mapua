@@ -13,8 +13,10 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import bootstrap5Plugin from "@fullcalendar/bootstrap5";
+import { useNavigate } from 'react-router-dom'
 
 function CourseModal({ course, show, handleClose }) {
+  const navigate = useNavigate()
   const { currentUser } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [userScores, setUserScores] = useState({});
@@ -122,7 +124,7 @@ function CourseModal({ course, show, handleClose }) {
   };
 
   const handleReviewerClick = (fileUrl) => {
-    window.open(fileUrl, "_blank");
+    navigate(`/preview/${encodeURIComponent(fileUrl)}`);
   };
 
   const handleActivityClick = (activity) => {

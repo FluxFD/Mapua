@@ -45,8 +45,6 @@ const MainPage = () => {
         return <Profile />
       case 'Calendar':
         return <Calendar />
-      case '':
-        return <Calendar />
       case 'Message':
         return <Message />
       case 'Logout':
