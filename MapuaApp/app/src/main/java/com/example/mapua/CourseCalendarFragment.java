@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,17 +21,20 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+public class CourseCalendarFragment extends Fragment {
 
-public class CalendarFragment extends Fragment {
+    private String courseId;
+    private List<BaseCourseContent> items = new ArrayList<>();
+    private NewContentAdapter adapter;
 
-
-    public CalendarFragment() {
+    public CourseCalendarFragment() {
         // Required empty public constructor
     }
 
-    public static CalendarFragment newInstance(String param1, String param2) {
-        CalendarFragment fragment = new CalendarFragment();
+    public static CourseCalendarFragment newInstance(String courseId) {
+        CourseCalendarFragment fragment = new CourseCalendarFragment();
         Bundle args = new Bundle();
+        args.putString("courseId", courseId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -39,27 +43,35 @@ public class CalendarFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-
+            courseId = getArguments().getString("courseId");
+            Log.d("CourseCalendarFragment", "Fetched courseId: " + courseId);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_calendar, container, false);
-        CalendarView calendarView = view.findViewById(R.id.calendarView);
+        View view = inflater.inflate(R.layout.fragment_course_calendar, container, false);
+        CalendarView calendarView = view.findViewById(R.id.courseCalendarView);
         long currentDate = System.currentTimeMillis();
         calendarView.setDate(currentDate);
 
-        List<BaseCourseContent> items = new ArrayList<>();
-        RecyclerView recyclerView = view.findViewById(R.id.calendarRecycleView);
+        RecyclerView recyclerView = view.findViewById(R.id.courseCalendarRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        NewContentAdapter adapter = new NewContentAdapter(items);
+        adapter = new NewContentAdapter(items);
         recyclerView.setAdapter(adapter);
 
-        // Reference to your "Task" collection
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Task");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        if (courseId != null) {
+            fetchTasks(courseId);
+        }
+
+        return view;
+    }
+
+    private void fetchTasks(String courseId) {
+        DatabaseReference tasksRef = FirebaseDatabase.getInstance().getReference("Task");
+
+        tasksRef.orderByChild("Course").equalTo(courseId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 items.clear(); // Clear the list before adding new items
@@ -82,7 +94,5 @@ public class CalendarFragment extends Fragment {
                 // Handle possible errors
             }
         });
-
-        return view;
     }
 }
