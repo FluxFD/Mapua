@@ -66,6 +66,17 @@
             tools:layout_editor_absoluteX="141dp"
             tools:layout_editor_absoluteY="489dp" />
 
+        <Button
+            android:id="@+id/videoActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Video Activity"
+            tools:layout_editor_absoluteX="141dp"
+            tools:layout_editor_absoluteY="489dp" />
+
+
+
 
     </LinearLayout>
 

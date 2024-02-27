@@ -33,7 +33,7 @@ public class CardReviewerActivity extends AppCompatActivity {
 
     TextView titleOfReviewActivity;
 
-    Button flashCardBtn, multiChoiceBtn, identifyBtn, practiceBtn;
+    Button flashCardBtn, multiChoiceBtn, identifyBtn, practiceBtn, videoBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +46,7 @@ public class CardReviewerActivity extends AppCompatActivity {
         multiChoiceBtn = findViewById(R.id.multipleChoice);
         identifyBtn = findViewById(R.id.identification);
         practiceBtn = findViewById(R.id.practiceQuestion);
+        videoBtn = findViewById(R.id.videoActivity);
 
         // Retrieve intent data
         Bundle extras = getIntent().getExtras();
@@ -135,6 +136,11 @@ public class CardReviewerActivity extends AppCompatActivity {
                 intent.putExtra("title", title);
                 startActivity(intent);
             }
+        });
+
+        videoBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(CardReviewerActivity.this, VideoActivity.class);
+            startActivity(intent);
         });
 
     }
