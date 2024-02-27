@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Container, Button, Modal, Form } from 'react-bootstrap'
+import { Container, Button, Modal, Form, Card } from 'react-bootstrap'
 import { database } from '../services/Firebase'
 import useAuth from '../services/Auth'
 import {
@@ -25,6 +25,8 @@ const VideoActivity = () => {
   const [activities, setActivities] = useState([])
   const [videoDataId, setVideoDataId] = useState(null)
   const [showModal, setShowModal] = useState(false)
+  const [selectedChoice, setSelectedChoice] = useState(null)
+  const [shakeKey, setShakeKey] = useState(null)
 
   const videoMap = {
     video1: video1,
@@ -139,50 +141,49 @@ const VideoActivity = () => {
       // Check if the video element exists and if the modal is closed
       if (videoRef.current && !showModal) {
         // Fast forward video by 1 second
-        videoRef.current.currentTime += 1;
+        videoRef.current.currentTime += 1
         // Resume video playback
-        videoRef.current.play();
+        videoRef.current.play()
       }
-    };
-  
+    }
+
     // Call the handleModalClose function when showModal state changes
-    handleModalClose();
-  
+    handleModalClose()
+
     // Check if the video has finished playing
     const handleVideoEnd = () => {
       // Navigate to /main when video finishes
-      window.location.href = '/main';
-    };
-  
+      window.location.href = '/main'
+    }
+
     // Add event listener for video end
     if (videoRef.current) {
-      videoRef.current.addEventListener('ended', handleVideoEnd);
+      videoRef.current.addEventListener('ended', handleVideoEnd)
     }
-  
+
     // Cleanup the event listener
     return () => {
       if (videoRef.current) {
-        videoRef.current.removeEventListener('ended', handleVideoEnd);
+        videoRef.current.removeEventListener('ended', handleVideoEnd)
       }
-    };
-  }, [showModal]);
-  
+    }
+  }, [showModal])
+
   // Listen for changes in showModal state
 
   return (
     <Container>
-      <div className='mt-5'>
-
+      <div className="mt-5">
         {videoSrc && (
           <>
-            <video ref={videoRef}>
+            <video ref={videoRef} controls>
               <source src={videoSrc} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
             <Button variant="success" onClick={playVideo}>
               Play Video
             </Button>
-            <div className='text-white'>
+            <div className="text-white">
               Current Time: {currentTime.toFixed(2)}s / Duration:{' '}
               {duration.toFixed(2)}s
             </div>
@@ -200,6 +201,7 @@ const VideoActivity = () => {
             const currentTimeInSeconds = Math.floor(currentTime)
             if (activityTimeInSeconds === currentTimeInSeconds) {
               const handleChoiceClick = (selectedChoice) => {
+                setSelectedChoice(selectedChoice)
                 if (selectedChoice === activity.answer) {
                   // If the selected choice matches the correct answer
                   // Display the correct icon and close the modal
@@ -209,23 +211,30 @@ const VideoActivity = () => {
                   // If the selected choice is wrong
                   // Display the wrong icon
                   // Additional logic if needed
+                  setShakeKey(Date.now()) // Update the key to trigger re-rendering
                 }
               }
 
               return (
                 <div key={activity.id}>
                   <h4>{activity.question}</h4>
-                  <ul>
-                    {Object.keys(activity.choices).map((key) => (
-                      <li
-                      style={{cursor:"pointer"}}
-                        key={`${activity.id}-${key}`}
-                        onClick={() => handleChoiceClick(key)}
-                      >
-                        <strong>{key}:</strong> {activity.choices[key]}
-                      </li>
-                    ))}
-                  </ul>
+                  {Object.keys(activity.choices).map((key) => (
+                    <Card
+                      key={`${activity.id}-${key}-${shakeKey}`} // Update the key
+                      className={
+                        selectedChoice !== activity.answer &&
+                        selectedChoice === key
+                          ? 'shake'
+                          : ''
+                      }
+                      style={{ cursor: 'pointer', marginBottom: '10px' }}
+                      onClick={() => handleChoiceClick(key)}
+                    >
+                      <Card.Body>
+                        <Card.Text>{activity.choices[key]}</Card.Text>
+                      </Card.Body>
+                    </Card>
+                  ))}
                 </div>
               )
             }
