@@ -140,6 +140,7 @@ public class CardReviewerActivity extends AppCompatActivity {
 
         videoBtn.setOnClickListener(v -> {
             Intent intent = new Intent(CardReviewerActivity.this, VideoActivity.class);
+            intent.putExtra("courseId", course);
             startActivity(intent);
         });
 
