@@ -25,9 +25,8 @@ function Calendar() {
       Object.entries(tasksData).forEach(([taskId, task]) => {
         tasksArray.push({ id: taskId, ...task });
       });
-
       setTasks(tasksArray);
-      console.log(tasksArray);
+      // console.log(tasksArray);
     });
   }, [currentUser]);
 
