@@ -192,57 +192,45 @@ function HomePage() {
               }}
             >
               {currentUser &&
-                courses.map((course) => {
-                  const score = Object.values(userScores).find(
-                    (score) => score.taskName === task.taskName
-                  );
+  courses.map((course) => (
+    <Row key={course.id} className="mb-4">
+      <Col md={12}>
+        <Card className="title-header" style={{ width: "97%" }}>
+          <Card.Body>
+            <h5>{course.id}</h5>
+            <div overflow="auto" style={{ display: "flex" }}>
+              <div
+                id="materials-count"
+                style={{
+                  display: "inline-block",
+                  width: "70rem",
+                }}
+              >
+                <div id="module-count">
+                  Modules: {course.studies.length}
+                </div>
+                <div id="excercises-count">Excercises: 00/10</div>
+                <div id="assessment-count">Assessment: 00/10</div>
+              </div>
+              <div
+                id="items-due"
+                style={{
+                  display: "inline-block",
+                  width: "30rem",
+                }}
+              >
+                <div id="items-due-count" style={{ textAlign: "center" }}>
+                  00
+                </div>
+                <div style={{ textAlign: "center" }}>Past Due</div>
+              </div>
+            </div>
+          </Card.Body>
+        </Card>
+      </Col>
+    </Row>
+  ))}
 
-                  return (
-                    <Row key={course.id} className="mb-4">
-                      <Col md={12}>
-                        <Card className="title-header" style={{ width: "97%" }}>
-                          <Card.Body>
-                            <h5>{course.id}</h5>
-                            <div overflow="auto" style={{ display: "flex" }}>
-                              <div
-                                id="materials-count"
-                                style={{
-                                  display: "inline-block",
-                                  width: "70rem",
-                                }}
-                              >
-                                <div id="module-count">Modules: 00/{}</div>
-                                <div id="excercises-count">
-                                  Excercises: 00/10
-                                </div>
-                                <div id="assessment-count">
-                                  Assessment: 00/10
-                                </div>
-                              </div>
-                              <div
-                                id="items-due"
-                                style={{
-                                  display: "inline-block",
-                                  width: "30rem",
-                                }}
-                              >
-                                <div
-                                  id="items-due-count"
-                                  style={{ textAlign: "center" }}
-                                >
-                                  00
-                                </div>
-                                <div style={{ textAlign: "center" }}>
-                                  Past Due
-                                </div>
-                              </div>
-                            </div>
-                          </Card.Body>
-                        </Card>
-                      </Col>
-                    </Row>
-                  );
-                })}
             </div>
           </Card>
         </Col>
