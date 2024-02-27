@@ -62,6 +62,9 @@ class CustomPagerAdapter extends FragmentPagerAdapter {
             case 2:
                 CourseCalendarFragment calendarFragment = CourseCalendarFragment.newInstance(courseId);
                 return calendarFragment;
+            case 3:
+                GradeBookFragment gradeBookFragment = GradeBookFragment.newInstance(courseId);
+                return gradeBookFragment;
             default:
                 throw new IllegalArgumentException("Invalid position: " + position);
         }
@@ -69,7 +72,7 @@ class CustomPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3; // Update the count to include the new fragment
+        return 4; // Update the count to include the new fragment
     }
 
     @Override
@@ -80,7 +83,9 @@ class CustomPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return "Announcement";
             case 2:
-                return "Calendar"; // Title for the new fragment
+                return "Calendar";
+            case 3:
+                return "Gradebook"; // Title for the new fragment
             default:
                 throw new IllegalArgumentException("Invalid position: " + position);
         }
