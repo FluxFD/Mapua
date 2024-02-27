@@ -18,6 +18,7 @@ import FlashcardsPage from "./pages/FlashCardsPage";
 import MultipleChoice from "./pages/MultipleChoice";
 import Identification from "./pages/Identification";
 import PracticeQuestion from "./pages/PracticeQuestion";
+import Message from "./pages/Message";
 
 
 // Moderator
@@ -52,6 +53,7 @@ function App() {
             <Route path="/Calendar" element={<Calendar />}></Route>
             <Route path="/Courses" element={<Courses />}></Route>
             <Route path="/CourseContent" element={<CourseContent />}></Route>
+            <Route path="/Message" element={<Message />}></Route>
             <Route
               path="/task/:taskId/:taskName"
               element={<TaskDetailsPage />}
