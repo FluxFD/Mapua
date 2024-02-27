@@ -76,7 +76,7 @@ function Courses() {
             <Col md={12}>
               <Card style={{cursor:"pointer"}} className='title-header' onClick={() => handleCardClick(course)}>
                 <Card.Body>
-                  <h3>{course.id}</h3>
+                  <h4>{course.id}</h4>
                 </Card.Body>
               </Card>
             </Col>

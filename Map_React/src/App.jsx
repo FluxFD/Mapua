@@ -39,7 +39,7 @@ function App() {
           display: "flex",
           flexDirection: "column",
           minHeight: "100vh",
-          fontFamily: "Colon Mono, monospace",
+          fontFamily: "roboto-light",
           backgroundColor: "#1B365B",
         }}
       >
