@@ -38,10 +38,14 @@ function Calendar() {
   };
 
   function modifyDateString(dateString) {
-    const modifiedDateString = dateString.replace(/\//g, "-");
-    console.log(modifiedDateString);
-    return modifiedDateString;
+    const dateObj = new Date(dateString);
+    dateObj.setUTCHours(dateObj.getUTCHours() + 8); // Adjust to UTC+8 timezone
+    const isoDate = dateObj.toISOString().split('T')[0]; // Extract YYYY-MM-DD
+    return isoDate;
   }
+  
+  
+  
 
   return (
     <Container fluid style={{ paddingLeft: "15%", paddingRight: "1%" }}>
