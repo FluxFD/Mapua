@@ -55,7 +55,9 @@ function Message() {
       onValue(messageRef, (snapshot) => {
         const messagesData = snapshot.val()
         if (messagesData) {
-          const courseMessages = Object.values(messagesData).filter(message => message.Course === clickedText)
+          const courseMessages = Object.values(messagesData).filter(
+            (message) => message.Course === clickedText
+          )
           setCourseMessages(courseMessages)
         }
       })
@@ -82,7 +84,7 @@ function Message() {
         date: new Date().toISOString(),
         message: message,
         uid: currentUser.uid,
-        name: studentData?.name
+        name: studentData?.name,
       }
       setMessage('')
       push(messageRef, messageData)
@@ -100,7 +102,7 @@ function Message() {
     hours = hours % 12 || 12 // Convert to 12-hour format
     return `${year}-${month}-${date} ${hours}:${minutes} ${meridian}`
   }
-  
+
   return (
     <Container
       fluid
@@ -139,8 +141,7 @@ function Message() {
           <Col>
             <Card className="mt-3" style={{ height: '80vh' }}>
               <Card.Body>
-                <Card style={{ height: '60vh' }}>
-                  
+                <Card style={{ height: '60vh', overflowY: 'auto' }}>
                   <div style={{ padding: '20px' }}>
                     {courseMessages.map((message, index) => (
                       <Row key={index}>
@@ -166,6 +167,7 @@ function Message() {
                     ))}
                   </div>
                 </Card>
+
                 <Form className="mt-4" onSubmit={handleSubmit}>
                   <Form.Group controlId="formMessage">
                     <Form.Control
