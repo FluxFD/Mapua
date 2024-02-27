@@ -63,6 +63,18 @@ function ActivityOptionsOffcanvas({ show, handleClose, selectedActivity }) {
               Identification
             </Link>
           </Button>
+          <Button
+            className="mt-2"
+            variant="primary"
+            // onClick={""}
+          >
+            <Link
+              to={`/practiceQuestion/${selectedActivity?.id}`}
+              style={{ color: 'white', textDecoration: 'none' }}
+            >
+              Practice Question
+            </Link>
+          </Button>
         </Row>
         <div style={{ marginTop: 'auto' }}>
           <Button

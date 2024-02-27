@@ -17,6 +17,7 @@ import TaskDetailsPage from "./pages/TaskDetailsPage";
 import FlashcardsPage from "./pages/FlashCardsPage";
 import MultipleChoice from "./pages/MultipleChoice";
 import Identification from "./pages/Identification";
+import PracticeQuestion from "./pages/PracticeQuestion";
 
 // Moderator
 import ModeratorDashboard from "./pages/Moderator/ModeratorDash";
@@ -67,6 +68,10 @@ function App() {
             <Route
               path="/identification/:activityId"
               element={<Identification />}
+            />
+            <Route
+              path="/practiceQuestion/:activityId"
+              element={<PracticeQuestion />}
             />
 
             <Route

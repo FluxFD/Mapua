@@ -61,51 +61,66 @@ function MultipleChoice() {
   const handleSubmit = (e) => {
     e.preventDefault()
     setIsLoading(true)
-
+  
     // Simulate a delay before navigating
     setTimeout(() => {
-      let correctAnswers = 0
-      activities.forEach((question, index) => {
-        const userAnswer = selectedOptions[index]
-        if (userAnswer === question.answer) {
-          correctAnswers++
-        }
-      })
-      const score = (correctAnswers / activities.length) * 100
+      let correctAnswers = 0;
+    const scores = []; // Array to store scores for each question
 
-      const studentRef = ref(database, `students/${currentUser.uid}`)
+    activities.forEach((question, index) => {
+      const userAnswer = selectedOptions[index];
+      const correctAnswer = question.answer;
+      const isCorrect = userAnswer === correctAnswer;
+
+      if (isCorrect) {
+        correctAnswers++;
+      }
+
+      scores.push({
+        question: question.question,
+        userAnswer: userAnswer,
+        correctAnswer: correctAnswer,
+        isCorrect: isCorrect
+      });
+    });
+  
+      const score = (correctAnswers / activities.length) * 100;
+  
+      const studentRef = ref(database, `students/${currentUser.uid}`);
       get(studentRef)
         .then((snapshot) => {
           if (snapshot.exists()) {
-            const studentName = snapshot.val().name
-
-            const scoreRef = ref(database, `Score`)
-            const newScoreRef = push(scoreRef)
+            const studentName = snapshot.val().name;
+  
+            const scoreRef = ref(database, `Score`);
+            const newScoreRef = push(scoreRef);
             set(newScoreRef, {
               taskName: activityTitle,
               score: score,
               studentName: studentName,
               studentId: currentUser.uid,
             })
-              .then(() => {
-                console.log('Score saved successfully.')
-                setIsLoading(false)
-                navigate('/main')
-              })
-              .catch((error) => {
-                console.error('Error saving score:', error)
-              })
+            .then(() => {
+              console.log('Score saved successfully.');
+              setIsLoading(false);
+              navigate('/main');
+            })
+            .catch((error) => {
+              console.error('Error saving score:', error);
+            });
           } else {
-            console.log('Student data not found.')
+            console.log('Student data not found.');
           }
         })
         .catch((error) => {
-          console.error('Error fetching student data:', error)
-        })
-
-      setSelectedOptions([])
-    }, 3000) // 3 seconds delay
+          console.error('Error fetching student data:', error);
+        });
+  
+      setSelectedOptions([]);
+    }, 3000); // 3 seconds delay
   }
+  
+  
 
   const navigateToMain = () => {
     navigate('/main')
