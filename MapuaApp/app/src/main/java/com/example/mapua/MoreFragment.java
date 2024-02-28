@@ -53,18 +53,23 @@ public class MoreFragment extends Fragment {
         TextView studentNameTextView = view.findViewById(R.id.studentName);
         TextView studentNumberTextView = view.findViewById(R.id.studentNumber);
         Button logoutButton = view.findViewById(R.id.logoutBtn);
+        Button messageButton = view.findViewById(R.id.messageBtn);
 
         // Set text values with username and usertype
         studentNameTextView.setText(username);
         studentNumberTextView.setText(usernum);
 
 
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle logout here
-                logout();
-            }
+        logoutButton.setOnClickListener(v -> {
+            // Handle logout here
+            logout();
+        });
+
+        messageButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), MessageActivity.class);
+            intent.putExtra("username", username);
+            intent.putExtra("usernum", usernum);
+            startActivity(intent);
         });
 
 
