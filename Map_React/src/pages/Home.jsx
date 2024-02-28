@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Card,
@@ -8,94 +8,135 @@ import {
   Button,
   Spinner,
   Image,
-} from 'react-bootstrap' // Import Spinner from react-bootstrap
-import AddIcon from '@mui/icons-material/Add'
-import FilterAltIcon from '@mui/icons-material/FilterAlt'
-import { database } from '../services/Firebase'
-import { ref, onValue } from 'firebase/database'
-import useAuth from '../services/Auth'
+} from "react-bootstrap"; // Import Spinner from react-bootstrap
+import AddIcon from "@mui/icons-material/Add";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import { database } from "../services/Firebase";
+import { ref, onValue } from "firebase/database";
+import useAuth from "../services/Auth";
 
 function HomePage() {
-  const [courses, setCourses] = useState([])
-  const [tasks, setTasks] = useState([])
-  const [modules, setModules] = useState(0)
-  const { currentUser } = useAuth()
-  const [studentData, setStudentData] = useState(null)
-  const [selectedTask, setSelectedTask] = useState(null)
-  const [showModal, setShowModal] = useState(false)
-  const [showSpinner, setShowSpinner] = useState(false)
-  const [hideCancel, setHideCancel] = useState(false)
+  const [courses, setCourses] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [modules, setModules] = useState(0);
+  const { currentUser } = useAuth();
+  const [studentData, setStudentData] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
+  const [hideCancel, setHideCancel] = useState(false);
 
   useEffect(() => {
+    
     const fetchStudentData = () => {
-      if (!currentUser) return
-      const studentRef = ref(database, 'students/' + currentUser.uid)
+      if (!currentUser) return;
+      const studentRef = ref(database, "students/" + currentUser.uid);
       onValue(studentRef, (snapshot) => {
-        const studentData = snapshot.val()
-        setStudentData(studentData)
-      })
-    }
+        const studentData = snapshot.val();
+        setStudentData(studentData);
+      });
+    };
 
     const fetchModules = () => {
-      if (!currentUser) return
-      const modulesRef = ref(database, 'Reviewer')
+      if (!currentUser) return;
+      const modulesRef = ref(database, "Reviewer");
       onValue(modulesRef, (snapshot) => {
-        const modulesData = snapshot.val()
-        setModules(modulesData)
-        console.log(modulesData)
-      })
-    }
+        const modulesData = snapshot.val();
+        setModules(modulesData);
+        // console.log(modulesData);
+      });
+    };
 
     const fetchCourses = () => {
       if (!currentUser) {
-        setCourses([])
-        return
+        setCourses([]);
+        return;
       }
-      const coursesRef = ref(database, 'Course')
+      const coursesRef = ref(database, "Course");
       onValue(coursesRef, (snapshot) => {
-        const coursesData = snapshot.val()
+        const coursesData = snapshot.val();
         if (coursesData) {
           const coursesArray = Object.keys(coursesData).map((courseId) => {
             const course = {
               id: courseId,
               ...coursesData[courseId],
-            }
+            };
+            
+            const scoresRefs = ref(database, "Score");
+            onValue(scoresRefs, (snapshot) => {
+            const scores = snapshot.val();
+            // console.log(scores,"scoresData");
+            });
+              
+
             // Fetch modules for this course
-            const modulesRef = ref(database, 'Reviewer')
+            const modulesRef = ref(database, "Reviewer");
             onValue(modulesRef, (snapshot) => {
-              const modulesData = snapshot.val()
+              const modulesData = snapshot.val();
               if (modulesData) {
                 const moduleCount = Object.values(modulesData).filter(
                   (module) => module.Course === course.id
-                ).length
+                ).length;
                 // Update course object with module count
-                course.moduleCount = moduleCount
-              } else {
-                course.moduleCount = 0
+                course.moduleCount = moduleCount;
+              } 
+              else {
+                course.moduleCount = 0;
               }
-            })
-            return course
-          })
-          console.log(coursesArray, 'array')
-          setCourses(coursesArray)
+              
+              }
+            });
+
+            const excercisesRef = ref(database, "ReviewerActivity");
+            onValue(excercisesRef, (snapshot) => {
+              const excercisesData = snapshot.val();
+              if (excercisesData) {
+                const excerciseCount = Object.values(excercisesData).filter(
+                  (excercise) => excercise.Course === course.id
+                ).length;
+                // Update course object with module count
+                course.excerciseCount = excerciseCount;
+              } else {
+                course.excerciseCount = 0;
+              }
+            });
+
+            const assessmentsRef = ref(database, "Task");
+            onValue(assessmentsRef, (snapshot) => {
+              const assessmentsData = snapshot.val();
+              if (assessmentsData) {
+                const assessmentCount = Object.values(assessmentsData).filter(
+                  (assessment) => assessment.Course === course.id
+                ).length;
+                // Update course object with module count
+                course.assessmentCount = assessmentCount;
+              } else {
+                course.assessmentCount = 0;
+              }
+            });
+
+            return course;
+          });
+          // console.log(coursesArray, "array");
+          setCourses(coursesArray);
         } else {
-          setCourses([])
+          setCourses([]);
         }
-      })
-    }
+      });
+    };
 
     const fetchTasks = () => {
-      if (!currentUser) return
-      const tasksRef = ref(database, 'Task')
+      if (!currentUser) return;
+      const tasksRef = ref(database, "Task");
       onValue(tasksRef, (snapshot) => {
-        const tasksData = snapshot.val()
+        const tasksData = snapshot.val();
         if (tasksData) {
-          const tasksArray = []
+          const tasksArray = [];
           Object.entries(tasksData).forEach(([taskId, task]) => {
-            const dueDate = new Date(task.dueDate)
-            const currentDate = new Date()
-            const timeDifference = dueDate.getTime() - currentDate.getTime()
-            const daysDifference = timeDifference / (1000 * 3600 * 24)
+            const dueDate = new Date(task.dueDate);
+            const currentDate = new Date();
+            const timeDifference = dueDate.getTime() - currentDate.getTime();
+            const daysDifference = timeDifference / (1000 * 3600 * 24);
 
             if (daysDifference <= 2) {
               tasksArray.push({
@@ -103,45 +144,45 @@ function HomePage() {
                 Course: task.Course,
                 dueDate: task.dueDate,
                 taskName: task.taskName,
-              })
+              });
             }
-          })
-          setTasks(tasksArray)
+          });
+          setTasks(tasksArray);
           // console.log(tasks);
         }
-      })
-    }
+      });
+    };
 
-    fetchStudentData()
-    fetchTasks()
-    fetchCourses()
-    fetchModules()
+    fetchStudentData();
+    fetchTasks();
+    fetchCourses();
+    fetchModules();
 
-    return () => {}
-  }, [currentUser])
+    return () => {};
+  }, [currentUser]);
 
   const handleTaskClick = (task) => {
-    setSelectedTask(task)
-    setShowModal(true)
-  }
+    setSelectedTask(task);
+    setShowModal(true);
+  };
 
   const handleModalConfirm = () => {
-    setShowSpinner(true)
-    setHideCancel(true)
+    setShowSpinner(true);
+    setHideCancel(true);
     setTimeout(() => {
-      setShowSpinner(false)
-      setShowModal(false)
+      setShowSpinner(false);
+      setShowModal(false);
       if (selectedTask) {
-        window.location.href = `/task/${selectedTask.id}/${selectedTask.taskName}`
+        window.location.href = `/task/${selectedTask.id}/${selectedTask.taskName}`;
       }
-    }, 3000)
-  }
+    }, 3000);
+  };
 
   return (
-    <Container fluid style={{ paddingLeft: '13%', paddingRight: '1%' }}>
-      <div style={{ width: '100%' }}>
+    <Container fluid style={{ paddingLeft: "13%", paddingRight: "1%" }}>
+      <div style={{ width: "100%" }}>
         <Card
-          style={{ width: '40%' }}
+          style={{ width: "40%" }}
           className="d-flex mt-5 ms-5 p-3 title-header"
         >
           <Row className="d-flex justify-content-evenly align-items-center ">
@@ -149,7 +190,7 @@ function HomePage() {
               <Image
                 className=""
                 src="/profile.png"
-                style={{ width: '350%' }}
+                style={{ width: "350%" }}
               />
             </Col>
             <Col sm={10}>
@@ -170,16 +211,16 @@ function HomePage() {
       <Row className="d-flex align-items-center">
         <Col sm={8}>
           <Card
-            style={{ width: '90%' }}
+            style={{ width: "90%" }}
             className="mt-5 ms-5 p-5 title-header bg-light"
           >
             <FilterAltIcon />
-            <div style={{ height: '62vh', overflowY: 'scroll' }}>
+            <div style={{ height: "62vh", overflowY: "scroll" }}>
               {tasks.map((task) => (
                 <Card
                   key={task.id}
                   onClick={() => handleTaskClick(task)} // Handle click on the task card
-                  style={{ cursor: 'pointer', width: '97%' }}
+                  style={{ cursor: "pointer", width: "97%" }}
                   border="warning"
                   className="mt-4 p-3 title-header"
                 >
@@ -198,47 +239,51 @@ function HomePage() {
             <h4>Progress Report</h4>
             <div
               style={{
-                height: '60vh',
-                width: '100%',
-                overflowY: 'scroll',
-                overflowX: 'hidden',
+                height: "60vh",
+                width: "100%",
+                overflowY: "scroll",
+                overflowX: "hidden",
               }}
             >
               {currentUser &&
                 courses.map((course) => (
                   <Row key={course.id} className="mb-4">
                     <Col md={12}>
-                      <Card className="title-header" style={{ width: '97%' }}>
+                      <Card className="title-header" style={{ width: "97%" }}>
                         <Card.Body>
                           <h5>{course.id}</h5>
-                          <div overflow="auto" style={{ display: 'flex' }}>
+                          <div overflow="auto" style={{ display: "flex" }}>
                             <div
                               id="materials-count"
                               style={{
-                                display: 'inline-block',
-                                width: '70rem',
+                                display: "inline-block",
+                                width: "70rem",
                               }}
                             >
                               <div id={`module-count-${course.id}`}>
-                                Modules: {course.moduleCount}/10
+                                Modules: 0/{course.moduleCount}
                               </div>
-                              <div id="excercises-count">Excercises: 00/10</div>
-                              <div id="assessment-count">Assessment: 00/10</div>
+                              <div id="excercises-count">
+                                Excercises: 0/{course.excerciseCount}
+                              </div>
+                              <div id="assessment-count">
+                                Assessment: 00/{course.assessmentCount}
+                              </div>
                             </div>
                             <div
                               id="items-due"
                               style={{
-                                display: 'inline-block',
-                                width: '30rem',
+                                display: "inline-block",
+                                width: "30rem",
                               }}
                             >
                               <div
                                 id="items-due-count"
-                                style={{ textAlign: 'center' }}
+                                style={{ textAlign: "center" }}
                               >
                                 00
                               </div>
-                              <div style={{ textAlign: 'center' }}>
+                              <div style={{ textAlign: "center" }}>
                                 Past Due
                               </div>
                             </div>
@@ -264,12 +309,12 @@ function HomePage() {
             </Button>
           )}
           <Button variant="primary" onClick={handleModalConfirm}>
-            {showSpinner ? <Spinner animation="border" size="sm" /> : 'Confirm'}
+            {showSpinner ? <Spinner animation="border" size="sm" /> : "Confirm"}
           </Button>
         </Modal.Footer>
       </Modal>
     </Container>
-  )
+  );
 }
 
-export default HomePage
+export default HomePage;

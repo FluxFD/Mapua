@@ -50,7 +50,7 @@ function Courses() {
               ...coursesData[courseId]
             };
           });
-          console.log(coursesArray,"array")
+          // console.log(coursesArray,"array")
           setCourses(coursesArray);
         } else {
           setCourses([]);
