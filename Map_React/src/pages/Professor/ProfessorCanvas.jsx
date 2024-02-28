@@ -17,6 +17,8 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import AddIcon from "@mui/icons-material/Add";
 
+import CreateTaskModal from "./ModalCreateTask";
+
 // Firebase
 import { database, storage, auth } from "../../services/Firebase";
 import { ref, onValue, off, set, update, push } from "firebase/database";
@@ -34,7 +36,18 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [announcements, setAnnouncements] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const fileInputRef = useRef(null);
-  const [title, setTitle] = useState(""); // State to store the file name
+  const [title, setTitle] = useState("");
+  const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
+
+  // Function to handle opening the Create Task modal
+  const handleOpenCreateTaskModal = () => {
+    setShowCreateTaskModal(true);
+  };
+
+  // Function to handle closing the Create Task modal
+  const handleCloseCreateTaskModal = () => {
+    setShowCreateTaskModal(false);
+  };
 
   useEffect(() => {
     const tasksRef = ref(database, "Task");
@@ -127,38 +140,19 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
 
     if (user) {
       const createdBy = user.email;
-      const months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
-
       const currentDate = new Date();
-      const month = currentDate.getMonth() + 1; // Adding 1 because getMonth() returns a zero-based index
+      const month = currentDate.getMonth() + 1;
       const date = currentDate.getDate();
       const year = currentDate.getFullYear();
-
       const formattedDate = `${month}/${date}/${year}`;
 
       try {
-        // Upload the file to storage
         const fileRef = storageRef(storage, file.name);
         await uploadBytes(fileRef, file);
         console.log("File uploaded successfully");
 
-        // Get download URL
         const downloadURL = await getDownloadURL(fileRef);
 
-        // Save file details to the database
         const reviewerRef = ref(database, `Reviewer/${selectedCourse.uid}`);
         const newFileKey = push(reviewerRef).key;
         update(ref(database), {
@@ -167,7 +161,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
             title: fileName,
             createdBy: createdBy,
             date: formattedDate,
-            file: downloadURL, // Include download URL in the database
+            file: downloadURL,
           },
         });
         console.log("File details saved to the database");
@@ -228,10 +222,17 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       className="d-flex align-items-center"
                       underline="hover"
                       color="text.primary"
+                      onClick={handleOpenCreateTaskModal}
                     >
-                      <AddIcon /> Create Content
+                      <AddIcon /> Create Task
                     </Link>
                   </Breadcrumbs>
+
+                  <CreateTaskModal
+                    show={showCreateTaskModal}
+                    onHide={handleCloseCreateTaskModal}
+                    selectedCourse={selectedCourse}
+                  />
                   <hr />
                   {tasks.map((task) => (
                     <Card
@@ -306,8 +307,8 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
         </Offcanvas>
       )}
 
-      {/* Modal */}
-      <Modal show={showModal} onHide={handleCloseModal}>
+      {/* Upload Modal */}
+      <Modal show={showModal} onHide={handleCloseModal} backdrop="static">
         <Modal.Header closeButton>
           <Modal.Title>Upload File</Modal.Title>
         </Modal.Header>
@@ -318,7 +319,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                 type="text"
                 placeholder="File name"
                 value={title}
-                onChange={handleFileNameChange} // Handle input change
+                onChange={handleFileNameChange}
               />
             </Form.Group>
             <Form.Group controlId="fileUpload" className="mb-3">
