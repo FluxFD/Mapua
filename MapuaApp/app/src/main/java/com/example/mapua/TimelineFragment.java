@@ -3,46 +3,38 @@ package com.example.mapua;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link TimelineFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class TimelineFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private RecyclerView recyclerView;
+    private TaskAdapter taskAdapter;
+    private List<TaskHelpers> taskList = new ArrayList<>();
 
     public TimelineFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TimelineFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static TimelineFragment newInstance(String param1, String param2) {
         TimelineFragment fragment = new TimelineFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -51,20 +43,23 @@ public class TimelineFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_timeline, container, false);
 
-        Button showBottomSheetButton = view.findViewById(R.id.bottom_sheet_toggle);
 
-        // Set a click listener for the button
+        recyclerView = view.findViewById(R.id.timelineRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        taskAdapter = new TaskAdapter(taskList);
+        recyclerView.setAdapter(taskAdapter);
+
+
+        Button showBottomSheetButton = view.findViewById(R.id.bottom_sheet_toggle);
         showBottomSheetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,8 +67,38 @@ public class TimelineFragment extends Fragment {
                 showBottomSheet();
             }
         });
+        // Fetch and log the "Task" collection
+        fetchTaskCollection();
+        return view;
+    }
 
-        return view;  // Return the inflated view, not a new instance
+    private void fetchTaskCollection() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference taskRef = database.getReference("Task");
+        taskRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                taskList.clear(); // Clear the existing list
+                for (DataSnapshot taskSnapshot : dataSnapshot.getChildren()) {
+                    // Access task details
+                    String course = taskSnapshot.child("Course").getValue(String.class);
+                    String dueDate = taskSnapshot.child("dueDate").getValue(String.class);
+                    String taskName = taskSnapshot.child("taskName").getValue(String.class);
+
+                    // Create a TaskHelpers object and add it to the list
+                    TaskHelpers task = new TaskHelpers(course, dueDate, taskName);
+                    taskList.add(task);
+                }
+                // Notify the adapter that the data set has changed
+                taskAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle possible errors
+                Log.e("TimelineFragment", "Failed to read value.", databaseError.toException());
+            }
+        });
     }
 
     private void showBottomSheet() {
