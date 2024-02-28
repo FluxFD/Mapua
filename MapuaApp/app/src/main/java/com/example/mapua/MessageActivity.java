@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -68,6 +69,10 @@ public class MessageActivity extends AppCompatActivity implements CoursesAdapter
     @Override
     public void onCourseClick(String courseId) {
         // Handle course click event
-        Toast.makeText(this, "Clicked on course: " + courseId, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(MessageActivity.this, ChatActivity.class);
+        intent.putExtra("courseId", courseId);
+        intent.putExtra("username", getIntent().getStringExtra("username"));
+        intent.putExtra("usernum", getIntent().getStringExtra("usernum"));
+        startActivity(intent);
     }
 }
