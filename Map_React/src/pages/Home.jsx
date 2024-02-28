@@ -21,6 +21,7 @@ function HomePage() {
   const [modules, setModules] = useState(0);
   const { currentUser } = useAuth();
   const [studentData, setStudentData] = useState(null);
+  const [studentName, setStudentName] = useState("");
   const [selectedTask, setSelectedTask] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
@@ -33,7 +34,13 @@ function HomePage() {
       const studentRef = ref(database, "students/" + currentUser.uid);
       onValue(studentRef, (snapshot) => {
         const studentData = snapshot.val();
+
+          if (studentData){
+            const name = studentData.name
+            setStudentName(name);
+          }
         setStudentData(studentData);
+        console.log(name);
       });
     };
 
@@ -64,8 +71,18 @@ function HomePage() {
             
             const scoresRefs = ref(database, "Score");
             onValue(scoresRefs, (snapshot) => {
-            const scores = snapshot.val();
-            // console.log(scores,"scoresData");
+              const scoresData = snapshot.val();
+              if (scoresData) {
+                const scoresCount = Object.values(scoresData).filter(
+                  (score) => score.studentName === studentData.name && score.taskName === course.title
+                );
+                // Update course object with scores
+                course.scoresCount = scoresCount;
+                // console.log(scoresCount, "scoresCount");
+                console.log(scoresData);
+              } else {
+                course.scoresCount = 0;
+              }
             });
               
 
@@ -84,7 +101,6 @@ function HomePage() {
                 course.moduleCount = 0;
               }
               
-              }
             });
 
             const excercisesRef = ref(database, "ReviewerActivity");
