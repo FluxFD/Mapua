@@ -38,11 +38,14 @@ function HomePage() {
           // Assuming 'name' is the field you want to store
           const name = studentData.name;
           setStudentName(name); // Update the state variable with the field value
-          console.log("Student Name:", name);
+          // Now, you can access studentName here
+          fetchCourses(); // Call fetchCourses after setting studentName
+          // console.log("Student Name:", name);
         }
         setStudentData(studentData);
       });
     };
+    
 
     const fetchModules = () => {
       if (!currentUser) return;
@@ -73,18 +76,18 @@ function HomePage() {
             onValue(scoresRefs, (snapshot) => {
               const scoresData = snapshot.val();
               if (scoresData) {
-                const scoresCount = Object.values(scoresData).filter(
-                  (score) => score.studentName === studentName && score.taskName === course.title
+                const scoreArray = Object.values(scoresData).filter(
+                  (score) => score.studentName === studentName 
                 );
                 // Update course object with scores
-                course.scoresCount = scoresCount;
-                // console.log(scoresCount, "scoresCount");
-                console.log(scoresData);
+                course.scoreArray = scoreArray;
+                // console.log(course.scoreArray,'scoreArray');
+                // console.log(scoresData,'scoresData');
+                // console.log(studentData,'studentData');
               } else {
-                course.scoresCount = 0;
+                course.scoreArray = [];
               }
             });
-              
 
             // Fetch modules for this course
             const modulesRef = ref(database, "Reviewer");
@@ -92,13 +95,29 @@ function HomePage() {
               const modulesData = snapshot.val();
               if (modulesData) {
                 const moduleCount = Object.values(modulesData).filter(
-                  (module) => module.Course === course.id
+                  (module) => module.Course == course.id
                 ).length;
                 // Update course object with module count
                 course.moduleCount = moduleCount;
+                // console.log(modulesData, 'modulesData');
+                // console.log(modulesData, 'moduleData');
               } 
               else {
                 course.moduleCount = 0;
+              }
+              
+              if (modulesData) {
+                const moduleAnswered = Object.values(modulesData).filter(
+                  (module) => module.taskName === course.scoreArray.taskName && module.Course == course.id
+                ).length;
+                // Update course object with module count
+                course.moduleAnswered = moduleAnswered;
+                // console.log(moduleAnswered, 'moduleAnswered');
+                // console.log(modulesData, 'modulesData');
+                // console.log(course.scoreArray);
+              } 
+              else {
+                course.moduleAnswered = 0;
               }
               
             });
@@ -115,6 +134,20 @@ function HomePage() {
               } else {
                 course.excerciseCount = 0;
               }
+
+              if (excercisesData) {
+                const excerciseAnswered = Object.values(excercisesData).filter(
+                  (excercise) => excercise.taskName === course.scoreArray.taskName && excercise.Course === course.id
+                ).length;
+                // Update course object with module count
+                course.excerciseAnswered = excerciseAnswered;
+                // console.log(moduleAnswered, 'moduleAnswered');
+                // console.log(excercisesData, 'excercisesData');
+                // console.log(course.scoreArray);
+              } 
+              else {
+                course.excerciseAnswered = 0;
+              }
             });
 
             const assessmentsRef = ref(database, "Task");
@@ -128,6 +161,20 @@ function HomePage() {
                 course.assessmentCount = assessmentCount;
               } else {
                 course.assessmentCount = 0;
+              }
+
+              if (assessmentsData) {
+                const assessmentAnswered = Object.values(assessmentsData).filter(
+                  (assessment) => assessment.taskName === course.scoreArray.taskName && assessment.Course === course.id
+                ).length;
+                // Update course object with module count
+                course.assessmentAnswered = assessmentAnswered;
+                // console.log(moduleAnswered, 'moduleAnswered');
+                // console.log(assessmentsData, 'assessmentsData');
+                // console.log(course.scoreArray);
+              } 
+              else {
+                course.assessmentAnswered = 0;
               }
             });
 
@@ -163,8 +210,11 @@ function HomePage() {
               });
             }
           });
+          
           setTasks(tasksArray);
+          console.log(tasksArray);
           // console.log(tasks);
+          
         }
       });
     };
@@ -277,13 +327,13 @@ function HomePage() {
                               }}
                             >
                               <div id={`module-count-${course.id}`}>
-                                Modules: 0/{course.moduleCount}
+                                Modules: {course.moduleAnswered}/{course.moduleCount}
                               </div>
                               <div id="excercises-count">
-                                Excercises: 0/{course.excerciseCount}
+                                Excercises: {course.excerciseAnswered}/{course.excerciseCount}
                               </div>
                               <div id="assessment-count">
-                                Assessment: 00/{course.assessmentCount}
+                                Assessment: {course.assessmentAnswered}/{course.assessmentCount}
                               </div>
                             </div>
                             <div
