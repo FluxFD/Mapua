@@ -45,22 +45,20 @@ function Courses() {
         const coursesData = snapshot.val();
         if (coursesData) {
           const coursesArray = Object.keys(coursesData).map((courseId) => {
-            const course = coursesData[courseId];
-            const studies = Object.keys(course).map((studyId) => ({
-              id: studyId,
-              dueDate: course[studyId].dueDate
-            }));
             return {
               id: courseId,
-              studies: studies
+              ...coursesData[courseId]
             };
           });
+          // console.log(coursesArray,"array")
           setCourses(coursesArray);
+        } else {
+          setCourses([]);
         }
       });
     };
 
-    fetchStudentData();
+    fetchStudentData(); // Assuming fetchStudentData is defined elsewhere
     fetchCourses();
 
     return () => {
@@ -76,7 +74,7 @@ function Courses() {
             <Col md={12}>
               <Card style={{cursor:"pointer"}} className='title-header' onClick={() => handleCardClick(course)}>
                 <Card.Body>
-                  <h3>{course.id}</h3>
+                  <h4>{course.id}</h4>
                 </Card.Body>
               </Card>
             </Col>

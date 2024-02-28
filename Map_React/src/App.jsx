@@ -19,6 +19,7 @@ import Identification from "./pages/Identification";
 import PracticeQuestion from "./pages/PracticeQuestion";
 import Message from "./pages/Message";
 import PdfViewer from "./components/pdfViewer";
+import VideoActivity from "./pages/VideoActivity";
 
 
 // Moderator
@@ -38,7 +39,7 @@ function App() {
           display: "flex",
           flexDirection: "column",
           minHeight: "100vh",
-          fontFamily: "Colon Mono, monospace",
+          fontFamily: "roboto-light",
           backgroundColor: "#1B365B",
         }}
       >
@@ -55,6 +56,7 @@ function App() {
             <Route path="/CourseContent" element={<CourseContent />}></Route>
             <Route path="/Message" element={<Message />}></Route>
             <Route path="/preview/:url" element= {<PdfViewer />}></Route>
+            <Route path="/video/:title" element= {<VideoActivity />}></Route>
             <Route
               path="/task/:taskId/:taskName"
               element={<TaskDetailsPage />}
