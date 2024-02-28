@@ -1,23 +1,37 @@
 package com.example.mapua;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.Objects;
 
 
 public class MoreFragment extends Fragment {
 
     private static final String ARG_USERNAME = "username";
     private static final String ARG_USERTYPE = "usertype";
+    private static final String PREF_BIOMETRICS = "Biometrics";
+    private static final String PREF_USERNAME = "username";
+    private static final String PREF_USERNUM = "usernum";
 
     private String username;
     private String usernum;
@@ -55,10 +69,24 @@ public class MoreFragment extends Fragment {
         Button logoutButton = view.findViewById(R.id.logoutBtn);
         Button messageButton = view.findViewById(R.id.messageBtn);
 
+        ToggleButton bioBtn = view.findViewById(R.id.toggleBio);
+
         // Set text values with username and usertype
         studentNameTextView.setText(username);
         studentNumberTextView.setText(usernum);
 
+        BiometricManager biometricManager = BiometricManager.from(requireContext());
+        switch (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)) {
+            case BiometricManager.BIOMETRIC_SUCCESS:
+                // Biometric authentication can be used
+                bioBtn.setEnabled(true);
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
+            case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
+            case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
+                bioBtn.setEnabled(false);
+                break;
+        }
 
         logoutButton.setOnClickListener(v -> {
             // Handle logout here
@@ -70,6 +98,21 @@ public class MoreFragment extends Fragment {
             intent.putExtra("username", username);
             intent.putExtra("usernum", usernum);
             startActivity(intent);
+        });
+
+        final String finalUserNum = usernum;
+
+        bioBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // Enable biometrics
+                    enableBiometrics();
+                } else {
+                    // Disable biometrics
+                    disableBiometrics();
+                }
+            }
         });
 
 
@@ -86,4 +129,22 @@ public class MoreFragment extends Fragment {
         startActivity(intent);
         getActivity().finish();
     }
+
+    private static final String PREF_BIOMETRICS_ENABLED = "biometrics_enabled";
+
+    private void enableBiometrics() {
+        SharedPreferences sharedPref = requireActivity().getSharedPreferences(PREF_BIOMETRICS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(PREF_BIOMETRICS_ENABLED, true);
+        editor.apply();
+    }
+
+    private void disableBiometrics() {
+        SharedPreferences sharedPref = requireActivity().getSharedPreferences(PREF_BIOMETRICS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(PREF_BIOMETRICS_ENABLED, false);
+        editor.apply();
+    }
+
+
 }

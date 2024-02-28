@@ -1,5 +1,6 @@
 package com.example.mapua;
 
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -59,7 +61,7 @@ public class TimelineFragment extends Fragment {
         recyclerView.setAdapter(taskAdapter);
 
 
-        Button showBottomSheetButton = view.findViewById(R.id.bottom_sheet_toggle);
+        ImageView showBottomSheetButton = view.findViewById(R.id.bottom_sheet_toggle);
         showBottomSheetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
