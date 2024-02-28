@@ -2,9 +2,12 @@ package com.example.mapua;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.MediaController;
 import android.widget.VideoView;
@@ -20,10 +23,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class VideoActivity extends AppCompatActivity {
 
-    String videoUrl = "https://firebasestorage.googleapis.com/v0/b/mapua-f1526.appspot.com/o/video1.mp4?alt=media&token=ad2cb2d1-8671-431c-9573-61df2a6407f0";
+    String videoUrl1 = "https://firebasestorage.googleapis.com/v0/b/mapua-f1526.appspot.com/o/video1.mp4?alt=media&token=ad2cb2d1-8671-431c-9573-61df2a6407f0";
     private MediaController mediaController;
 
     @Override
@@ -34,7 +39,6 @@ public class VideoActivity extends AppCompatActivity {
         VideoView videoView = findViewById(R.id.videoView);
         mediaController = new MediaController(this);
         videoView.setMediaController(mediaController);
-        playVideo(videoView, videoUrl);
 
         // Check if the Intent contains the courseId key
         if (getIntent().hasExtra("courseId")) {
@@ -72,6 +76,8 @@ public class VideoActivity extends AppCompatActivity {
 
                             // Log the fetched activity data
                             Log.d("VideoActivity", "Answer: " + activityModel.getAnswer() + ", Question: " + activityModel.getQuestion() + ", Type: " + activityModel.getQuestionType() + ", Time: " + activityModel.getTime() + ", Choices: " + activityModel.getChoices());
+                            playVideo(videoView, videoUrl1, activityModel);
+
                         }
                     }
                 }
@@ -87,10 +93,12 @@ public class VideoActivity extends AppCompatActivity {
     }
 
 
-    private void playVideo(VideoView videoView, String videoUrl) {
+    private void playVideo(VideoView videoView, String videoUrl, ActivityModel activityModel) {
         try {
             Uri uri = Uri.parse(videoUrl);
             videoView.setVideoURI(uri);
+            videoView.setMediaController(mediaController);
+            videoView.requestFocus();
             videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
@@ -103,12 +111,65 @@ public class VideoActivity extends AppCompatActivity {
                         videoView.setScaleY(1f / scaleX);
                     }
                     videoView.start();
+
+                    // Log video duration in seconds
+                    int durationSeconds = videoView.getDuration() / 1000;
+                    Log.d("VideoActivity", "Video duration: " + durationSeconds + " seconds");
+
+                    // Schedule the pop-up dialogs at the specified times
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Determine which question to display based on the current time
+                            int currentTimeSeconds = videoView.getCurrentPosition() / 1000;
+                            int timeDifferenceFirst = Math.abs(currentTimeSeconds - 54);
+                            int timeDifferenceSecond = Math.abs(currentTimeSeconds - 60);
+                            String question;
+
+                            if (timeDifferenceFirst < timeDifferenceSecond) {
+                                question = "What is the symbol?";
+                            } else {
+                                question = "What does the symbol represent?";
+                            }
+
+                            // Display the pop-up dialog with the question
+                            Log.d("VideoActivity", "Pop-up dialog at " + currentTimeSeconds + " seconds: " + question);
+                            showQuestionAndAnswer(activityModel.getAnswer(), question, activityModel.getQuestionType(), activityModel.getChoices());
+                        }
+                    }, 54000); // 54 seconds
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
+
+    private void showQuestionAndAnswer(String answer, String question, String questionType, Map<String, String> choices) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Question: " + question)
+                .setMessage("Type: " + questionType + "\n\nChoices:\n" + choicesToString(choices))
+                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Handle answer submission
+                        // For example, compare the selected answer with the correct answer (answer) and log the result
+                        Log.d("VideoActivity", "Answer submitted");
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private String choicesToString(Map<String, String> choices) {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, String> entry : choices.entrySet()) {
+            sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+        }
+        return sb.toString();
+    }
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
