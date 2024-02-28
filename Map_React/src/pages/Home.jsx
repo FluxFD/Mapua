@@ -34,13 +34,13 @@ function HomePage() {
       const studentRef = ref(database, "students/" + currentUser.uid);
       onValue(studentRef, (snapshot) => {
         const studentData = snapshot.val();
-
-          if (studentData){
-            const name = studentData.name
-            setStudentName(name);
-          }
+        if (studentData) {
+          // Assuming 'name' is the field you want to store
+          const name = studentData.name;
+          setStudentName(name); // Update the state variable with the field value
+          console.log("Student Name:", name);
+        }
         setStudentData(studentData);
-        console.log(name);
       });
     };
 
@@ -74,7 +74,7 @@ function HomePage() {
               const scoresData = snapshot.val();
               if (scoresData) {
                 const scoresCount = Object.values(scoresData).filter(
-                  (score) => score.studentName === studentData.name && score.taskName === course.title
+                  (score) => score.studentName === studentName && score.taskName === course.title
                 );
                 // Update course object with scores
                 course.scoresCount = scoresCount;
