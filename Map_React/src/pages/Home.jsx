@@ -26,6 +26,7 @@ function HomePage() {
   const [showModal, setShowModal] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
   const [hideCancel, setHideCancel] = useState(false);
+  const [dueTasksCount, setDueTasksCount] = useState({}); // State to store due tasks count by course
 
   useEffect(() => {
     
@@ -195,6 +196,7 @@ function HomePage() {
         const tasksData = snapshot.val();
         if (tasksData) {
           const tasksArray = [];
+          const dueTasksCountByCourse = {}; // Object to store due tasks count by course
           Object.entries(tasksData).forEach(([taskId, task]) => {
             const dueDate = new Date(task.dueDate);
             const currentDate = new Date();
@@ -208,13 +210,17 @@ function HomePage() {
                 dueDate: task.dueDate,
                 taskName: task.taskName,
               });
+
+              // Increment due tasks count for the course
+              if (dueTasksCountByCourse[task.Course]) {
+                dueTasksCountByCourse[task.Course]++;
+              } else {
+                dueTasksCountByCourse[task.Course] = 1;
+              }
             }
           });
-          
           setTasks(tasksArray);
-          console.log(tasksArray);
-          // console.log(tasks);
-          
+          setDueTasksCount(dueTasksCountByCourse); // Update due tasks count state
         }
       });
     };
@@ -347,10 +353,10 @@ function HomePage() {
                                 id="items-due-count"
                                 style={{ textAlign: "center" }}
                               >
-                                00
+                                {dueTasksCount[course.id] || 0} {/* Display due tasks count */}
                               </div>
                               <div style={{ textAlign: "center" }}>
-                                Past Due
+                                Pass Due
                               </div>
                             </div>
                           </div>
