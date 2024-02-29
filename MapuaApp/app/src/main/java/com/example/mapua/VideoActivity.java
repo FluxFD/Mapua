@@ -21,7 +21,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,6 +43,10 @@ public class VideoActivity extends AppCompatActivity {
         VideoView videoView = findViewById(R.id.videoView);
         mediaController = new MediaController(this);
         videoView.setMediaController(mediaController);
+        Uri uri = Uri.parse(videoUrl1);
+        videoView.setVideoURI(uri);
+        videoView.setMediaController(mediaController);
+        videoView.requestFocus();
 
         // Check if the Intent contains the courseId key
         if (getIntent().hasExtra("courseId")) {
@@ -51,6 +59,7 @@ public class VideoActivity extends AppCompatActivity {
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    List<ActivityModel> activitiesList = new ArrayList<>();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         // Parse the snapshot data into your model class
                         VideoActivityModel videoActivity = snapshot.getValue(VideoActivityModel.class);
@@ -74,14 +83,19 @@ public class VideoActivity extends AppCompatActivity {
                             // Create ActivityModel object
                             ActivityModel activityModel = new ActivityModel(answer, choices, question, questionType, time);
 
-                            // Log the fetched activity data
-                            Log.d("VideoActivity", "Answer: " + activityModel.getAnswer() + ", Question: " + activityModel.getQuestion() + ", Type: " + activityModel.getQuestionType() + ", Time: " + activityModel.getTime() + ", Choices: " + activityModel.getChoices());
-                            playVideo(videoView, videoUrl1, activityModel);
-
+                            // Add activity to the list
+                            activitiesList.add(activityModel);
                         }
                     }
-                }
 
+                    // Sort the activities list by time
+                    Collections.sort(activitiesList, Comparator.comparing(ActivityModel::getTime));
+
+                    // Log the sorted activities list
+                    for (ActivityModel activity : activitiesList) {
+                        Log.d("VideoActivity", "Sorted Activity - Question: " + activity.getQuestion() + ", Time: " + activity.getTime());
+                    }
+                }
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     // Handle any errors
@@ -93,81 +107,7 @@ public class VideoActivity extends AppCompatActivity {
     }
 
 
-    private void playVideo(VideoView videoView, String videoUrl, ActivityModel activityModel) {
-        try {
-            Uri uri = Uri.parse(videoUrl);
-            videoView.setVideoURI(uri);
-            videoView.setMediaController(mediaController);
-            videoView.requestFocus();
-            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    float videoRatio = mp.getVideoWidth() / (float) mp.getVideoHeight();
-                    float screenRatio = videoView.getWidth() / (float) videoView.getHeight();
-                    float scaleX = videoRatio / screenRatio;
-                    if (scaleX >= 1f) {
-                        videoView.setScaleX(scaleX);
-                    } else {
-                        videoView.setScaleY(1f / scaleX);
-                    }
-                    videoView.start();
 
-                    // Log video duration in seconds
-                    int durationSeconds = videoView.getDuration() / 1000;
-                    Log.d("VideoActivity", "Video duration: " + durationSeconds + " seconds");
-
-                    // Schedule the pop-up dialogs at the specified times
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Determine which question to display based on the current time
-                            int currentTimeSeconds = videoView.getCurrentPosition() / 1000;
-                            int timeDifferenceFirst = Math.abs(currentTimeSeconds - 54);
-                            int timeDifferenceSecond = Math.abs(currentTimeSeconds - 60);
-                            String question;
-
-                            if (timeDifferenceFirst < timeDifferenceSecond) {
-                                question = "What is the symbol?";
-                            } else {
-                                question = "What does the symbol represent?";
-                            }
-
-                            // Display the pop-up dialog with the question
-                            Log.d("VideoActivity", "Pop-up dialog at " + currentTimeSeconds + " seconds: " + question);
-                            showQuestionAndAnswer(activityModel.getAnswer(), question, activityModel.getQuestionType(), activityModel.getChoices());
-                        }
-                    }, 54000); // 54 seconds
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
-    private void showQuestionAndAnswer(String answer, String question, String questionType, Map<String, String> choices) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Question: " + question)
-                .setMessage("Type: " + questionType + "\n\nChoices:\n" + choicesToString(choices))
-                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Handle answer submission
-                        // For example, compare the selected answer with the correct answer (answer) and log the result
-                        Log.d("VideoActivity", "Answer submitted");
-                    }
-                });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    private String choicesToString(Map<String, String> choices) {
-        StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, String> entry : choices.entrySet()) {
-            sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
-        }
-        return sb.toString();
-    }
 
 
     @Override
