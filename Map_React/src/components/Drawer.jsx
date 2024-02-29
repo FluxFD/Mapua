@@ -89,18 +89,7 @@ export default function MiniDrawer({ onItemClick, selectedItem }) {
             ...theme.mixins.toolbar,
           }}
         >
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerToggle}
-            edge="end"
-            sx={{
-              marginRight: 1,
-              color: "white",
-            }}
-          >
-            {open ? <ChevronLeftIcon /> : <MenuIcon />}
-          </IconButton>
+          
         </Box>
         <List>
           {[
