@@ -57,136 +57,154 @@ function HomePage() {
     };
 
     const fetchCourses = () => {
-      if (!currentUser) {
-        setCourses([]);
-        return;
-      }
-      const coursesRef = ref(database, "Course");
-      onValue(coursesRef, (snapshot) => {
-        const coursesData = snapshot.val();
-        if (coursesData) {
-          const coursesArray = Object.keys(coursesData).map((courseId) => {
-            const course = {
-              id: courseId,
-              ...coursesData[courseId],
-            };
-
-            const scoresRefs = ref(database, "Score");
-            onValue(scoresRefs, (snapshot) => {
-              const scoresData = snapshot.val();
-              if (scoresData) {
-                const scoreArray = Object.values(scoresData).filter(
-                  (score) => score.studentName === studentName
-                );
-                // Update course object with scores
-                course.scoreArray = scoreArray;
-                // console.log(course.scoreArray,'scoreArray');
-                // console.log(scoresData,'scoresData');
-                // console.log(studentData,'studentData');
-              } else {
-                course.scoreArray = [];
-              }
-            });
-
-            // Fetch modules for this course
-            const modulesRef = ref(database, "Reviewer");
-            onValue(modulesRef, (snapshot) => {
-              const modulesData = snapshot.val();
-              if (modulesData) {
-                const moduleCount = Object.values(modulesData).filter(
-                  (module) => module.Course == course.id
-                ).length;
-                // Update course object with module count
-                course.moduleCount = moduleCount;
-                // console.log(modulesData, 'modulesData');
-                // console.log(modulesData, 'moduleData');
-              } else {
-                course.moduleCount = 0;
-              }
-
-              if (modulesData) {
-                const moduleAnswered = Object.values(modulesData).filter(
-                  (module) =>
-                    module.taskName === course.scoreArray?.taskName &&
-                    module.Course == course.id
-                ).length;
-                // Update course object with module count
-                course.moduleAnswered = moduleAnswered;
-                // console.log(moduleAnswered, 'moduleAnswered');
-                // console.log(modulesData, 'modulesData');
-                // console.log(course.scoreArray);
-              } else {
-                course.moduleAnswered = 0;
-              }
-            });
-
-            const excercisesRef = ref(database, "ReviewerActivity");
-            onValue(excercisesRef, (snapshot) => {
-              const excercisesData = snapshot.val();
-              if (excercisesData) {
-                const excerciseCount = Object.values(excercisesData).filter(
-                  (excercise) => excercise.Course === course.id
-                ).length;
-                // Update course object with module count
-                course.excerciseCount = excerciseCount;
-              } else {
-                course.excerciseCount = 0;
-              }
-
-              if (excercisesData) {
-                const excerciseAnswered = Object.values(excercisesData).filter(
-                  (excercise) =>
-                    excercise.taskName === course.scoreArray.taskName &&
-                    excercise.Course === course.id
-                ).length;
-                // Update course object with module count
-                course.excerciseAnswered = excerciseAnswered;
-                // console.log(moduleAnswered, 'moduleAnswered');
-                // console.log(excercisesData, 'excercisesData');
-                // console.log(course.scoreArray);
-              } else {
-                course.excerciseAnswered = 0;
-              }
-            });
-
-            const assessmentsRef = ref(database, "Task");
-            onValue(assessmentsRef, (snapshot) => {
-              const assessmentsData = snapshot.val();
-              if (assessmentsData) {
-                const assessmentCount = Object.values(assessmentsData).filter(
-                  (assessment) => assessment.Course === course.id
-                ).length;
-                // Update course object with module count
-                course.assessmentCount = assessmentCount;
-              } else {
-                course.assessmentCount = 0;
-              }
-
-              if (assessmentsData) {
-                const assessmentAnswered = Object.values(
-                  assessmentsData
-                ).filter(
-                  (assessment) =>
-                    assessment.taskName === course.scoreArray?.taskName &&
-                    assessment.Course === course.id
-                ).length;
-                // Update course object with module count
-                course.assessmentAnswered = assessmentAnswered;
-                // console.log(moduleAnswered, 'moduleAnswered');
-                // console.log(assessmentsData, 'assessmentsData');
-                // console.log(course.scoreArray);
-              } else {
-                course.assessmentAnswered = 0;
-              }
-            });
-
-            return course;
-          });
-          // console.log(coursesArray, "array");
-          setCourses(coursesArray);
-        } else {
+      return new Promise((resolve, reject) => {
+        if (!currentUser) {
           setCourses([]);
+          resolve([]);
+          return;
         }
+
+        const coursesRef = ref(database, "Course");
+        onValue(
+          coursesRef,
+          (snapshot) => {
+            const coursesData = snapshot.val();
+            if (coursesData) {
+              const coursesArray = Object.keys(coursesData).map((courseId) => {
+                const course = {
+                  id: courseId,
+                  ...coursesData[courseId],
+                };
+
+                const scoresRefs = ref(database, "Score");
+                onValue(scoresRefs, (snapshot) => {
+                  const scoresData = snapshot.val();
+                  if (scoresData) {
+                    const scoreArray = Object.values(scoresData).filter(
+                      (score) => score.studentName === studentName
+                    );
+                    // Update course object with scores
+                    course.scoreArray = scoreArray;
+                    // console.log(course.scoreArray,'scoreArray');
+                    // console.log(scoresData,'scoresData');
+                    // console.log(studentData,'studentData');
+                  } else {
+                    course.scoreArray = [];
+                  }
+                });
+
+                // Fetch modules for this course
+                const modulesRef = ref(database, "Reviewer");
+                onValue(modulesRef, (snapshot) => {
+                  const modulesData = snapshot.val();
+                  if (modulesData) {
+                    const moduleCount = Object.values(modulesData).filter(
+                      (module) => module.Course == course.id
+                    ).length;
+                    // Update course object with module count
+                    course.moduleCount = moduleCount;
+                    // console.log(modulesData, 'modulesData');
+                    // console.log(modulesData, 'moduleData');
+                  } else {
+                    course.moduleCount = 0;
+                  }
+
+                  if (modulesData) {
+                    const moduleAnswered = Object.values(modulesData).filter(
+                      (module) =>
+                        module.taskName === course.scoreArray?.taskName &&
+                        module.Course == course.id
+                    ).length;
+                    // Update course object with module count
+                    course.moduleAnswered = moduleAnswered;
+                    // console.log(moduleAnswered, 'moduleAnswered');
+                    // console.log(modulesData, 'modulesData');
+                    // console.log(course.scoreArray);
+                  } else {
+                    course.moduleAnswered = 0;
+                  }
+                });
+
+                const excercisesRef = ref(database, "ReviewerActivity");
+                onValue(excercisesRef, (snapshot) => {
+                  const excercisesData = snapshot.val();
+                  if (excercisesData) {
+                    const excerciseCount = Object.values(excercisesData).filter(
+                      (excercise) => excercise.Course === course.id
+                    ).length;
+                    // Update course object with module count
+                    course.excerciseCount = excerciseCount;
+                  } else {
+                    course.excerciseCount = 0;
+                  }
+
+                  if (excercisesData) {
+                    const excerciseAnswered = Object.values(
+                      excercisesData
+                    ).filter(
+                      (excercise) =>
+                        excercise.taskName === course.scoreArray.taskName &&
+                        excercise.Course === course.id
+                    ).length;
+                    // Update course object with module count
+                    course.excerciseAnswered = excerciseAnswered;
+                    // console.log(moduleAnswered, 'moduleAnswered');
+                    console.log(excercisesData, 'excercisesData');
+                    // console.log(course.scoreArray);
+                  } else {
+                    course.excerciseAnswered = 0;
+                  }
+                });
+
+                const assessmentsRef = ref(database, "Task");
+                onValue(assessmentsRef, (snapshot) => {
+                  const assessmentsData = snapshot.val();
+                  if (assessmentsData) {
+                    const assessmentCount = Object.values(
+                      assessmentsData
+                    ).filter(
+                      (assessment) => assessment.Course === course.id
+                    ).length;
+                    // Update course object with module count
+                    course.assessmentCount = assessmentCount;
+                  } else {
+                    course.assessmentCount = 0;
+                  }
+
+                  if (assessmentsData) {
+                    const assessmentAnswered = Object.values(
+                      assessmentsData
+                    ).filter(
+                      (assessment) =>
+                        assessment.taskName === course.scoreArray?.taskName &&
+                        assessment.Course === course.id
+                    ).length;
+                    // Update course object with module count
+                    course.assessmentAnswered = assessmentAnswered;
+                    // console.log(moduleAnswered, 'moduleAnswered');
+                    // console.log(assessmentsData, 'assessmentsData');
+                    // console.log(course.scoreArray);
+                  } else {
+                    course.assessmentAnswered = 0;
+                  }
+                });
+
+                return course;
+              });
+              // console.log(coursesArray, "array");
+              setCourses(coursesArray);
+              resolve(coursesArray);
+            } else {
+              setCourses([]);
+              resolve([]);
+            }
+          },
+          (error) => {
+            // Handle error
+            console.error("Error fetching courses:", error);
+            reject(error);
+          }
+        );
       });
     };
 
