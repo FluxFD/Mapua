@@ -29,7 +29,6 @@ function HomePage() {
   const [dueTasksCount, setDueTasksCount] = useState({}); // State to store due tasks count by course
 
   useEffect(() => {
-    
     const fetchStudentData = () => {
       if (!currentUser) return;
       const studentRef = ref(database, "students/" + currentUser.uid);
@@ -46,7 +45,6 @@ function HomePage() {
         setStudentData(studentData);
       });
     };
-    
 
     const fetchModules = () => {
       if (!currentUser) return;
@@ -72,13 +70,13 @@ function HomePage() {
               id: courseId,
               ...coursesData[courseId],
             };
-            
+
             const scoresRefs = ref(database, "Score");
             onValue(scoresRefs, (snapshot) => {
               const scoresData = snapshot.val();
               if (scoresData) {
                 const scoreArray = Object.values(scoresData).filter(
-                  (score) => score.studentName === studentName 
+                  (score) => score.studentName === studentName
                 );
                 // Update course object with scores
                 course.scoreArray = scoreArray;
@@ -102,25 +100,24 @@ function HomePage() {
                 course.moduleCount = moduleCount;
                 // console.log(modulesData, 'modulesData');
                 // console.log(modulesData, 'moduleData');
-              } 
-              else {
+              } else {
                 course.moduleCount = 0;
               }
-              
+
               if (modulesData) {
                 const moduleAnswered = Object.values(modulesData).filter(
-                  (module) => module.taskName === course.scoreArray.taskName && module.Course == course.id
+                  (module) =>
+                    module.taskName === course.scoreArray?.taskName &&
+                    module.Course == course.id
                 ).length;
                 // Update course object with module count
                 course.moduleAnswered = moduleAnswered;
                 // console.log(moduleAnswered, 'moduleAnswered');
                 // console.log(modulesData, 'modulesData');
                 // console.log(course.scoreArray);
-              } 
-              else {
+              } else {
                 course.moduleAnswered = 0;
               }
-              
             });
 
             const excercisesRef = ref(database, "ReviewerActivity");
@@ -138,15 +135,16 @@ function HomePage() {
 
               if (excercisesData) {
                 const excerciseAnswered = Object.values(excercisesData).filter(
-                  (excercise) => excercise.taskName === course.scoreArray.taskName && excercise.Course === course.id
+                  (excercise) =>
+                    excercise.taskName === course.scoreArray.taskName &&
+                    excercise.Course === course.id
                 ).length;
                 // Update course object with module count
                 course.excerciseAnswered = excerciseAnswered;
                 // console.log(moduleAnswered, 'moduleAnswered');
                 // console.log(excercisesData, 'excercisesData');
                 // console.log(course.scoreArray);
-              } 
-              else {
+              } else {
                 course.excerciseAnswered = 0;
               }
             });
@@ -165,16 +163,19 @@ function HomePage() {
               }
 
               if (assessmentsData) {
-                const assessmentAnswered = Object.values(assessmentsData).filter(
-                  (assessment) => assessment.taskName === course.scoreArray.taskName && assessment.Course === course.id
+                const assessmentAnswered = Object.values(
+                  assessmentsData
+                ).filter(
+                  (assessment) =>
+                    assessment.taskName === course.scoreArray?.taskName &&
+                    assessment.Course === course.id
                 ).length;
                 // Update course object with module count
                 course.assessmentAnswered = assessmentAnswered;
                 // console.log(moduleAnswered, 'moduleAnswered');
                 // console.log(assessmentsData, 'assessmentsData');
                 // console.log(course.scoreArray);
-              } 
-              else {
+              } else {
                 course.assessmentAnswered = 0;
               }
             });
@@ -333,13 +334,16 @@ function HomePage() {
                               }}
                             >
                               <div id={`module-count-${course.id}`}>
-                                Modules: {course.moduleAnswered}/{course.moduleCount}
+                                Modules: {course.moduleAnswered}/
+                                {course.moduleCount}
                               </div>
                               <div id="excercises-count">
-                                Excercises: {course.excerciseAnswered}/{course.excerciseCount}
+                                Excercises: {course.excerciseAnswered}/
+                                {course.excerciseCount}
                               </div>
                               <div id="assessment-count">
-                                Assessment: {course.assessmentAnswered}/{course.assessmentCount}
+                                Assessment: {course.assessmentAnswered}/
+                                {course.assessmentCount}
                               </div>
                             </div>
                             <div
@@ -353,7 +357,8 @@ function HomePage() {
                                 id="items-due-count"
                                 style={{ textAlign: "center" }}
                               >
-                                {dueTasksCount[course.id] || 0} {/* Display due tasks count */}
+                                {dueTasksCount[course.id] || 0}{" "}
+                                {/* Display due tasks count */}
                               </div>
                               <div style={{ textAlign: "center" }}>
                                 Pass Due
