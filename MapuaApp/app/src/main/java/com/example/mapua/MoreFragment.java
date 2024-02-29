@@ -55,6 +55,7 @@ public class MoreFragment extends Fragment {
         if (getArguments() != null) {
             username = getArguments().getString(ARG_USERNAME);
             usernum = getArguments().getString(ARG_USERTYPE);
+            Log.d("MoreFragment", "Username: " + username + ", UserNumber: " + usernum);
         }
     }
 
@@ -75,8 +76,10 @@ public class MoreFragment extends Fragment {
         studentNameTextView.setText(username);
         studentNumberTextView.setText(usernum);
 
+
         BiometricManager biometricManager = BiometricManager.from(requireContext());
-        switch (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)) {
+        int canAuth = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK);
+        switch (canAuth) {
             case BiometricManager.BIOMETRIC_SUCCESS:
                 // Biometric authentication can be used
                 bioBtn.setEnabled(true);
@@ -84,8 +87,13 @@ public class MoreFragment extends Fragment {
             case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
             case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
             case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
+            case BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED:
+            case BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED:
+            case BiometricManager.BIOMETRIC_STATUS_UNKNOWN:
                 bioBtn.setEnabled(false);
                 break;
+
+
         }
 
         logoutButton.setOnClickListener(v -> {

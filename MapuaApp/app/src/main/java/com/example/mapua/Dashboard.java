@@ -62,6 +62,7 @@ public class Dashboard extends AppCompatActivity {
             } else {
                 // Pass data to MoreFragment
                 MoreFragment moreFragment = MoreFragment.newInstance(name, studentNo);
+                Log.d(TAG, "Passing data to MoreFragment: name=" + name + ", studentNo=" + studentNo);
                 replaceFragment(moreFragment);
             }
 

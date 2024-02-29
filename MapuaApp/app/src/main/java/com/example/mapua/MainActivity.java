@@ -3,6 +3,7 @@ package com.example.mapua;
 import static android.content.ContentValues.TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextInputEditText userNameField, passWordField;
     private FirebaseAuth mAuth;
+    private String name, studentNo;
 
 
     @Override
@@ -47,21 +49,18 @@ public class MainActivity extends AppCompatActivity {
         passWordField = findViewById(R.id.passwordInput);
         Button loginButton = findViewById(R.id.loginBtn);
         mAuth = FirebaseAuth.getInstance();
-
+        Executor executor = ContextCompat.getMainExecutor(this);
         Button bioButton = findViewById(R.id.bioBtn);
 
-        bioButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
-                        .setTitle("Please Verify")
-                        .setDescription("User Auth is required to proceed")
-                        .setNegativeButtonText("Cancel")
-                        .build();
-                getPrompt().authenticate(promptInfo);
+        bioButton.setOnClickListener(v -> {
+            if (isBiometricAvailable()) {
+                // Trigger biometric authentication
+                showBiometricPrompt(executor);
+            } else {
+                // Biometric authentication not available, handle accordingly
+                // For example, display an error message or fallback to other authentication methods
             }
         });
-
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,25 +77,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        Button biometricsButton = findViewById(R.id.loginWithBiometricsBtn);
-        biometricsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                authenticateWithBiometrics();
-            }
-        });
-
-
-
     }
 
-    private void authenticateWithBiometrics() {
-        BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Please Verify")
-                .setDescription("User Auth is required to proceed")
-                .setNegativeButtonText("Cancel")
-                .build();
-        getPrompt().authenticate(promptInfo);
+    public boolean isBiometricAvailable() {
+        BiometricManager biometricManager = BiometricManager.from(this);
+        return biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS;
     }
 
     private void proceedToNextActivity(String name, String studentNo) {
@@ -106,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
 
 
     private void loginUser(String email, String password) {
@@ -135,19 +121,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    // Get user data
                     String email = snapshot.child("email").getValue(String.class);
                     String name = snapshot.child("name").getValue(String.class);
                     String role = snapshot.child("role").getValue(String.class);
                     String studentNo = snapshot.child("studentNo").getValue(String.class);
 
+                    // Log user data
                     Log.d(TAG, "Email: " + email);
                     Log.d(TAG, "Name: " + name);
                     Log.d(TAG, "Role: " + role);
                     Log.d(TAG, "Student No: " + studentNo);
 
+                    // Pass data to the next activity
                     proceedToNextActivity(name, studentNo);
-
-                    // You can perform further actions here, such as navigating to another activity
                 } else {
                     Log.d(TAG, "User not found in student collection");
                 }
@@ -160,37 +147,49 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private BiometricPrompt getPrompt(){
-        Executor executor = ContextCompat.getMainExecutor(this);
-        BiometricPrompt.AuthenticationCallback callback = new BiometricPrompt.AuthenticationCallback() {
-            @Override
-            public void onAuthenticationError(int errorCode, CharSequence errString) {
-                super.onAuthenticationError(errorCode, errString);
-                notifyUser(errString.toString());
-            }
 
+    private void showBiometricPrompt(Executor executor) {
+        BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Biometric Login")
+                .setSubtitle("Use your fingerprint to login")
+                .setNegativeButtonText("Cancel")
+                .build();
 
+        BiometricPrompt biometricPrompt = new BiometricPrompt(this, executor, new BiometricPrompt.AuthenticationCallback() {
             @Override
             public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
                 super.onAuthenticationSucceeded(result);
-                notifyUser("Authentication Success");
-
+                // Biometric authentication succeeded
+                // Proceed with Firebase Authentication
+                FirebaseUser user = mAuth.getCurrentUser();
+                if (user != null) {
+                    String uid = user.getUid();
+                    checkStudentCollection(uid);
+                }
+                signInWithBiometric();
             }
 
             @Override
             public void onAuthenticationFailed() {
                 super.onAuthenticationFailed();
-                notifyUser("Authentication Failed");
+                // Biometric authentication failed, handle accordingly
             }
-        };
-        BiometricPrompt biometricPrompt = new BiometricPrompt(this,executor,callback);
-        return biometricPrompt;
-    }
+        });
 
-    private void notifyUser(String message){
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+        biometricPrompt.authenticate(promptInfo);
     }
 
 
-
+    private void signInWithBiometric() {
+        // Assuming biometric authentication succeeded, sign in with Firebase Authentication
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            String uid = user.getUid();
+            checkStudentCollection(uid);
+        } else {
+            // Handle the case where the user is not authenticated
+            Log.w(TAG, "User not authenticated after biometric authentication");
+            Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
