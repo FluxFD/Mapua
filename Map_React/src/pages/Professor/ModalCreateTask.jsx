@@ -18,6 +18,7 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
   const [numberOfItems, setNumberOfItems] = useState(1);
   const [enumerationItems, setEnumerationItems] = useState([""]);
   const [choices, setChoices] = useState(["", "", "", ""]);
+  const [answerValue, setAnswerValue] = useState("");
 
   const handleQuizNameChange = (event) => {
     setQuizName(event.target.value);
@@ -45,12 +46,12 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
     setChoices(updatedChoices);
     setSelectedChoiceIndex(index);
   };
+
   const handleCreateQuiz = async () => {
     const user = auth.currentUser;
 
     if (user) {
       const createdBy = user.email;
-      const taskRef = ref(database, "ReviewerActivity");
       const quizName = document.getElementById("taskName").value;
       const dueDateInput = document.getElementById("dueDate").value;
       const question = document.getElementById("question").value;
@@ -67,49 +68,85 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
       if (questionType === "MultipleChoice") {
         answer = choices[selectedChoiceIndex];
       } else {
-        answer = document.getElementById("answer").value;
+        answer = answerValue;
       }
 
       try {
-        const newTaskRef = push(taskRef);
-        const newTaskKey = newTaskRef.key;
+        if (questionType === "Enumeration") {
+          const enumerationRef = ref(database, "Enumeration");
 
-        await set(newTaskRef, {
-          Course: selectedCourse.uid,
-          createdBy: createdBy,
-          date: formattedDate,
-          title: quizName,
-        });
+          const newEnumerationRef = push(enumerationRef);
+          const newEnumKey = newEnumerationRef.key;
 
-        const activitiesRef = ref(
-          database,
-          `ReviewerActivity/${newTaskKey}/activities`
-        );
-        const newActivityRef = push(activitiesRef);
-        const newActivityKey = newActivityRef.key;
+          await set(newEnumerationRef, {
+            Course: selectedCourse.uid,
+            createdBy: createdBy,
+            date: formattedDate,
+            title: quizName,
+          });
 
-        const choicesToSave =
-          questionType === "MultipleChoice"
-            ? choices.reduce((acc, choice, index) => {
-                acc[String.fromCharCode(65 + index)] = choice;
-                return acc;
-              }, {})
-            : {};
+          const activitiesEnumRef = ref(
+            database,
+            `Enumeration/${newEnumKey}/activities`
+          );
+          const newActivityEnumRef = push(activitiesEnumRef);
+          const newActivityEnumKey = newActivityEnumRef.key;
 
-        await set(newActivityRef, {
-          question: question,
-          questionType: questionType,
-          answer: answer,
-          choices: choicesToSave,
-        });
+          await set(newActivityEnumRef, {
+            question: question,
+            questionType: questionType,
+            answer: enumerationItems,
+          });
 
-        console.log("Quiz created successfully");
+          setQuestionType("");
+          setEnumerationItems([""]);
+          setNumberOfItems(1);
+          console.log("Enumeration question created successfully");
+        } else {
+          const taskRef = ref(database, "ReviewerActivity");
+          const newTaskRef = push(taskRef);
+          const newTaskKey = newTaskRef.key;
+
+          await set(newTaskRef, {
+            Course: selectedCourse.uid,
+            createdBy: createdBy,
+            date: formattedDate,
+            title: quizName,
+          });
+
+          const activitiesRef = ref(
+            database,
+            `ReviewerActivity/${newTaskKey}/activities`
+          );
+          const newActivityRef = push(activitiesRef);
+          const newActivityKey = newActivityRef.key;
+
+          const choicesToSave =
+            questionType === "MultipleChoice"
+              ? choices.reduce((acc, choice, index) => {
+                  acc[String.fromCharCode(65 + index)] = choice;
+                  return acc;
+                }, {})
+              : {};
+
+          await set(newActivityRef, {
+            question: question,
+            questionType: questionType,
+            answer: answer,
+            choices: choicesToSave,
+          });
+
+          console.log("Other types of questions created successfully");
+        }
+
+        // Reset form state
         setQuizName("");
         setDueDate("");
         setQuestion("");
         setQuestionType("");
         setAnswer("");
         setChoices(["", "", "", ""]);
+
         onHide();
       } catch (error) {
         console.error("Error creating quiz: ", error);
