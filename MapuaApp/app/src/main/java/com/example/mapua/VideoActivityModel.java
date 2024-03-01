@@ -79,7 +79,15 @@ class ActivityModel {
         return questionType;
     }
 
-    public String getTime() {
-        return time;
+    public String getTimeInSeconds() {
+        String[] timeParts = time.split(":");
+        if (timeParts.length == 2) {
+            int minutes = Integer.parseInt(timeParts[0]);
+            int seconds = Integer.parseInt(timeParts[1]);
+            return String.valueOf(minutes * 60 + seconds); // Convert to seconds and return as a string
+        } else {
+            return "0"; // Return "0" if time format is invalid
+        }
     }
 }
+
