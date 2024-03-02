@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CardReviewerActivity">
+    tools:context=".CardReviewerActivity"
+    android:background="@color/gray">
 
     <TextView
         android:id="@+id/activityTitleTextview"
@@ -12,6 +13,7 @@
         android:layout_height="50dp"
         android:text="Title Of Activity"
         android:textSize="30dp"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

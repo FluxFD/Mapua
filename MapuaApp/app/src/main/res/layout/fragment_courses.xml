@@ -22,7 +22,8 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline10"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/blue"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/courseRecyclerView"

@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="16dp">
+    android:padding="16dp"
+    >
 
     <TextView
         android:id="@+id/taskNameTextView"
@@ -12,7 +13,8 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:text="TaskName"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="@color/black"/>
 
     <TextView
         android:id="@+id/scoreTextView"
@@ -20,5 +22,6 @@
         android:text="Grade"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:layout_marginLeft="10dp"/>
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/black"/>
 </LinearLayout>

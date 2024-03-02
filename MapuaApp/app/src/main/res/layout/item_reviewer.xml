@@ -11,7 +11,8 @@
         android:id="@+id/reviewerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/white">
 
         <TextView
             android:id="@+id/titleTextView"
@@ -19,7 +20,7 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:text="Title:"
-
+            android:textColor="@color/black"
             android:textSize="20sp" />
 
         <TextView
@@ -28,7 +29,7 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:text="Created by:"
-
+            android:textColor="@color/black"
             android:textSize="16sp" />
 
     </LinearLayout>
