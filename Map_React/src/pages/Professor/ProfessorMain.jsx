@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import ProfessorMiniDrawer from "../../components/ProfessorDrawer";
 import ProfessorDashboard from "./ProfessorDash";
 import ProfessorCourse from "./ProfessorCourses";
+import Message from "../Message";
 
 // Firebase
 import { auth } from "../../services/Firebase";
@@ -33,8 +34,8 @@ const ProfessorMainPage = () => {
         return <ProfessorDashboard />;
       case "Courses":
         return <ProfessorCourse />;
-      // case "Vehicle Management":
-      //   return <AssignVehiclePage />;
+      case "Message":
+        return <Message />;
       // case "Applicants":
       //   return <Applicants />;
       // case "Driver Management":

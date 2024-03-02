@@ -1,117 +1,127 @@
-import React, { useEffect, useState } from 'react'
-import { database } from '../services/Firebase'
-import { ref, onValue, push } from 'firebase/database'
-import useAuth from '../services/Auth'
-import { Container, Card, Row, Col, Button, Image, Form } from 'react-bootstrap'
-import Profile from './Profile'
+import React, { useEffect, useState } from "react";
+import { database } from "../services/Firebase";
+import { ref, onValue, push } from "firebase/database";
+import useAuth from "../services/Auth";
+import {
+  Container,
+  Card,
+  Row,
+  Col,
+  Button,
+  Image,
+  Form,
+} from "react-bootstrap";
+import Profile from "./Profile";
+
+import Typography from "@mui/material/Typography";
 
 function Message() {
-  const [message, setMessage] = useState('')
-  const [courses, setCourses] = useState([])
-  const { currentUser } = useAuth()
-  const [studentData, setStudentData] = useState(null)
-  const [selectedCourse, setSelectedCourse] = useState(null)
-  const [clickedText, setClickedText] = useState(null)
-  const [courseMessages, setCourseMessages] = useState([])
+  const [message, setMessage] = useState("");
+  const [courses, setCourses] = useState([]);
+  const { currentUser } = useAuth();
+  const [studentData, setStudentData] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [clickedText, setClickedText] = useState(null);
+  const [courseMessages, setCourseMessages] = useState([]);
 
   useEffect(() => {
     const fetchStudentData = () => {
-      if (!currentUser) return
-      const studentRef = ref(database, 'students/' + currentUser.uid)
+      if (!currentUser) return;
+      const studentRef = ref(database, "students/" + currentUser.uid);
       onValue(studentRef, (snapshot) => {
-        const studentData = snapshot.val()
-        setStudentData(studentData)
-      })
-    }
+        const studentData = snapshot.val();
+        setStudentData(studentData);
+      });
+    };
 
     const fetchCourses = () => {
       if (!currentUser) {
-        setCourses([])
-        return
+        setCourses([]);
+        return;
       }
-      const coursesRef = ref(database, 'Course')
+      const coursesRef = ref(database, "Course");
       onValue(coursesRef, (snapshot) => {
-        const coursesData = snapshot.val()
+        const coursesData = snapshot.val();
         if (coursesData) {
           const coursesArray = Object.keys(coursesData).map((courseId) => {
-            const course = coursesData[courseId]
+            const course = coursesData[courseId];
             const studies = Object.keys(course).map((studyId) => ({
               id: studyId,
               dueDate: course[studyId].dueDate,
-            }))
+            }));
             return {
               id: courseId,
               studies: studies,
-            }
-          })
-          setCourses(coursesArray)
+            };
+          });
+          setCourses(coursesArray);
         }
-      })
-    }
+      });
+    };
 
     const fetchMessages = () => {
-      if (!currentUser || !clickedText) return
-      const messageRef = ref(database, 'Message')
+      if (!currentUser || !clickedText) return;
+      const messageRef = ref(database, "Message");
       onValue(messageRef, (snapshot) => {
-        const messagesData = snapshot.val()
+        const messagesData = snapshot.val();
         if (messagesData) {
           const courseMessages = Object.values(messagesData).filter(
             (message) => message.Course === clickedText
-          )
-          setCourseMessages(courseMessages)
+          );
+          setCourseMessages(courseMessages);
         }
-      })
-    }
+      });
+    };
 
-    fetchStudentData()
-    fetchCourses()
-    fetchMessages()
+    fetchStudentData();
+    fetchCourses();
+    fetchMessages();
 
-    return () => {}
-  }, [currentUser, clickedText])
+    return () => {};
+  }, [currentUser, clickedText]);
 
   const handleCardClick = (course) => {
-    setSelectedCourse(course)
-    setClickedText(course.id) // Update the text when a course card is clicked
-  }
+    setSelectedCourse(course);
+    setClickedText(course.id);
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (currentUser && selectedCourse) {
-      const messageRef = ref(database, 'Message')
+      const messageRef = ref(database, "Message");
       const messageData = {
         Course: selectedCourse.id,
         date: new Date().toISOString(),
         message: message,
         uid: currentUser.uid,
         name: studentData?.name,
-      }
-      setMessage('')
-      push(messageRef, messageData)
+      };
+      setMessage("");
+      push(messageRef, messageData);
     }
-  }
+  };
 
   const formatDate = (isoDate) => {
-    const dateObj = new Date(isoDate)
-    const year = dateObj.getFullYear()
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0')
-    const date = String(dateObj.getDate()).padStart(2, '0')
-    let hours = dateObj.getHours()
-    const minutes = String(dateObj.getMinutes()).padStart(2, '0')
-    const meridian = hours >= 12 ? 'PM' : 'AM'
-    hours = hours % 12 || 12 // Convert to 12-hour format
-    return `${year}-${month}-${date} ${hours}:${minutes} ${meridian}`
-  }
+    const dateObj = new Date(isoDate);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const date = String(dateObj.getDate()).padStart(2, "0");
+    let hours = dateObj.getHours();
+    const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+    const meridian = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12; // Convert to 12-hour format
+    return `${year}-${month}-${date} ${hours}:${minutes} ${meridian}`;
+  };
 
   return (
     <Container
       fluid
-      style={{ paddingLeft: '18%', paddingRight: '5%', height: '90vh' }}
+      style={{ paddingLeft: "18%", paddingRight: "5%", height: "90vh" }}
     >
-      <Card className="mt-5" style={{ padding: '20px', height: '90vh' }}>
+      <Card className="mt-5" style={{ padding: "20px" }}>
         <Row>
           <Col sm={4}>
-            <Card className="mt-3" style={{ height: '80vh' }}>
+            <Card className="mt-3" style={{ height: "80vh" }}>
               <Card.Body>
                 <h1>Message</h1>
                 <hr />
@@ -121,7 +131,7 @@ function Message() {
                       <Row key={course.id} className="mb-4">
                         <Col md={12}>
                           <Card
-                            style={{ cursor: 'pointer' }}
+                            style={{ cursor: "pointer" }}
                             className="title-header"
                             onClick={() => handleCardClick(course)}
                           >
@@ -139,30 +149,34 @@ function Message() {
           </Col>
 
           <Col>
-            <Card className="mt-3" style={{ height: '80vh' }}>
+            <Card className="mt-3" style={{ height: "80vh" }}>
               <Card.Body>
-                <Card style={{ height: '60vh', overflowY: 'auto' }}>
-                  <div style={{ padding: '20px' }}>
+                <Card style={{ height: "60vh", overflowY: "auto" }}>
+                  <div style={{ padding: "20px" }}>
                     {courseMessages.map((message, index) => (
-                      <Row key={index}>
+                      <Row key={index} className="mb-3">
                         <Col sm={1}>
                           <Image
                             src="/profile.png"
                             roundedCircle
-                            style={{ width: '100%' }}
+                            style={{ width: "100%" }}
                           />
                         </Col>
-                        <Col
-                          className="d-flex flex-column"
-                          md={9}
-                          style={{ fontWeight: 'bold' }}
-                        >
-                          <p className="mb-0">{message.name}</p>
-                          <p className="mb-0">{formatDate(message.date)}</p>
+                        <Col className="d-flex flex-column" md={9}>
+                          <Typography variant="button" display="block">
+                            {message.name}
+                          </Typography>
+
+                          <Typography variant="overline" display="block">
+                            {formatDate(message.date)}
+                          </Typography>
                         </Col>
-                        <Card className="mt-3 mb-3">
-                          <p>{message.message}</p>
-                        </Card>
+                        <div className="mb-3">
+                          <Typography className="ms-4 mt-3" variant="body2">
+                            - {message.message}
+                          </Typography>
+                        </div>
+                        <hr />
                       </Row>
                     ))}
                   </div>
@@ -178,10 +192,11 @@ function Message() {
                       onChange={(e) => setMessage(e.target.value)}
                     />
                   </Form.Group>
-
-                  <Button variant="primary" type="submit">
-                    Send Message
-                  </Button>
+                  <div className="d-flex justify-content-end mt-3">
+                    <Button variant="primary" type="submit">
+                      Send Message
+                    </Button>
+                  </div>
                 </Form>
               </Card.Body>
             </Card>
@@ -189,7 +204,7 @@ function Message() {
         </Row>
       </Card>
     </Container>
-  )
+  );
 }
 
-export default Message
+export default Message;

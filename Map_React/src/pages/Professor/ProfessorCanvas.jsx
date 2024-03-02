@@ -37,7 +37,6 @@ import {
 } from "firebase/storage";
 
 function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
-  const [tasks, setTasks] = useState([]);
   const [reviewers, setReviewers] = useState([]);
   const [reviewerActivity, setReviewerActivity] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
@@ -81,23 +80,9 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   };
 
   useEffect(() => {
-    const tasksRef = ref(database, "Task");
     const reviewersRef = ref(database, "Reviewer");
     const reviewerActivityRef = ref(database, "ReviewerActivity");
     const announcementsRef = ref(database, "Announcement");
-
-    const unsubscribeTasks = onValue(tasksRef, (snapshot) => {
-      const tasksData = snapshot.val() || {};
-      const tasksArray = [];
-
-      Object.entries(tasksData).forEach(([taskId, task]) => {
-        if (task.Course === selectedCourse.uid) {
-          tasksArray.push({ id: taskId, ...task });
-        }
-      });
-
-      setTasks(tasksArray);
-    });
 
     const unsubscribeReviewers = onValue(reviewersRef, (snapshot) => {
       const reviewersData = snapshot.val() || {};
@@ -149,7 +134,6 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
     });
 
     return () => {
-      unsubscribeTasks();
       unsubscribeReviewers();
       unsubscribeReviewerActivity();
       unsubscribeAnnouncements();
@@ -218,9 +202,6 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
 
       let itemRef;
       switch (type) {
-        case "Task":
-          itemRef = ref(database, `Task/${id}`);
-          break;
         case "Reviewer":
           itemRef = ref(database, `Reviewer/${id}`);
           break;
@@ -302,33 +283,6 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     selectedCourse={selectedCourse}
                   />
                   <hr />
-                  {tasks.map((task) => (
-                    <Card
-                      key={task.id}
-                      style={{ cursor: "pointer" }}
-                      className="title-header mt-3"
-                    >
-                      <Card.Body>
-                        <div className="d-flex align-items-center justify-content-between">
-                          <span>
-                            <ListAltIcon className="me-2" />
-                            {task.taskName} - Due Date: {task.dueDate}
-                          </span>
-
-                          <DeleteIcon
-                            color="error"
-                            className="cursor-pointer"
-                            onClick={() =>
-                              handleDeleteConfirmation({
-                                id: task.id,
-                                type: "Task",
-                              })
-                            }
-                          />
-                        </div>
-                      </Card.Body>
-                    </Card>
-                  ))}
                   {reviewers.map((reviewer) => (
                     <Card
                       key={reviewer.id}
