@@ -41,7 +41,7 @@ function CreateAnnouncementModal({ show, onHide, selectedCourse }) {
           <Form.Group controlId="announcementTitle">
             <Form.Label>Announcement Title</Form.Label>
             <Form.Control
-              type="text"
+              as="textarea"
               value={announcementTitle}
               onChange={handleTitleChange}
               placeholder="Enter announcement title"

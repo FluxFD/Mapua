@@ -20,7 +20,8 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 import CreateTaskModal from "./ModalCreateTask";
 import CreateAnnouncementModal from "./CreateAnnouncement";
@@ -60,6 +61,16 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
 
   const handleCloseAnnouncementModal = () => {
     setShowAnnouncementModal(false);
+  };
+
+  const handleToggleExpansion = (id) => {
+    setReviewerActivity((prevActivities) =>
+      prevActivities.map((activity) =>
+        activity.id === id
+          ? { ...activity, isExpanded: !activity.isExpanded }
+          : activity
+      )
+    );
   };
 
   useEffect(() => {
@@ -291,28 +302,33 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     </Card>
                   ))}
                   {reviewerActivity.map((activity) => (
-                    <div defaultActiveKey="0">
-                      <Accordion
-                        key={activity.id}
-                        className="title-header mt-3 cursor-pointer"
-                      >
-                        <Accordion.Item eventKey="0">
-                          <Accordion.Header>
-                            <div className="d-flex align-items-center">
-                              <span>
-                                <ListAltIcon className="me-2" />
-                                {activity.title} - Date: {activity.date}
-                              </span>
-                            </div>
-                          </Accordion.Header>
-                          <Accordion.Body>
-                            <div className="d-flex align-items-center ms-3">
-                              <ListAltIcon className="me-2" />
-                            </div>
-                          </Accordion.Body>
-                        </Accordion.Item>
-                      </Accordion>
-                    </div>
+                    <Card
+                      key={activity.id}
+                      className="title-header mt-3 cursor-pointer"
+                      onClick={() => handleToggleExpansion(activity.id)}
+                    >
+                      <Card.Header className="p-3">
+                        <div className="d-flex align-items-center justify-content-between">
+                          <span>
+                            <ListAltIcon className="me-2" />
+                            {activity.title} - Date: {activity.date}
+                          </span>
+                          <div className="d-flex align-items-center">
+                            <DeleteIcon
+                              color="error"
+                              className="cursor-pointer"
+                            />
+                          </div>
+                        </div>
+                      </Card.Header>
+                      {activity.isExpanded && (
+                        <Card.Body>
+                          <div className="d-flex align-items-center ms-3">
+                            <ListAltIcon className="me-2" />
+                          </div>
+                        </Card.Body>
+                      )}
+                    </Card>
                   ))}
                 </Tab>
                 <Tab eventKey="announcement" title="Announcement">
@@ -345,9 +361,17 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       className="title-header mt-3"
                     >
                       <Card.Body>
-                        <div className="d-flex align-items-center">
-                          <CampaignIcon className="me-2" />
-                          {announcements.title} - Date: {announcements.date}
+                        <div className="d-flex align-items-center justify-content-between">
+                          <span>
+                            <ArticleIcon className="me-2" />
+                            {announcements.title} - Due Date:{" "}
+                            {announcements.date}
+                          </span>
+
+                          <DeleteIcon
+                            color="error"
+                            className="cursor-pointer"
+                          />
                         </div>
                       </Card.Body>
                     </Card>
