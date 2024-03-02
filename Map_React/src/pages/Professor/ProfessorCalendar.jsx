@@ -10,10 +10,10 @@ import { database } from "../../services/Firebase";
 import { ref, onValue } from "firebase/database";
 
 function ProfessorCalendar() {
-  const calendarRef = useRef(null); // Ref to access FullCalendar instance
-  const [currentView, setCurrentView] = useState("dayGridMonth"); // State to hold the current view
+  const calendarRef = useRef(null);
+  const [currentView, setCurrentView] = useState("dayGridMonth");
   const { currentUser } = useAuth();
-  const [events, setEvents] = useState([]); // State to hold events
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
     const fetchData = () => {
@@ -60,7 +60,7 @@ function ProfessorCalendar() {
               const formattedDate = `${
                 eventDate.getMonth() + 1
               }/${eventDate.getDate()}/${eventDate.getFullYear()}`;
-              const isPastEvent = eventDate < new Date(); // Check if the event date is before today's date
+              const isPastEvent = eventDate < new Date();
               return {
                 html: `<div style="text-align: center; padding: 3px; color: "white"};"><div>${eventInfo.event.title}</div><div>${formattedDate}</div></div>`,
               };

@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Card,
-  Col,
-  Row,
-  Button,
-  Form,
-  FloatingLabel,
-} from "react-bootstrap";
-import { Fingerprint } from "@mui/icons-material";
+import { Container, Card, Col, Row, Button, Form } from "react-bootstrap";
 import { database } from "../../services/Firebase";
 import { ref, onValue, set } from "firebase/database";
 import useAuth from "../../services/Auth";
@@ -28,7 +19,6 @@ function ProfessorProfile() {
         const studentData = snapshot.val();
         setStudentData(studentData);
 
-        // Store studentNo in localStorage
         if (studentData && studentData.studentNo) {
           localStorage.setItem("studentData", JSON.stringify(studentData));
         }
@@ -40,45 +30,23 @@ function ProfessorProfile() {
     return () => {};
   }, [currentUser]);
 
-  useEffect(() => {
-    // Listen for messages from the parent
-    window.addEventListener("message", function (event) {
-      // Check if the message is from an allowed origin
-      if (event.origin === "http://localhost/fingerprint") {
-        // Check the message content
-        if (event.data === "getData") {
-          // Access localStorage data and send it back to the parent
-          var studentData = localStorage.getItem("studentData");
-          // Send data back to the parent
-          event.source.postMessage(studentData, event.origin);
-        }
-      }
-    });
-  }, [studentData]);
-
   function handleEditName() {
     if (editName) {
-      // Save the updated name to the database
       const studentRef = ref(database, "students/" + currentUser.uid + "/name");
       set(studentRef, studentData.name);
     }
-    setEditName(!editName); // Toggle edit mode for name
+    setEditName(!editName);
   }
 
   function handleEditEmail() {
     if (editEmail) {
-      // Save the updated email to the database
       const studentRef = ref(
         database,
         "students/" + currentUser.uid + "/email"
       );
       set(studentRef, studentData.email);
     }
-    setEditEmail(!editEmail); // Toggle edit mode for email
-  }
-
-  function handleFingerprint() {
-    window.open("http://localhost/fingerprint/register");
+    setEditEmail(!editEmail);
   }
 
   return (
