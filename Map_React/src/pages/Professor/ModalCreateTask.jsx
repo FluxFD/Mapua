@@ -67,6 +67,8 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
 
       if (questionType === "MultipleChoice") {
         answer = choices[selectedChoiceIndex];
+      } else if (questionType === "Identification") {
+        answer = document.getElementById("answer").value;
       } else {
         answer = answerValue;
       }
@@ -139,7 +141,6 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
           console.log("Other types of questions created successfully");
         }
 
-        // Reset form state
         setQuizName("");
         setDueDate("");
         setQuestion("");

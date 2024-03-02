@@ -7,21 +7,17 @@ import {
   Tabs,
   Card,
   Offcanvas,
-  Accordion,
-  Row,
-  Col,
+  Table,
 } from "react-bootstrap";
 import "../../index.css";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import ArticleIcon from "@mui/icons-material/Article";
-import CampaignIcon from "@mui/icons-material/Campaign";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import CreateTaskModal from "./ModalCreateTask";
 import CreateAnnouncementModal from "./CreateAnnouncement";
@@ -47,6 +43,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [scores, setScores] = useState([]);
 
   const handleOpenCreateTaskModal = () => {
     setShowCreateTaskModal(true);
@@ -83,6 +80,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
     const reviewersRef = ref(database, "Reviewer");
     const reviewerActivityRef = ref(database, "ReviewerActivity");
     const announcementsRef = ref(database, "Announcement");
+    const scoresRef = ref(database, "Score");
 
     const unsubscribeReviewers = onValue(reviewersRef, (snapshot) => {
       const reviewersData = snapshot.val() || {};
@@ -133,10 +131,24 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
       setAnnouncements(announcementsArray);
     });
 
+    const unsubscribeScores = onValue(scoresRef, (snapshot) => {
+      const scoresData = snapshot.val() || {};
+      const scoresArray = [];
+
+      Object.entries(scoresData).forEach(([key, value]) => {
+        const { score, studentName, taskName } = value;
+
+        scoresArray.push({ id: key, score, studentName, taskName });
+      });
+
+      setScores(scoresArray);
+    });
+
     return () => {
       unsubscribeReviewers();
       unsubscribeReviewerActivity();
       unsubscribeAnnouncements();
+      unsubscribeScores();
     };
   }, [selectedCourse.uid]);
 
@@ -402,7 +414,38 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                   Tab content for Calendar
                 </Tab>
                 <Tab eventKey="gradeBook" title="Gradebook">
-                  Tab content for Gradebook
+                  <Table striped bordered hover>
+                    <thead className="text-center">
+                      <tr>
+                        <th>Student Name</th>
+                        <th>Task Name</th>
+                        <th>Score</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-center">
+                      {scores.map((score) => {
+                        const matchedActivity = reviewerActivity.find(
+                          (activity) => activity.title === score.taskName
+                        );
+                        const shouldDisplayScore =
+                          matchedActivity !== undefined;
+
+                        return (
+                          shouldDisplayScore && (
+                            <tr key={score.id}>
+                              <td>{score.studentName}</td>
+                              <td>{score.taskName}</td>
+                              <td>{score.score}</td>
+                              <td>
+                                <VisibilityIcon />
+                              </td>
+                            </tr>
+                          )
+                        );
+                      })}
+                    </tbody>
+                  </Table>
                 </Tab>
               </Tabs>
             </div>
