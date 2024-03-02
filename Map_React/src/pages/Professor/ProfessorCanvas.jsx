@@ -7,6 +7,9 @@ import {
   Tabs,
   Card,
   Offcanvas,
+  Accordion,
+  Row,
+  Col,
 } from "react-bootstrap";
 import "../../index.css";
 import ListAltIcon from "@mui/icons-material/ListAlt";
@@ -16,8 +19,11 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
 import CreateTaskModal from "./ModalCreateTask";
+import CreateAnnouncementModal from "./CreateAnnouncement";
 
 // Firebase
 import { database, storage, auth } from "../../services/Firebase";
@@ -38,15 +44,22 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const fileInputRef = useRef(null);
   const [title, setTitle] = useState("");
   const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
+  const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
 
-  // Function to handle opening the Create Task modal
   const handleOpenCreateTaskModal = () => {
     setShowCreateTaskModal(true);
   };
 
-  // Function to handle closing the Create Task modal
   const handleCloseCreateTaskModal = () => {
     setShowCreateTaskModal(false);
+  };
+
+  const handleOpenAnnouncementModal = () => {
+    setShowAnnouncementModal(true);
+  };
+
+  const handleCloseAnnouncementModal = () => {
+    setShowAnnouncementModal(false);
   };
 
   useEffect(() => {
@@ -207,6 +220,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
               >
                 <Tab eventKey="content" title="Course Content">
                   <Breadcrumbs
+                    className="d-flex justify-content-end"
                     aria-label="breadcrumb"
                     style={{ cursor: "pointer" }}
                   >
@@ -241,9 +255,16 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       className="title-header mt-3"
                     >
                       <Card.Body>
-                        <div className="d-flex align-items-center">
-                          <ListAltIcon className="me-2" />
-                          {task.taskName} - Due Date: {task.dueDate}
+                        <div className="d-flex align-items-center justify-content-between">
+                          <span>
+                            <ListAltIcon className="me-2" />
+                            {task.taskName} - Due Date: {task.dueDate}
+                          </span>
+
+                          <DeleteIcon
+                            color="error"
+                            className="cursor-pointer"
+                          />
                         </div>
                       </Card.Body>
                     </Card>
@@ -255,30 +276,67 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       className="title-header mt-3"
                     >
                       <Card.Body>
-                        <div className="d-flex align-items-center">
-                          <ArticleIcon className="me-2" />
-                          {reviewer.title} - Due Date: {reviewer.date}
+                        <div className="d-flex align-items-center justify-content-between">
+                          <span>
+                            <ArticleIcon className="me-2" />
+                            {reviewer.title} - Due Date: {reviewer.date}
+                          </span>
+
+                          <DeleteIcon
+                            color="error"
+                            className="cursor-pointer"
+                          />
                         </div>
                       </Card.Body>
                     </Card>
                   ))}
                   {reviewerActivity.map((activity) => (
-                    <Card
-                      key={activity.id}
-                      style={{ cursor: "pointer" }}
-                      className="title-header mt-3"
-                    >
-                      <Card.Body>
-                        <div className="d-flex align-items-center">
-                          <ListAltIcon className="me-2" />
-                          {activity.title} - Date: {activity.date}
-                        </div>
-                      </Card.Body>
-                    </Card>
+                    <div defaultActiveKey="0">
+                      <Accordion
+                        key={activity.id}
+                        className="title-header mt-3 cursor-pointer"
+                      >
+                        <Accordion.Item eventKey="0">
+                          <Accordion.Header>
+                            <div className="d-flex align-items-center">
+                              <span>
+                                <ListAltIcon className="me-2" />
+                                {activity.title} - Date: {activity.date}
+                              </span>
+                            </div>
+                          </Accordion.Header>
+                          <Accordion.Body>
+                            <div className="d-flex align-items-center ms-3">
+                              <ListAltIcon className="me-2" />
+                            </div>
+                          </Accordion.Body>
+                        </Accordion.Item>
+                      </Accordion>
+                    </div>
                   ))}
                 </Tab>
                 <Tab eventKey="announcement" title="Announcement">
-                  Announcement
+                  <Breadcrumbs
+                    className="d-flex justify-content-end"
+                    aria-label="breadcrumb"
+                    style={{ cursor: "pointer" }}
+                  >
+                    <Link
+                      className="d-flex align-items-center"
+                      underline="hover"
+                      color="text.primary"
+                      onClick={() => setShowAnnouncementModal(true)}
+                    >
+                      <AddIcon /> Create Announcement
+                    </Link>
+                  </Breadcrumbs>
+
+                  <CreateAnnouncementModal
+                    show={showAnnouncementModal}
+                    onHide={handleCloseAnnouncementModal}
+                    selectedCourse={selectedCourse}
+                  />
+
                   <hr />
                   {announcements.map((announcements) => (
                     <Card
