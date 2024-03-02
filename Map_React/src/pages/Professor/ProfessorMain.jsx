@@ -8,6 +8,7 @@ import ProfessorDashboard from "./ProfessorDash";
 import ProfessorCourse from "./ProfessorCourses";
 import Message from "../Message";
 import ProfessorCalander from "./ProfessorCalendar";
+import ProfessorProfile from "./ProfessorProfile";
 
 // Firebase
 import { auth } from "../../services/Firebase";
@@ -39,16 +40,8 @@ const ProfessorMainPage = () => {
         return <ProfessorCalander />;
       case "Message":
         return <Message />;
-      // case "Applicants":
-      //   return <Applicants />;
-      // case "Driver Management":
-      //   return <DriverManagement />;
-      // case "Attendance Record":
-      //   return <AttendanceRecord />;
-      // case "Leave Request":
-      //   return <DriverLetter />;
-      // case "Maintenance Record":
-      //   return <MaintenanceRecord />;
+      case "Settings":
+        return <ProfessorProfile />;
       case "Logout":
         handleLogout();
         return null;
