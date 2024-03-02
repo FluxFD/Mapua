@@ -21,7 +21,6 @@ import Message from "./pages/Message";
 import PdfViewer from "./components/pdfViewer";
 import VideoActivity from "./pages/VideoActivity";
 
-
 // Moderator
 import ModeratorDashboard from "./pages/Moderator/ModeratorDash";
 import ModeratorMainPage from "./pages/Moderator/ModeratorMain";
@@ -55,8 +54,8 @@ function App() {
             <Route path="/Courses" element={<Courses />}></Route>
             <Route path="/CourseContent" element={<CourseContent />}></Route>
             <Route path="/Message" element={<Message />}></Route>
-            <Route path="/preview/:url" element= {<PdfViewer />}></Route>
-            <Route path="/video/:title" element= {<VideoActivity />}></Route>
+            <Route path="/preview/:url" element={<PdfViewer />}></Route>
+            <Route path="/video/:title" element={<VideoActivity />}></Route>
             <Route
               path="/task/:taskId/:taskName"
               element={<TaskDetailsPage />}

@@ -7,6 +7,7 @@ import ProfessorMiniDrawer from "../../components/ProfessorDrawer";
 import ProfessorDashboard from "./ProfessorDash";
 import ProfessorCourse from "./ProfessorCourses";
 import Message from "../Message";
+import ProfessorCalander from "./ProfessorCalendar";
 
 // Firebase
 import { auth } from "../../services/Firebase";
@@ -34,6 +35,8 @@ const ProfessorMainPage = () => {
         return <ProfessorDashboard />;
       case "Courses":
         return <ProfessorCourse />;
+      case "Calendar":
+        return <ProfessorCalander />;
       case "Message":
         return <Message />;
       // case "Applicants":
