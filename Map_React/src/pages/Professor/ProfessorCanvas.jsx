@@ -28,7 +28,7 @@ import CreateAnnouncementModal from "./CreateAnnouncement";
 
 // Firebase
 import { database, storage, auth } from "../../services/Firebase";
-import { ref, onValue, off, set, update, push } from "firebase/database";
+import { ref, onValue, update, push, remove } from "firebase/database";
 import {
   getStorage,
   ref as storageRef,
@@ -46,6 +46,8 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [title, setTitle] = useState("");
   const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
   const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
+  const [deleteItemId, setDeleteItemId] = useState(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const handleOpenCreateTaskModal = () => {
     setShowCreateTaskModal(true);
@@ -71,6 +73,11 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
           : activity
       )
     );
+  };
+
+  const handleDeleteConfirmation = (itemId) => {
+    setDeleteItemId(itemId);
+    setShowDeleteConfirmation(true);
   };
 
   useEffect(() => {
@@ -205,6 +212,42 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
     setTitle(event.target.value);
   };
 
+  const handleDeleteItem = () => {
+    if (deleteItemId && deleteItemId.id && deleteItemId.type) {
+      const { id, type } = deleteItemId;
+
+      let itemRef;
+      switch (type) {
+        case "Task":
+          itemRef = ref(database, `Task/${id}`);
+          break;
+        case "Reviewer":
+          itemRef = ref(database, `Reviewer/${id}`);
+          break;
+        case "ReviewerActivity":
+          itemRef = ref(database, `ReviewerActivity/${id}`);
+          break;
+        case "Announcement":
+          itemRef = ref(database, `Announcement/${id}`);
+          break;
+        default:
+          console.error("Invalid item type for deletion");
+          return;
+      }
+
+      remove(itemRef)
+        .then(() => {
+          console.log("Item deleted successfully");
+          setShowDeleteConfirmation(false);
+        })
+        .catch((error) => {
+          console.error("Error deleting item:", error);
+        });
+    } else {
+      console.error("No valid item selected for deletion");
+    }
+  };
+
   return (
     <>
       {selectedCourse && (
@@ -275,6 +318,12 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                           <DeleteIcon
                             color="error"
                             className="cursor-pointer"
+                            onClick={() =>
+                              handleDeleteConfirmation({
+                                id: task.id,
+                                type: "Task",
+                              })
+                            }
                           />
                         </div>
                       </Card.Body>
@@ -296,6 +345,12 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                           <DeleteIcon
                             color="error"
                             className="cursor-pointer"
+                            onClick={() =>
+                              handleDeleteConfirmation({
+                                id: reviewer.id,
+                                type: "Reviewer",
+                              })
+                            }
                           />
                         </div>
                       </Card.Body>
@@ -317,6 +372,12 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                             <DeleteIcon
                               color="error"
                               className="cursor-pointer"
+                              onClick={() =>
+                                handleDeleteConfirmation({
+                                  id: activity.id,
+                                  type: "ReviewerActivity",
+                                })
+                              }
                             />
                           </div>
                         </div>
@@ -364,13 +425,19 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                         <div className="d-flex align-items-center justify-content-between">
                           <span>
                             <ArticleIcon className="me-2" />
-                            {announcements.title} - Due Date:{" "}
+                            {announcements.title} - Due Date:
                             {announcements.date}
                           </span>
 
                           <DeleteIcon
                             color="error"
                             className="cursor-pointer"
+                            onClick={() =>
+                              handleDeleteConfirmation({
+                                id: announcements.id,
+                                type: "Announcement",
+                              })
+                            }
                           />
                         </div>
                       </Card.Body>
@@ -415,6 +482,30 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
           </Button>
           <Button variant="primary" onClick={handleFileUpload}>
             Upload File
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Delete confirmation modal */}
+      <Modal
+        show={showDeleteConfirmation}
+        onHide={() => setShowDeleteConfirmation(false)}
+        backdrop="static"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this item?</Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowDeleteConfirmation(false)}
+          >
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDeleteItem}>
+            Delete
           </Button>
         </Modal.Footer>
       </Modal>
