@@ -21,6 +21,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import CreateTaskModal from "./ModalCreateTask";
 import CreateAnnouncementModal from "./CreateAnnouncement";
+import ReviewerModal from "./ReviewerModal";
 
 // Firebase
 import { database, storage, auth } from "../../services/Firebase";
@@ -44,6 +45,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [deleteItemId, setDeleteItemId] = useState(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [scores, setScores] = useState([]);
+  const [selectedReviewer, setSelectedReviewer] = useState(null);
 
   const handleOpenCreateTaskModal = () => {
     setShowCreateTaskModal(true);
@@ -59,6 +61,14 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
 
   const handleCloseAnnouncementModal = () => {
     setShowAnnouncementModal(false);
+  };
+
+  const handleOpenReviewerModal = (reviewer) => {
+    setSelectedReviewer(reviewer);
+  };
+
+  const handleCloseReviewerModal = () => {
+    setSelectedReviewer(null);
   };
 
   const handleToggleExpansion = (id) => {
@@ -297,6 +307,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                   <hr />
                   {reviewers.map((reviewer) => (
                     <Card
+                      onClick={() => handleOpenReviewerModal(reviewer)}
                       key={reviewer.id}
                       style={{ cursor: "pointer" }}
                       className="title-header mt-3"
@@ -322,6 +333,15 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       </Card.Body>
                     </Card>
                   ))}
+
+                  {selectedReviewer && (
+                    <ReviewerModal
+                      show={selectedReviewer !== null}
+                      onHide={handleCloseReviewerModal}
+                      reviewer={selectedReviewer}
+                    />
+                  )}
+
                   {reviewerActivity.map((activity) => (
                     <Card
                       key={activity.id}
