@@ -11,25 +11,41 @@ import Calendar from '../pages/Calendar'
 import Message from '../pages/Message'
 // Firebase
 import { auth } from '../services/Firebase'
-
+import { ref, get, update } from "firebase/database";
+import { database } from "../services/Firebase";
 const MainPage = () => {
   const [selectedItem, setSelectedItem] = useState('Dashboard')
   const navigate = useNavigate()
 
   const handleLogout = async () => {
     try {
-      await auth.signOut()
-      localStorage.removeItem(
-        'firebase:host:mapua-f1526-default-rtdb.firebaseio.com'
-      )
-      localStorage.removeItem('credentials')
-      localStorage.removeItem('studentNo')
-      localStorage.removeItem('studentData')
-      navigate('/')
+      // Get the current user
+      const user = auth.currentUser;
+  
+      // Update isActive field to false if user exists
+      if (user) {
+        const activeRef = ref(database, `students/${user.uid}`);
+        await update(activeRef, {
+          isActive: false
+        });
+      }
+  
+      // Sign out the user
+      await auth.signOut();
+  
+      // Remove stored credentials and other data
+      localStorage.removeItem('credentials');
+      localStorage.removeItem('studentNo');
+      localStorage.removeItem('studentData');
+  
+      // Navigate to home page
+      navigate('/');
     } catch (error) {
-      console.error('Error during logout:', error)
+      console.error('Error during logout:', error);
     }
-  }
+  };
+  
+  
 
   const handleItemClick = (item) => {
     setSelectedItem(item)

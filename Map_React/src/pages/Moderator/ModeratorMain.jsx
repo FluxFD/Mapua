@@ -9,6 +9,8 @@ import ModeratorDashboard from "./ModeratorDash";
 
 // Firebase
 import { auth } from "../../services/Firebase";
+import { ref, get, update } from "firebase/database";
+import { database } from "../../services/Firebase";
 
 const ModeratorMainPage = () => {
   const [selectedItem, setSelectedItem] = useState("Dashboard");
@@ -16,10 +18,29 @@ const ModeratorMainPage = () => {
 
   const handleLogout = async () => {
     try {
+      // Get the current user
+      const user = auth.currentUser;
+  
+      // Update isActive field to false if user exists
+      if (user) {
+        const activeRef = ref(database, `students/${user.uid}`);
+        await update(activeRef, {
+          isActive: false
+        });
+      }
+  
+      // Sign out the user
       await auth.signOut();
-      navigate("/");
+  
+      // Remove stored credentials and other data
+      localStorage.removeItem('credentials');
+      localStorage.removeItem('studentNo');
+      localStorage.removeItem('studentData');
+  
+      // Navigate to home page
+      navigate('/');
     } catch (error) {
-      console.error("Error during logout:", error);
+      console.error('Error during logout:', error);
     }
   };
 

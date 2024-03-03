@@ -3,7 +3,7 @@ import { Container, Card, Form, Button, Image } from "react-bootstrap";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, database } from "../services/Firebase";
 import { useNavigate } from "react-router-dom";
-import { ref, get } from "firebase/database";
+import { ref, get, update } from "firebase/database";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -20,39 +20,39 @@ function LoginPage() {
     }
   }, []);
 
-  const signIn = async (email, password) => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
+  // const signIn = async (email, password) => {
+  //   try {
+  //     const userCredential = await signInWithEmailAndPassword(
+  //       auth,
+  //       email,
+  //       password
+  //     );
+  //     const user = userCredential.user;
 
-      const studentRef = ref(database, `students/${user.uid}/role`);
-      const roleSnapshot = await get(studentRef);
-      const role = roleSnapshot.val();
+  //     const studentRef = ref(database, `students/${user.uid}/role`);
+  //     const roleSnapshot = await get(studentRef);
+  //     const role = roleSnapshot.val();
 
-      switch (role) {
-        case "Professor":
-          navigate("/ProfessorMain");
-          break;
-        case "Student":
-          navigate("/Main");
-          break;
-        case "Moderator":
-          navigate("/ModeratorMain");
-          break;
-        default:
-          console.error("Unknown role:", role);
-          break;
-      }
-    } catch (error) {
-      console.error("Authentication Error:", error.message);
-      throw error;
-    }
-  };
-
+  //     switch (role) {
+  //       case "Professor":
+  //         navigate("/ProfessorMain");
+  //         break;
+  //       case "Student":
+  //         navigate("/Main");
+  //         break;
+  //       case "Moderator":
+  //         navigate("/ModeratorMain");
+  //         break;
+  //       default:
+  //         console.error("Unknown role:", role);
+  //         break;
+  //     }
+  //   } catch (error) {
+  //     console.error("Authentication Error:", error.message);
+  //     throw error;
+  //   }
+  // };
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -63,6 +63,12 @@ function LoginPage() {
       );
       const user = userCredential.user;
 
+      // Update isActive field to true
+      const activeRef = ref(database, `students/${user.uid}`);
+      await update(activeRef, {
+        isActive: true
+      });
+
       const studentRef = ref(database, `students/${user.uid}/role`);
       const roleSnapshot = await get(studentRef);
       const role = roleSnapshot.val();
@@ -85,6 +91,7 @@ function LoginPage() {
       console.error("Authentication Error:", error.message);
     }
   };
+
 
   useEffect(() => {
     window.addEventListener("message", handleMessage);
