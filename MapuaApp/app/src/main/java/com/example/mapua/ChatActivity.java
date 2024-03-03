@@ -37,6 +37,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private EditText editTextMessage;
     private Button buttonSend;
+    private RecyclerView recyclerViewMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +63,7 @@ public class ChatActivity extends AppCompatActivity {
             Log.d("ChatActivity", "Usernum: " + usernum);
         }
 
-        RecyclerView recyclerViewMessages = findViewById(R.id.recyclerViewMessages);
+        recyclerViewMessages = findViewById(R.id.recyclerViewMessages);
         recyclerViewMessages.setLayoutManager(new LinearLayoutManager(this));
         messages = new ArrayList<>();
         messageAdapter = new MessageAdapter(messages);
@@ -98,7 +99,8 @@ public class ChatActivity extends AppCompatActivity {
                                 ", Date: " + message.getDate());
                     }
                 }
-                messageAdapter.notifyDataSetChanged();
+                messageAdapter.notifyItemInserted(messages.size() -1);
+                recyclerViewMessages.smoothScrollToPosition(messageAdapter.getItemCount()- 1);
             }
 
             @Override

@@ -9,9 +9,13 @@ import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -50,7 +54,12 @@ public class MainActivity extends AppCompatActivity {
         Button loginButton = findViewById(R.id.loginBtn);
         mAuth = FirebaseAuth.getInstance();
         Executor executor = ContextCompat.getMainExecutor(this);
-        Button bioButton = findViewById(R.id.bioBtn);
+
+        TextView bioButton = findViewById(R.id.bioBtn);
+        String text = bioButton.getText().toString();
+        SpannableString spannableString = new SpannableString(text);
+        spannableString.setSpan(new UnderlineSpan(), 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        bioButton.setText(spannableString);
 
         bioButton.setOnClickListener(v -> {
             if (isBiometricAvailable()) {
@@ -60,7 +69,9 @@ public class MainActivity extends AppCompatActivity {
                 // Biometric authentication not available, handle accordingly
                 // For example, display an error message or fallback to other authentication methods
             }
+            Log.d(TAG, "TextView Clicked");
         });
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
