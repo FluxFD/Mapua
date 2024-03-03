@@ -33,7 +33,7 @@ public class CardReviewerActivity extends AppCompatActivity {
 
     TextView titleOfReviewActivity;
 
-    Button flashCardBtn, multiChoiceBtn, identifyBtn, practiceBtn, videoBtn;
+    Button flashCardBtn, multiChoiceBtn, identifyBtn, enumBtn, practiceBtn, videoBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +45,7 @@ public class CardReviewerActivity extends AppCompatActivity {
         flashCardBtn = findViewById(R.id.flashCard);
         multiChoiceBtn = findViewById(R.id.multipleChoice);
         identifyBtn = findViewById(R.id.identification);
+        enumBtn = findViewById(R.id.enumeration);
         practiceBtn = findViewById(R.id.practiceQuestion);
         videoBtn = findViewById(R.id.videoActivity);
 
@@ -123,6 +124,15 @@ public class CardReviewerActivity extends AppCompatActivity {
             if (!reviewerActivities.isEmpty()) {
                 Intent intent = new Intent(CardReviewerActivity.this, Identification.class);
                 intent.putExtra("reviewerActivities", new ArrayList<>(reviewerActivities));
+                intent.putExtra("title", title);
+                startActivity(intent);
+            }
+        });
+
+        enumBtn.setOnClickListener(view ->{
+            if (!reviewerActivities.isEmpty()) {
+                Intent intent = new Intent(CardReviewerActivity.this, Enumeration.class);
+                intent.putExtra("courseId", course);
                 intent.putExtra("title", title);
                 startActivity(intent);
             }
