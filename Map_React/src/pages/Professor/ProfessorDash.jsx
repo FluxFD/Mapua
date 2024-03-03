@@ -1,11 +1,45 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Container, Card, Row, Col } from "react-bootstrap";
 import "../../index.css";
+import { Link, useNavigate } from "react-router-dom";
 
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Typography from "@mui/material/Typography";
 
+import { database } from "../../services/Firebase";
+import { ref, onValue, off, set, update, push } from "firebase/database";
+
 function ProfessorDashboard() {
+  const navigate = useNavigate();
+  const [latestMessages, setLatestMessages] = useState([]);
+
+  useEffect(() => {
+    const messagesRef = ref(database, "Message");
+
+    const unsubscribe = onValue(messagesRef, (snapshot) => {
+      const messageData = snapshot.val();
+      if (messageData) {
+        const messageList = Object.keys(messageData).map((key) => ({
+          id: key,
+          ...messageData[key],
+        }));
+        messageList.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+        const top5Messages = messageList.slice(0, 5);
+        setLatestMessages(top5Messages);
+      } else {
+        setLatestMessages([]);
+      }
+    });
+
+    return () => {
+      off(messagesRef, "value", unsubscribe);
+    };
+  }, []);
+
+  const handleMessageClick = (messageId) => {
+    navigate("/Message");
+  };
+
   return (
     <Container fluid style={{ paddingLeft: "18%", paddingRight: "5%" }}>
       <Row className="mt-5 d-flex justify-content-evenly align-items-center ">
@@ -26,11 +60,17 @@ function ProfessorDashboard() {
                 <b>Latest</b>
               </h5>
             </div>
-
-            <Card className="title-header p-3">
-              <b>Message Title</b>
-              <p>Date & Time</p>
-            </Card>
+            {latestMessages.map((message) => (
+              <div
+                key={message.id}
+                onClick={() => handleMessageClick(message.id)}
+              >
+                <Card className="title-header p-3 mb-2 cursor-pointer">
+                  <b>{message.name}</b>
+                  <p>{message.date}</p>
+                </Card>
+              </div>
+            ))}
           </Card>
         </Col>
         <Col>
