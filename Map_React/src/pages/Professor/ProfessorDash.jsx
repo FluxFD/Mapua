@@ -1,3 +1,4 @@
+// ProfessorDashboard.js
 import React, { useState, useEffect, useRef } from "react";
 import { Container, Card, Row, Col } from "react-bootstrap";
 import "../../index.css";
@@ -9,8 +10,7 @@ import Typography from "@mui/material/Typography";
 import { database } from "../../services/Firebase";
 import { ref, onValue, off, set, update, push } from "firebase/database";
 
-function ProfessorDashboard() {
-  const navigate = useNavigate();
+function ProfessorDashboard({ onMessageClick }) {
   const [latestMessages, setLatestMessages] = useState([]);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ function ProfessorDashboard() {
   }, []);
 
   const handleMessageClick = (messageId) => {
-    navigate("/Message");
+    onMessageClick(messageId);
   };
 
   return (
@@ -65,7 +65,10 @@ function ProfessorDashboard() {
                 key={message.id}
                 onClick={() => handleMessageClick(message.id)}
               >
-                <Card className="title-header p-3 mb-2 cursor-pointer">
+                <Card
+                  className="title-header p-3 mb-2"
+                  style={{ cursor: "pointer" }}
+                >
                   <b>{message.name}</b>
                   <p>{message.date}</p>
                 </Card>

@@ -1,3 +1,4 @@
+// ProfessorMainPage.js
 import React, { useState } from "react";
 import { Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -17,33 +18,34 @@ import { database } from "../../services/Firebase";
 
 const ProfessorMainPage = () => {
   const [selectedItem, setSelectedItem] = useState("Dashboard");
+  const [selectedMessageId, setSelectedMessageId] = useState(null);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
       // Get the current user
       const user = auth.currentUser;
-  
+
       // Update isActive field to false if user exists
       if (user) {
         const activeRef = ref(database, `students/${user.uid}`);
         await update(activeRef, {
-          isActive: false
+          isActive: false,
         });
       }
-  
+
       // Sign out the user
       await auth.signOut();
-  
+
       // Remove stored credentials and other data
-      localStorage.removeItem('credentials');
-      localStorage.removeItem('studentNo');
-      localStorage.removeItem('studentData');
-  
+      localStorage.removeItem("credentials");
+      localStorage.removeItem("studentNo");
+      localStorage.removeItem("studentData");
+
       // Navigate to home page
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error("Error during logout:", error);
     }
   };
 
@@ -51,16 +53,21 @@ const ProfessorMainPage = () => {
     setSelectedItem(item);
   };
 
+  const handleNavigateToMessage = (messageId) => {
+    setSelectedMessageId(messageId);
+    setSelectedItem("Message");
+  };
+
   const renderPageContent = () => {
     switch (selectedItem) {
       case "Dashboard":
-        return <ProfessorDashboard />;
+        return <ProfessorDashboard onMessageClick={handleNavigateToMessage} />;
       case "Courses":
         return <ProfessorCourse />;
       case "Calendar":
         return <ProfessorCalander />;
       case "Message":
-        return <Message />;
+        return <Message messageId={selectedMessageId} />;
       case "Settings":
         return <ProfessorProfile />;
       case "Logout":
