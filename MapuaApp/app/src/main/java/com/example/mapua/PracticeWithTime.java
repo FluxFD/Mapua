@@ -111,10 +111,7 @@ public class PracticeWithTime extends AppCompatActivity {
                         public void onFinish() {
                             timerTextView.setText("Time's up!");
                             timerStarted = false;
-                            // Add logic to handle when the timer finishes
-                            // For example, disable submit button and show results
                             submitBtn.performClick();
-
                         }
                     };
                     timer.start(); // Start the timer
@@ -123,29 +120,25 @@ public class PracticeWithTime extends AppCompatActivity {
             }
         });
 
-
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                timer.cancel();
                 int score = 0;
                 for (int i = 0; i < adapter.getItemCount(); i++) {
                     ActivitiesReviewerListItem question = questions.get(i);
                     switch (question.getQuestionType()) {
                         case "MultipleChoice":
-                            int selectedRadioButtonId = ((QuestionAdapter.MultipleChoiceViewHolder) recyclerView.findViewHolderForAdapterPosition(i)).optionsRadioGroup.getCheckedRadioButtonId();
-                            if (selectedRadioButtonId != -1) {
-                                RadioButton selectedRadioButton = findViewById(selectedRadioButtonId);
-                                String selectedAnswer = selectedRadioButton.getText().toString();
-                                if (selectedAnswer.equals(question.getAnswer())) {
-                                    score++;
-                                }
-                            }
+                            // Code for multiple choice questions
                             break;
                         case "Identification":
-                            String enteredAnswer = ((QuestionAdapter.IdentificationViewHolder) recyclerView.findViewHolderForAdapterPosition(i)).answerEditText.getText().toString().trim();
-                            if (enteredAnswer.equalsIgnoreCase(question.getAnswer())) {
-                                score++;
+                            // Check if the ViewHolder is not null
+                            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
+                            if (viewHolder != null && viewHolder instanceof QuestionAdapter.IdentificationViewHolder) {
+                                // Access the answerEditText if viewHolder is not null
+                                String enteredAnswer = ((QuestionAdapter.IdentificationViewHolder) viewHolder).answerEditText.getText().toString().trim();
+                                if (!enteredAnswer.isEmpty() && enteredAnswer.equalsIgnoreCase(question.getAnswer())) {
+                                    score++;
+                                }
                             }
                             break;
                     }
@@ -155,19 +148,12 @@ public class PracticeWithTime extends AppCompatActivity {
             }
         });
 
-
-
-
-
     }
     @Override
     protected void onDestroy() {
         super.onDestroy();
         timer.cancel(); // Stop the timer to prevent memory leaks
     }
-
-
-
 
     private void saveScore(int correctAnswers) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
