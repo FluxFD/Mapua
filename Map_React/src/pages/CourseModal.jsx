@@ -11,15 +11,10 @@ import ArticleIcon from "@mui/icons-material/Article";
 import GradingIcon from "@mui/icons-material/Grading";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import bootstrap5Plugin from "@fullcalendar/bootstrap5";
-import { useNavigate } from "react-router-dom";
 import SlideshowIcon from "@mui/icons-material/Slideshow";
 
 function CourseModal({ course, show, handleClose }) {
-  const navigate = useNavigate();
   const { currentUser } = useAuth();
-  // const [currentView, setCurrentView] = useState("dayGridMonth"); // State to hold the current view
   const [tasks, setTasks] = useState([]);
   const [userScores, setUserScores] = useState({});
   const [userName, setUserName] = useState("");
@@ -31,9 +26,10 @@ function CourseModal({ course, show, handleClose }) {
   const [reviewerActivities, setReviewerActivities] = useState([]);
   const [videoActivities, setVideoActivities] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState(null);
+  const [calendarKey, setCalendarKey] = useState(Date.now()); // Key for FullCalendar component
 
-  const calendarRef = useRef(null); // Ref for the FullCalendar component
-  const [rerenderCalendar, setRerenderCalendar] = useState(false); // State to trigger rerender of calendar
+  const calendarRef = useRef(null);
+  // const [rerenderCalendar, setRerenderCalendar] = useState(false); // State to trigger rerender of calendar
 
   useEffect(() => {
     if (!currentUser) return;
@@ -129,16 +125,16 @@ function CourseModal({ course, show, handleClose }) {
     return () => {};
   }, [course.id, currentUser]);
 
-  useEffect(() => {
-    if (rerenderCalendar && calendarRef.current) {
-      calendarRef.current.getApi().render(); // Manually trigger a rerender of the calendar
-      setRerenderCalendar(false); // Reset the state after rerendering
-    }
-  }, [rerenderCalendar]);
+  // useEffect(() => {
+  //   if (rerenderCalendar && calendarRef.current) {
+  //     calendarRef.current.getApi().render(); // Manually trigger a rerender of the calendar
+  //     setRerenderCalendar(false); // Reset the state after rerendering
+  //   }
+  // }, [rerenderCalendar]);
 
   const handleTabChange = (key) => {
     if (key === "calendar") {
-      setRerenderCalendar(true); // Set state to trigger rerender when calendar tab is selected
+      setCalendarKey(Date.now()); // Update calendar key to force remount
     }
   };
 
@@ -269,7 +265,9 @@ function CourseModal({ course, show, handleClose }) {
               </Tab>
               <Tab eventKey="calendar" title="Calendar">
                 <div id="calendar" style={{ margin: "20px" }}>
-                  <FullCalendar
+                <FullCalendar
+                    key={calendarKey} // Key to force remounting of FullCalendar
+                    ref={calendarRef}
                     plugins={[dayGridPlugin]}
                     initialView={"dayGridWeek"}
                     height="69vh"
@@ -277,6 +275,7 @@ function CourseModal({ course, show, handleClose }) {
                       title: task.title,
                       date: modifyDateString(task.date),
                     }))}
+                  />
                   />
                 </div>
               </Tab>
