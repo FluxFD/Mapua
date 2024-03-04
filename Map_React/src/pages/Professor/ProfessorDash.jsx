@@ -43,44 +43,37 @@ function ProfessorDashboard({ onMessageClick }) {
   return (
     <Container fluid style={{ paddingLeft: "18%", paddingRight: "5%" }}>
       <Row className="mt-5 d-flex justify-content-evenly align-items-center ">
-        <Col sm={8}>
-          <div className="ms-5 ">
-            <Breadcrumbs aria-label="breadcrumb" style={{ color: "white" }}>
-              <Typography underline="hover" color="white">
-                Dashboard
-              </Typography>
-              <Typography underline="hover" color="white">
-                Message
-              </Typography>
-            </Breadcrumbs>
+        <div className="ms-5 ">
+          <Breadcrumbs aria-label="breadcrumb" style={{ color: "white" }}>
+            <Typography underline="hover" color="white">
+              Dashboard
+            </Typography>
+            <Typography underline="hover" color="white">
+              Message
+            </Typography>
+          </Breadcrumbs>
+        </div>
+        <Card className="title-header ms-5 p-3">
+          <div className="mb-2">
+            <h5>
+              <b>Latest</b>
+            </h5>
           </div>
-          <Card className="title-header ms-5 p-3">
-            <div className="mb-2">
-              <h5>
-                <b>Latest</b>
-              </h5>
-            </div>
-            {latestMessages.map((message) => (
-              <div
-                key={message.id}
-                onClick={() => handleMessageClick(message.id)}
+          {latestMessages.map((message) => (
+            <div
+              key={message.id}
+              onClick={() => handleMessageClick(message.id)}
+            >
+              <Card
+                className="title-header p-3 mb-2"
+                style={{ cursor: "pointer" }}
               >
-                <Card
-                  className="title-header p-3 mb-2"
-                  style={{ cursor: "pointer" }}
-                >
-                  <b>{message.name}</b>
-                  <p>{message.date}</p>
-                </Card>
-              </div>
-            ))}
-          </Card>
-        </Col>
-        <Col>
-          <Card className="title-header p-3">
-            <p>test</p>
-          </Card>
-        </Col>
+                <b>{message.name}</b>
+                <p>{message.date}</p>
+              </Card>
+            </div>
+          ))}
+        </Card>
       </Row>
     </Container>
   );

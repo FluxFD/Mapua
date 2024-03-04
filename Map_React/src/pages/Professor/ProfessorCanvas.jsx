@@ -96,16 +96,6 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
     );
   };
 
-  const toggleEnumerationExpansion = (enumerationId) => {
-    setEnumerations((prevEnumerations) =>
-      prevEnumerations.map((enumeration) =>
-        enumeration.id === enumerationId
-          ? { ...enumeration, isExpanded: !enumeration.isExpanded }
-          : enumeration
-      )
-    );
-  };
-
   const handleDeleteConfirmation = (itemId) => {
     setDeleteItemId(itemId);
     setShowDeleteConfirmation(true);
@@ -303,6 +293,9 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
         case "Announcement":
           itemRef = ref(database, `Announcement/${id}`);
           break;
+        case "Enumeration":
+          itemRef = ref(database, `Enumeration/${id}`);
+          break;
         default:
           console.error("Invalid item type for deletion");
           return;
@@ -459,11 +452,12 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     <Card
                       key={enumeration.id}
                       className="title-header mt-3 cursor-pointer"
-                      onClick={(e) =>
-                        toggleEnumerationExpansion(enumeration.id)
-                      }
                     >
-                      <Card.Header className="p-3">
+                      <Card.Body
+                        onClick={() =>
+                          handleOpenEnumerationrModal(enumeration.id)
+                        }
+                      >
                         <div className="d-flex align-items-center justify-content-between">
                           <span>
                             <ListAltIcon className="me-2" />
@@ -482,31 +476,8 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                             />
                           </div>
                         </div>
-                      </Card.Header>
-                      {enumeration.isExpanded && (
-                        <Card.Body>
-                          <Typography className="ms-4" variant="body2">
-                            {enumActivities[enumeration.id] &&
-                              Object.values(enumActivities[enumeration.id]).map(
-                                (activityEnum) => (
-                                  <div key={activityEnum.id}>
-                                    <div
-                                      className="hoverable"
-                                      onClick={() =>
-                                        handleOpenEnumerationrModal(
-                                          enumeration.id
-                                        )
-                                      }
-                                    >
-                                      {activityEnum.questionType}
-                                    </div>
-                                  </div>
-                                )
-                              )}
-                          </Typography>
-                        </Card.Body>
-                      )}
-                      {selectedEnumeration === enumeration.id && (
+                      </Card.Body>
+                      {selectedEnumeration && (
                         <EnumerationModal
                           show={selectedEnumeration === enumeration.id}
                           onHide={handleCloseEnumerationModal}
