@@ -6,7 +6,6 @@ import {
   Row,
   Button,
   Form,
-  FloatingLabel,
 } from "react-bootstrap";
 import { Fingerprint } from "@mui/icons-material";
 import { database } from "../services/Firebase";
@@ -114,6 +113,16 @@ function Profile() {
                         value={studentData ? studentData.name : ""}
                         style={{ width: "50rem" }}
                         disabled={!editName} // Enable/disable based on edit mode
+                        onChange={(e) => {
+                          set(ref(database, "students/" + currentUser.uid), {
+                            email: studentData.email,
+                            isActive: studentData.isActive,
+                            name: e.target.value,
+                            role: studentData.role,
+                            studentNo: studentData.studentNo,
+                            uid: studentData.uid,
+                          });
+                        }}
                       />
                     </Col>
                     <Col>
@@ -195,6 +204,16 @@ function Profile() {
                         value={studentData ? studentData.email : ""}
                         style={{ width: "50rem" }}
                         disabled={!editEmail} // Enable/disable based on edit mode
+                        onChange={(e) => {
+                          set(ref(database, "students/" + currentUser.uid), {
+                            email: e.target.value,
+                            isActive: studentData.isActive,
+                            name: studentData.name,
+                            role: studentData.role,
+                            studentNo: studentData.studentNo,
+                            uid: studentData.uid,
+                          });
+                        }}
                       />
                     </Col>
                     <Col>
@@ -203,6 +222,7 @@ function Profile() {
                         type="button"
                         style={{ width: "10rem" }}
                         variant="primary"
+                        
                       >
                         {editEmail ? "Save" : "Edit"}
                         {/* Change button label based on edit mode */}
