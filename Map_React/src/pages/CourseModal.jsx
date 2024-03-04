@@ -265,7 +265,7 @@ function CourseModal({ course, show, handleClose }) {
               </Tab>
               <Tab eventKey="calendar" title="Calendar">
                 <div id="calendar" style={{ margin: "20px" }}>
-                <FullCalendar
+                  <FullCalendar
                     key={calendarKey} // Key to force remounting of FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin]}
@@ -275,7 +275,6 @@ function CourseModal({ course, show, handleClose }) {
                       title: task.title,
                       date: modifyDateString(task.date),
                     }))}
-                  />
                   />
                 </div>
               </Tab>
