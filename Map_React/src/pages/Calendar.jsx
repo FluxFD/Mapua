@@ -11,23 +11,34 @@ import { database } from "../services/Firebase";
 import { ref, onValue } from "firebase/database";
 
 function Calendar() {
-  const calendarRef = useRef(null); // Ref to access FullCalendar instance
-  const [currentView, setCurrentView] = useState("dayGridMonth"); // State to hold the current view
+  const calendarRef = useRef(null);
+  const [currentView, setCurrentView] = useState("dayGridMonth");
   const { currentUser } = useAuth();
-  const [tasks, setTasks] = useState([]);
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    const tasksRef = ref(database, "ReviewerActivity");
-    onValue(tasksRef, (snapshot) => {
-      const tasksData = snapshot.val() || {};
-      const tasksArray = [];
+    const fetchData = () => {
+      const eventsRef = ref(database, "ReviewerActivity");
+      onValue(eventsRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          const formattedEvents = Object.keys(data).map((key) => {
+            const [month, day, year] = data[key].date.split("/");
+            const parsedDate = new Date(year, month - 1, day);
 
-      Object.entries(tasksData).forEach(([taskId, task]) => {
-        tasksArray.push({ id: taskId, ...task });
+            return {
+              title: data[key].title,
+              date: parsedDate,
+            };
+          });
+          console.log("Fetched events:", formattedEvents);
+          setEvents(formattedEvents);
+        }
       });
-      setTasks(tasksArray);
-      // console.log(tasksArray);
-    });
+    };
+
+    fetchData();
+    return () => {};
   }, [currentUser]);
 
   const handleDateClick = (info) => {
@@ -36,35 +47,32 @@ function Calendar() {
     calendarRef.current.getApi().changeView(currentView);
   };
 
-  function modifyDateString(dateString) {
-    const dateObj = new Date(dateString);
-    dateObj.setUTCHours(dateObj.getUTCHours() + 8); // Adjust to UTC+8 timezone
-    const isoDate = dateObj.toISOString().split('T')[0]; // Extract YYYY-MM-DD
-    return isoDate;
-  }
-  
   return (
     <Container fluid style={{ paddingLeft: "15%", paddingRight: "1%" }}>
       <Card style={{ margin: "20px", maxHeight: "100vh", height: "95vh" }}>
         <div id="calendar" style={{ margin: "20px" }}>
           <FullCalendar
+            dateClick={handleDateClick}
             plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}
-            // themeSystem="bootstrap5"
-            initialView="dayGridMonth"
             ref={calendarRef}
             headerToolbar={{
               left: "title,prev,next",
-              right: "dayGridDay,dayGridMonth", // user can switch between the two}
+              right: "dayGridDay,dayGridMonth",
             }}
             height="90vh"
-            events={tasks.map((task) => ({
-              title: task.title, date: modifyDateString(task.date)
-            }))}
-            // {[
-            //   { title: "event 1", date: "2024-02-01" },
-            // ]}
-            dateClick={handleDateClick}
-            // eventClick={}
+            initialView="dayGridMonth"
+            events={events}
+            eventDisplay="block"
+            eventContent={(eventInfo) => {
+              const eventDate = eventInfo.event.start;
+              const formattedDate = `${
+                eventDate.getMonth() + 1
+              }/${eventDate.getDate()}/${eventDate.getFullYear()}`;
+              const isPastEvent = eventDate < new Date();
+              return {
+                html: `<div style="text-align: center; padding: 3px; color: "white"};"><div>${eventInfo.event.title}</div><div>${formattedDate}</div></div>`,
+              };
+            }}
           />
         </div>
       </Card>
