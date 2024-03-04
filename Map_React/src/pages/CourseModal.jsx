@@ -47,7 +47,7 @@ function CourseModal({ course, show, handleClose }) {
       setUserName(name);
     });
 
-    const tasksRef = ref(database, "ReviewerActivity");
+    const tasksRef = ref(database, "Task");
     onValue(tasksRef, (snapshot) => {
       const tasksData = snapshot.val() || {};
       const tasksArray = [];
@@ -271,9 +271,9 @@ function CourseModal({ course, show, handleClose }) {
                     plugins={[dayGridPlugin]}
                     initialView={"dayGridWeek"}
                     height="69vh"
-                    events={tasks.map((task) => ({
-                      title: task.title,
-                      date: modifyDateString(task.date),
+                    events={reviewerActivities.map((activities) => ({
+                      title: activities.title,
+                      date: modifyDateString(activities.date),
                     }))}
                   />
                 </div>
