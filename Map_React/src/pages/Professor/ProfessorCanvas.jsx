@@ -26,6 +26,7 @@ import CreateTaskModal from "./ModalCreateTask";
 import CreateAnnouncementModal from "./CreateAnnouncement";
 import ReviewerModal from "./ReviewerModal";
 import EnumerationModal from "./EnumerationModal";
+import ReviewerActivityModal from "./ReviewerActivityModal";
 
 // Firebase
 import { database, storage, auth } from "../../services/Firebase";
@@ -53,6 +54,8 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [selectedEnumeration, setSelectedEnumeration] = useState(null);
   const [enumerations, setEnumerations] = useState([]);
   const [enumActivities, setEnumActivities] = useState({});
+  const [selectedReviewerActivity, setSelectedReviewerActivity] =
+    useState(null);
 
   const handleOpenCreateTaskModal = () => {
     setShowCreateTaskModal(true);
@@ -84,6 +87,14 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
 
   const handleCloseEnumerationModal = () => {
     setSelectedEnumeration(null);
+  };
+
+  const handleOpenReviewerActivityModal = (activity) => {
+    setSelectedReviewerActivity(activity);
+  };
+
+  const handleCloseReviewerActivityModal = () => {
+    setSelectedReviewerActivity(null);
   };
 
   const handleDeleteConfirmation = (itemId) => {
@@ -399,6 +410,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     <Card
                       key={activity.id}
                       className="title-header mt-3 cursor-pointer"
+                      onClick={() => handleOpenReviewerActivityModal(activity)}
                     >
                       <Card.Body>
                         <div className="d-flex align-items-center justify-content-between">
@@ -422,6 +434,14 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       </Card.Body>
                     </Card>
                   ))}
+
+                  {selectedReviewerActivity && (
+                    <ReviewerActivityModal
+                      show={selectedReviewerActivity !== null}
+                      onHide={handleCloseReviewerActivityModal}
+                      activity={selectedReviewerActivity}
+                    />
+                  )}
 
                   {enumerations.map((enumeration) => (
                     <Card
