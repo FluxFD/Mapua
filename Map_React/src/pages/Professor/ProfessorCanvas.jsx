@@ -28,6 +28,7 @@ import ReviewerModal from "./ReviewerModal";
 import EnumerationModal from "./EnumerationModal";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import ReviewerActivityModal from "./ReviewerActivityModal";
 
 // Firebase
 import { database, storage, auth } from "../../services/Firebase";
@@ -67,6 +68,8 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
     const isoDate = dateObj.toISOString().split("T")[0]; // Extract YYYY-MM-DD
     return isoDate;
   }
+  const [selectedReviewerActivity, setSelectedReviewerActivity] =
+    useState(null);
 
   const handleOpenCreateTaskModal = () => {
     setShowCreateTaskModal(true);
@@ -98,6 +101,14 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
 
   const handleCloseEnumerationModal = () => {
     setSelectedEnumeration(null);
+  };
+
+  const handleOpenReviewerActivityModal = (activity) => {
+    setSelectedReviewerActivity(activity);
+  };
+
+  const handleCloseReviewerActivityModal = () => {
+    setSelectedReviewerActivity(null);
   };
 
   const handleDeleteConfirmation = (itemId) => {
@@ -434,6 +445,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     <Card
                       key={activity.id}
                       className="title-header mt-3 cursor-pointer"
+                      onClick={() => handleOpenReviewerActivityModal(activity)}
                     >
                       <Card.Body>
                         <div className="d-flex align-items-center justify-content-between">
@@ -457,6 +469,14 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       </Card.Body>
                     </Card>
                   ))}
+
+                  {selectedReviewerActivity && (
+                    <ReviewerActivityModal
+                      show={selectedReviewerActivity !== null}
+                      onHide={handleCloseReviewerActivityModal}
+                      activity={selectedReviewerActivity}
+                    />
+                  )}
 
                   {enumerations.map((enumeration) => (
                     <Card
