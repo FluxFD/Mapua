@@ -9,9 +9,11 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPracticeNoTimer"
-        android:layout_width="match_parent"
+        android:layout_width="400dp"
         android:layout_height="575dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.454"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
