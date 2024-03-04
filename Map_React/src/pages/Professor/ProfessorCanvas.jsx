@@ -26,6 +26,8 @@ import CreateTaskModal from "./ModalCreateTask";
 import CreateAnnouncementModal from "./CreateAnnouncement";
 import ReviewerModal from "./ReviewerModal";
 import EnumerationModal from "./EnumerationModal";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
 
 // Firebase
 import { database, storage, auth } from "../../services/Firebase";
@@ -53,6 +55,18 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [selectedEnumeration, setSelectedEnumeration] = useState(null);
   const [enumerations, setEnumerations] = useState([]);
   const [enumActivities, setEnumActivities] = useState({});
+  const calendarRef = useRef(null);
+  const [calendarKey, setCalendarKey] = useState(Date.now()); // Key for FullCalendar component
+  const [tasks, setTasks] = useState([]);
+
+
+
+  function modifyDateString(dateString) {
+    const dateObj = new Date(dateString);
+    dateObj.setUTCHours(dateObj.getUTCHours() + 8); // Adjust to UTC+8 timezone
+    const isoDate = dateObj.toISOString().split("T")[0]; // Extract YYYY-MM-DD
+    return isoDate;
+  }
 
   const handleOpenCreateTaskModal = () => {
     setShowCreateTaskModal(true);
@@ -304,6 +318,27 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
     }
   };
 
+  const handleTabChange = (key) => {
+    if (key === "calendar") {
+      setCalendarKey(Date.now()); // Update calendar key to force remount
+    }
+  };
+
+  // const tasksRef = ref(database, "ReviewerActivity");
+  // onValue(tasksRef, (snapshot) => {
+  //   const tasksData = snapshot.val() || {};
+  //   const tasksArray = [];
+
+  //   Object.entries(tasksData).forEach(([taskId, task]) => {
+  //     if (task.Course === selectedCourse.uid) {
+  //       tasksArray.push({ id: taskId, ...task });
+  //     }
+  //   });
+
+  //   setTasks(tasksArray);
+  // });
+
+
   return (
     <>
       {selectedCourse && (
@@ -515,7 +550,19 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                   ))}
                 </Tab>
                 <Tab eventKey="calendar" title="Calendar">
-                  Tab content for Calendar
+                <div id="calendar" style={{ margin: "20px" }}>
+                  <FullCalendar
+                    key={calendarKey}
+                    ref={calendarRef}
+                    plugins={[dayGridPlugin]}
+                    initialView={"dayGridWeek"}
+                    height="69vh"
+                    events={reviewerActivity.map((reviewer) => ({
+                      title: reviewer.title,
+                      date: modifyDateString(reviewer.date),
+                    }))}
+                  />
+                </div>
                 </Tab>
                 <Tab eventKey="gradeBook" title="Gradebook">
                   <Table striped bordered hover>
