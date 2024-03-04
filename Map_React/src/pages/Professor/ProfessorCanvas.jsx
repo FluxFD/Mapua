@@ -86,16 +86,6 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
     setSelectedEnumeration(null);
   };
 
-  const handleToggleExpansion = (id) => {
-    setReviewerActivity((prevActivities) =>
-      prevActivities.map((activity) =>
-        activity.id === id
-          ? { ...activity, isExpanded: !activity.isExpanded }
-          : activity
-      )
-    );
-  };
-
   const handleDeleteConfirmation = (itemId) => {
     setDeleteItemId(itemId);
     setShowDeleteConfirmation(true);
@@ -409,9 +399,8 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     <Card
                       key={activity.id}
                       className="title-header mt-3 cursor-pointer"
-                      onClick={() => handleToggleExpansion(activity.id)}
                     >
-                      <Card.Header className="p-3">
+                      <Card.Body>
                         <div className="d-flex align-items-center justify-content-between">
                           <span>
                             <ListAltIcon className="me-2" />
@@ -430,21 +419,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                             />
                           </div>
                         </div>
-                      </Card.Header>
-                      {activity.isExpanded && (
-                        <Card.Body>
-                          {Array.isArray(activity.activities) &&
-                            activity.activities.map((subActivity) => (
-                              <Typography className="ms-4 mb-2" variant="body2">
-                                <div key={subActivity.id}>
-                                  <div className="hoverable">
-                                    {subActivity.questionType}
-                                  </div>
-                                </div>
-                              </Typography>
-                            ))}
-                        </Card.Body>
-                      )}
+                      </Card.Body>
                     </Card>
                   ))}
 
