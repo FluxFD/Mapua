@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EnumAdapter extends RecyclerView.Adapter<EnumAdapter.ViewHolder> {
 
@@ -23,7 +24,7 @@ public class EnumAdapter extends RecyclerView.Adapter<EnumAdapter.ViewHolder> {
     private HashMap<Integer,List<String>> enumAnswerMap; // storing of correct answer
 
     private HashMap<Integer,List<String>> enumInputAnswerMap; // storing of user answer
-    private HashMap<Integer, List<EditText>> editFieldsList;
+    private HashMap<Integer, List<EditText>> editFieldsList = new HashMap<>();
 
     public EnumAdapter(List<EnumActivity> enumActivityList, HashMap<Integer,List<String>> enumAnswerMap, HashMap<Integer,List<String>> enumInputAnswerMap) {
         this.enumActivityList = enumActivityList;
@@ -57,29 +58,33 @@ public class EnumAdapter extends RecyclerView.Adapter<EnumAdapter.ViewHolder> {
             temp1.add(answer);
             enumAnswerMap.put(position, temp1);
 
-            answerEditText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//            answerEditText.addTextChangedListener(new TextWatcher() {
+//                @Override
+//                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//                }
+//
+//                @Override
+//                public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//                }
+//
+//                @Override
+//                public void afterTextChanged(Editable s) {
+//                    int position = holder.getAdapterPosition();
+//                    List<String> temp = new ArrayList<>();
+//                    if (enumInputAnswerMap.containsKey(position)) {
+//                        temp.addAll(enumInputAnswerMap.get(position));
+//                    }
+//                    temp.add(s.toString());
+//                    enumInputAnswerMap.put(position, temp);
+//                }
+//            });
 
-                }
+            if (!editFieldsList.containsKey(position))
+                editFieldsList.put(position, new ArrayList<>());
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    int position = holder.getAdapterPosition();
-                    List<String> temp = new ArrayList<>();
-                    if (enumInputAnswerMap.containsKey(position)) {
-                        temp.addAll(enumInputAnswerMap.get(position));
-                    }
-                    temp.add(s.toString());
-                    enumInputAnswerMap.put(position, temp);
-                }
-            });
-
+            editFieldsList.get(position).add(answerEditText);
             holder.enumAnswersContainer.addView(answerEditText);
         }
     }
@@ -89,6 +94,15 @@ public class EnumAdapter extends RecyclerView.Adapter<EnumAdapter.ViewHolder> {
         int count = enumActivityList.size();
         Log.d("EnumAdapter", "getItemCount: " + count);
         return count;
+    }
+
+    public List<String> getUserInput(int position){
+
+        List<EditText> editTextList = editFieldsList.get(position);
+
+        return editTextList.stream()
+                .map(editText -> editText.getText().toString())
+                .collect(Collectors.toList());
     }
 
 

@@ -4,7 +4,10 @@ package com.example.mapua;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,7 +41,7 @@ public class Enumeration extends AppCompatActivity {
     private final HashMap<Integer,List<String>> enumInputAnswerMap = new HashMap<>();
 
     private final List<HashMap<String, Object>> userEnumScore = new ArrayList<>();
-
+    RecyclerView recyclerView;
     int score = 0;
 
 
@@ -62,7 +65,7 @@ public class Enumeration extends AppCompatActivity {
 
         Button enumSubmit = findViewById(R.id.enumSubmit);
 
-        RecyclerView recyclerView = findViewById(R.id.enumRecyclerView);
+        recyclerView = findViewById(R.id.enumRecyclerView);
         activities = new ArrayList<>();
         adapter = new EnumAdapter(activities, enumAnswerMap,enumInputAnswerMap);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -82,9 +85,12 @@ public class Enumeration extends AppCompatActivity {
 
     private void checkEnumAns(){
 
+
         for (int i = 0; i < activities.size(); i++){
+
+            List <String> inputAnswers = adapter.getUserInput(i);
             List <String> correctAnswers = enumAnswerMap.get(i);
-            List <String> inputAnswers = enumInputAnswerMap.get(i);
+
             EnumActivity activity = activities.get(i);
 
             HashMap<String, Object> scoreEntry = new HashMap<>();
