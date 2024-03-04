@@ -8,6 +8,7 @@ import {
   Card,
   Offcanvas,
   Table,
+  Row,
 } from "react-bootstrap";
 import "../../index.css";
 import ListAltIcon from "@mui/icons-material/ListAlt";
@@ -18,14 +19,17 @@ import Link from "@mui/material/Link";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import Typography from "@mui/material/Typography";
+import "../../index.css";
 
 import CreateTaskModal from "./ModalCreateTask";
 import CreateAnnouncementModal from "./CreateAnnouncement";
 import ReviewerModal from "./ReviewerModal";
+import EnumerationModal from "./EnumerationModal";
 
 // Firebase
 import { database, storage, auth } from "../../services/Firebase";
-import { ref, onValue, update, push, remove } from "firebase/database";
+import { ref, onValue, update, push, remove, get } from "firebase/database";
 import {
   getStorage,
   ref as storageRef,
@@ -46,6 +50,9 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [scores, setScores] = useState([]);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
+  const [selectedEnumeration, setSelectedEnumeration] = useState(null);
+  const [enumerations, setEnumerations] = useState([]);
+  const [enumActivities, setEnumActivities] = useState({});
 
   const handleOpenCreateTaskModal = () => {
     setShowCreateTaskModal(true);
@@ -71,12 +78,30 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
     setSelectedReviewer(null);
   };
 
+  const handleOpenEnumerationrModal = (enumerationId) => {
+    setSelectedEnumeration(enumerationId);
+  };
+
+  const handleCloseEnumerationModal = () => {
+    setSelectedEnumeration(null);
+  };
+
   const handleToggleExpansion = (id) => {
     setReviewerActivity((prevActivities) =>
       prevActivities.map((activity) =>
         activity.id === id
           ? { ...activity, isExpanded: !activity.isExpanded }
           : activity
+      )
+    );
+  };
+
+  const toggleEnumerationExpansion = (enumerationId) => {
+    setEnumerations((prevEnumerations) =>
+      prevEnumerations.map((enumeration) =>
+        enumeration.id === enumerationId
+          ? { ...enumeration, isExpanded: !enumeration.isExpanded }
+          : enumeration
       )
     );
   };
@@ -91,6 +116,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
     const reviewerActivityRef = ref(database, "ReviewerActivity");
     const announcementsRef = ref(database, "Announcement");
     const scoresRef = ref(database, "Score");
+    const enumerationsRef = ref(database, "Enumeration");
 
     const unsubscribeReviewers = onValue(reviewersRef, (snapshot) => {
       const reviewersData = snapshot.val() || {};
@@ -118,6 +144,24 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
             }
           }
         );
+
+        reviewerActivityArray.forEach(async (activity) => {
+          const activitiesRef = ref(
+            database,
+            `ReviewerActivity/${activity.id}/activities`
+          );
+          const activitiesSnapshot = await get(activitiesRef);
+          const activitiesData = activitiesSnapshot.val() || {};
+
+          const activitiesArray = Object.entries(activitiesData).map(
+            ([activityId, activityData]) => ({
+              id: activityId,
+              ...activityData,
+            })
+          );
+
+          activity.activities = activitiesArray;
+        });
 
         setReviewerActivity(reviewerActivityArray);
       }
@@ -154,11 +198,37 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
       setScores(scoresArray);
     });
 
+    const unsubscribeEnumerations = onValue(enumerationsRef, (snapshot) => {
+      const enumerationsData = snapshot.val() || {};
+      const enumerationsArray = [];
+      const activitiesObject = {};
+
+      Object.entries(enumerationsData).forEach(
+        ([enumerationId, enumeration]) => {
+          if (enumeration.Course === selectedCourse.uid) {
+            enumerationsArray.push({ id: enumerationId, ...enumeration });
+            const enumActivitiesRef = ref(
+              database,
+              `Enumeration/${enumerationId}/activities`
+            );
+            onValue(enumActivitiesRef, (snapshot) => {
+              const activitiesData = snapshot.val() || {};
+              activitiesObject[enumerationId] = activitiesData;
+              setEnumActivities(activitiesObject);
+            });
+          }
+        }
+      );
+
+      setEnumerations(enumerationsArray);
+    });
+
     return () => {
       unsubscribeReviewers();
       unsubscribeReviewerActivity();
       unsubscribeAnnouncements();
       unsubscribeScores();
+      unsubscribeEnumerations();
     };
   }, [selectedCourse.uid]);
 
@@ -370,10 +440,78 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       </Card.Header>
                       {activity.isExpanded && (
                         <Card.Body>
-                          <div className="d-flex align-items-center ms-3">
-                            <ListAltIcon className="me-2" />
-                          </div>
+                          {Array.isArray(activity.activities) &&
+                            activity.activities.map((subActivity) => (
+                              <Typography className="ms-4 mb-2" variant="body2">
+                                <div key={subActivity.id}>
+                                  <div className="hoverable">
+                                    {subActivity.questionType}
+                                  </div>
+                                </div>
+                              </Typography>
+                            ))}
                         </Card.Body>
+                      )}
+                    </Card>
+                  ))}
+
+                  {enumerations.map((enumeration) => (
+                    <Card
+                      key={enumeration.id}
+                      className="title-header mt-3 cursor-pointer"
+                      onClick={(e) =>
+                        toggleEnumerationExpansion(enumeration.id)
+                      }
+                    >
+                      <Card.Header className="p-3">
+                        <div className="d-flex align-items-center justify-content-between">
+                          <span>
+                            <ListAltIcon className="me-2" />
+                            {enumeration.title} - Date: {enumeration.date}
+                          </span>
+                          <div className="d-flex align-items-center">
+                            <DeleteIcon
+                              color="error"
+                              className="cursor-pointer"
+                              onClick={() =>
+                                handleDeleteConfirmation({
+                                  id: enumeration.id,
+                                  type: "Enumeration",
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                      </Card.Header>
+                      {enumeration.isExpanded && (
+                        <Card.Body>
+                          <Typography className="ms-4" variant="body2">
+                            {enumActivities[enumeration.id] &&
+                              Object.values(enumActivities[enumeration.id]).map(
+                                (activityEnum) => (
+                                  <div key={activityEnum.id}>
+                                    <div
+                                      className="hoverable"
+                                      onClick={() =>
+                                        handleOpenEnumerationrModal(
+                                          enumeration.id
+                                        )
+                                      }
+                                    >
+                                      {activityEnum.questionType}
+                                    </div>
+                                  </div>
+                                )
+                              )}
+                          </Typography>
+                        </Card.Body>
+                      )}
+                      {selectedEnumeration === enumeration.id && (
+                        <EnumerationModal
+                          show={selectedEnumeration === enumeration.id}
+                          onHide={handleCloseEnumerationModal}
+                          enumeration={enumeration}
+                        />
                       )}
                     </Card>
                   ))}
@@ -440,7 +578,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                         <th>Student Name</th>
                         <th>Task Name</th>
                         <th>Score</th>
-                        <th>Action</th>
+                        {/* <th>Action</th> */}
                       </tr>
                     </thead>
                     <tbody className="text-center">
@@ -457,9 +595,9 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                               <td>{score.studentName}</td>
                               <td>{score.taskName}</td>
                               <td>{score.score}</td>
-                              <td>
+                              {/* <td>
                                 <VisibilityIcon />
-                              </td>
+                              </td> */}
                             </tr>
                           )
                         );
