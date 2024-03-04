@@ -17,7 +17,7 @@ function Calendar() {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    const tasksRef = ref(database, "Task");
+    const tasksRef = ref(database, "ReviewerActivity");
     onValue(tasksRef, (snapshot) => {
       const tasksData = snapshot.val() || {};
       const tasksArray = [];
@@ -43,9 +43,6 @@ function Calendar() {
     return isoDate;
   }
   
-  
-  
-
   return (
     <Container fluid style={{ paddingLeft: "15%", paddingRight: "1%" }}>
       <Card style={{ margin: "20px", maxHeight: "100vh", height: "95vh" }}>
@@ -53,6 +50,7 @@ function Calendar() {
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}
             // themeSystem="bootstrap5"
+            initialView="dayGridMonth"
             ref={calendarRef}
             headerToolbar={{
               left: "title,prev,next",
@@ -60,7 +58,7 @@ function Calendar() {
             }}
             height="90vh"
             events={tasks.map((task) => ({
-              title: task.taskName, date: modifyDateString(task.dueDate)
+              title: task.title, date: modifyDateString(task.date)
             }))}
             // {[
             //   { title: "event 1", date: "2024-02-01" },

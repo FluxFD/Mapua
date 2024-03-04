@@ -57,14 +57,27 @@ function Profile() {
   }, [studentData]);
 
   function handleEditName() {
-    setEditName(!editName); // Toggle edit mode for name
+    if (!editName) {
+      setEditNumber(false);
+      setEditEmail(false);
+    }
+    setEditName(!editName);
   }
 
   function handleEditNumber() {
-    setEditNumber(!editNumber); // Toggle edit mode for number
+    if (!editNumber) {
+      setEditName(false);
+      setEditEmail(false);
+    }
+    setEditNumber(!editNumber);
   }
+
   function handleEditEmail() {
-    setEditEmail(!editEmail); // Toggle edit mode for number
+    if (!editEmail) {
+      setEditName(false);
+      setEditNumber(false);
+    }
+    setEditEmail(!editEmail);
   }
 
   function handleFingerprint() {
@@ -131,15 +144,7 @@ function Profile() {
                       />
                     </Col>
                     <Col>
-                      <Button
-                        type="button"
-                        onClick={handleEditNumber}
-                        style={{ width: "10rem" }}
-                        variant="primary"
-                      >
-                        {editNumber ? "Save" : "Edit"}
-                        {/* Change button label based on edit mode */}
-                      </Button>
+                      
                     </Col>
                   </Row>
                 </Form.Group>

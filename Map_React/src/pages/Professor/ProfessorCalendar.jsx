@@ -38,13 +38,20 @@ function ProfessorCalendar() {
 
     fetchData();
     return () => {};
-  }, []);
+  }, [currentUser]);
+
+  const handleDateClick = (info) => {
+    setCurrentView("dayGridDay"); // Change the view to dayGridDay
+    calendarRef.current.getApi().gotoDate(info.date); // Go to the clicked date
+    calendarRef.current.getApi().changeView(currentView);
+  };
 
   return (
     <Container fluid style={{ paddingLeft: "15%", paddingRight: "1%" }}>
       <Card style={{ margin: "20px", maxHeight: "100vh", height: "95vh" }}>
         <div id="calendar" style={{ margin: "20px" }}>
           <FullCalendar
+            dateClick={handleDateClick}
             plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}
             ref={calendarRef}
             headerToolbar={{
