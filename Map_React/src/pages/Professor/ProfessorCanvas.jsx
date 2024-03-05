@@ -380,6 +380,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                 defaultActiveKey="content"
                 id="uncontrolled-tab-example"
                 className="mb-3"
+                onSelect={handleTabChange}
               >
                 <Tab eventKey="content" title="Course Content">
                   <Breadcrumbs
