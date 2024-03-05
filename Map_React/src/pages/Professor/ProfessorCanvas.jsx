@@ -27,6 +27,7 @@ import CreateAnnouncementModal from "./CreateAnnouncement";
 import ReviewerModal from "./ReviewerModal";
 import EnumerationModal from "./EnumerationModal";
 import ReviewerActivityModal from "./ReviewerActivityModal";
+import ProfScoreView from "./ProfessorScoreView";
 
 // Firebase
 import { database, storage, auth } from "../../services/Firebase";
@@ -56,6 +57,15 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [enumActivities, setEnumActivities] = useState({});
   const [selectedReviewerActivity, setSelectedReviewerActivity] =
     useState(null);
+  const [selectedScore, setSelectedScore] = useState(null);
+
+  const handleOpenScoreView = (score) => {
+    setSelectedScore(score);
+  };
+
+  const handleCloseScoreView = () => {
+    setSelectedScore(null);
+  };
 
   const handleOpenCreateTaskModal = () => {
     setShowCreateTaskModal(true);
@@ -544,7 +554,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                         <th>Student Name</th>
                         <th>Task Name</th>
                         <th>Score</th>
-                        {/* <th>Action</th> */}
+                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody className="text-center">
@@ -557,17 +567,26 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
 
                         return (
                           shouldDisplayScore && (
-                            <tr key={score.id}>
+                            <tr
+                              key={score.id}
+                              onClick={() => handleOpenScoreView(score)}
+                            >
                               <td>{score.studentName}</td>
                               <td>{score.taskName}</td>
                               <td>{score.score}</td>
-                              {/* <td>
+                              <td>
                                 <VisibilityIcon />
-                              </td> */}
+                              </td>
                             </tr>
                           )
                         );
                       })}
+
+                      <ProfScoreView
+                        show={selectedScore != null}
+                        onHide={handleCloseScoreView}
+                        score={selectedScore}
+                      />
                     </tbody>
                   </Table>
                 </Tab>
