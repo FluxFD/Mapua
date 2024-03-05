@@ -48,6 +48,8 @@ function ProfScoreView({ show, onHide, score }) {
                   </div>
                   <div>
                     <Chip
+                      size="small"
+                      variant="outlined"
                       label={subScore.isCorrect ? "1/1" : "0/1"}
                       color={subScore.isCorrect ? "success" : "error"}
                     />

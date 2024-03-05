@@ -61,8 +61,6 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [calendarKey, setCalendarKey] = useState(Date.now()); // Key for FullCalendar component
   const [tasks, setTasks] = useState([]);
 
-
-
   function modifyDateString(dateString) {
     const dateObj = new Date(dateString);
     dateObj.setUTCHours(dateObj.getUTCHours() + 8); // Adjust to UTC+8 timezone
@@ -359,7 +357,6 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   //   setTasks(tasksArray);
   // });
 
-
   return (
     <>
       {selectedCourse && (
@@ -456,6 +453,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       key={activity.id}
                       className="title-header mt-3 cursor-pointer"
                       onClick={() => handleOpenReviewerActivityModal(activity)}
+                      style={{ cursor: "pointer" }}
                     >
                       <Card.Body>
                         <div className="d-flex align-items-center justify-content-between">
@@ -492,6 +490,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     <Card
                       key={enumeration.id}
                       className="title-header mt-3 cursor-pointer"
+                      style={{ cursor: "pointer" }}
                     >
                       <Card.Body
                         onClick={() =>
@@ -580,22 +579,22 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                   ))}
                 </Tab>
                 <Tab eventKey="calendar" title="Calendar">
-                <div id="calendar" style={{ margin: "20px" }}>
-                  <FullCalendar
-                    key={calendarKey}
-                    ref={calendarRef}
-                    plugins={[dayGridPlugin]}
-                    initialView={"dayGridWeek"}
-                    height="69vh"
-                    events={reviewerActivity.map((reviewer) => ({
-                      title: reviewer.title,
-                      date: modifyDateString(reviewer.date),
-                    }))}
-                  />
-                </div>
+                  <div id="calendar" style={{ margin: "20px" }}>
+                    <FullCalendar
+                      key={calendarKey}
+                      ref={calendarRef}
+                      plugins={[dayGridPlugin]}
+                      initialView={"dayGridWeek"}
+                      height="69vh"
+                      events={reviewerActivity.map((reviewer) => ({
+                        title: reviewer.title,
+                        date: modifyDateString(reviewer.date),
+                      }))}
+                    />
+                  </div>
                 </Tab>
                 <Tab eventKey="gradeBook" title="Gradebook">
-                  <Table striped bordered hover>
+                  <Table striped bordered hover style={{ cursor: "pointer" }}>
                     <thead className="text-center">
                       <tr>
                         <th>Student Name</th>

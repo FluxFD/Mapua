@@ -49,7 +49,7 @@ function ProfessorCalendar() {
   return (
     <Container fluid style={{ paddingLeft: "15%", paddingRight: "1%" }}>
       <Card style={{ margin: "20px", maxHeight: "100vh", height: "95vh" }}>
-        <div id="calendar" style={{ margin: "20px" }}>
+        <div id="calendar" style={{ margin: "20px", cursor: "pointer" }}>
           <FullCalendar
             dateClick={handleDateClick}
             plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}

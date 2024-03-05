@@ -96,7 +96,10 @@ function ProfessorCourse() {
 
         {courses.map((course) => (
           <div key={course.uid} onClick={() => handleCardClick(course)}>
-            <Card className="title-header  p-3 mt-2">
+            <Card
+              className="title-header  p-3 mt-2"
+              style={{ cursor: "pointer" }}
+            >
               <div>
                 <b>{course.uid}</b>
                 <p>{course.createdBy}</p>
