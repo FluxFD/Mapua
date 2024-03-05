@@ -328,7 +328,7 @@ function ModeratorDashboard() {
                 <Tooltip title="Delete" arrow>
                   <DeleteIcon
                     color="error"
-                    onClick={() => handleDeleteUser(student.uid)}
+                    onClick={() => handleDeleteUser(student.uid, student.studentNo)}
                   />
                 </Tooltip>
               </Col>

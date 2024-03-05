@@ -38,25 +38,21 @@ app.post("/user", (req, res) => {
 });
 
 app.delete("/user/:id", (req, res) => {
-  const userId = req.params.id;
-  const q = "DELETE FROM users WHERE id=?";
-
-  db.query(q, userId, (err, data) => {
-    if (err) {
-      return res.json(err);
-    } else {
-      if (data.affectedRows === 0) {
-        return res.status(404).json({ error: "User not found" });
+    const userId = req.params.id;
+    const q = "DELETE FROM users WHERE id = ?";
+  
+    db.query(q, [userId], (err, data) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
       } else {
-        return (
-        res.json("user has been deleted."),
-        console.log('userID' + userId),
-        console.log('data' + data)
-        );
+        if (data.affectedRows === 0) {
+          return res.status(404).json({ error: "User not found" });
+        } else {
+          return res.json({ message: "User has been deleted." });
+        }
       }
-    }
+    });
   });
-});
 
 // app.put("/user/:id", (req,res)=>{
 //     const bookId=req.params.id;
