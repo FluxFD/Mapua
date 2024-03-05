@@ -38,14 +38,14 @@ public class MultipleChoiceAdapter extends RecyclerView.Adapter<MultipleChoiceAd
         for (String key : item.getChoices().keySet()) {
             RadioButton radioButton = new RadioButton(holder.itemView.getContext());
             radioButton.setText("Choice " + key + ": " + item.getChoices().get(key));
-            radioButton.setTag(key);
+            radioButton.setTag(item.getChoices().get(key));
             holder.choicesRadioGroup.addView(radioButton);
         }
 
         holder.choicesRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             RadioButton selectedRadioButton = group.findViewById(checkedId);
             if (selectedRadioButton != null) {
-                item.setAnswer((String) selectedRadioButton.getTag());
+                item.setUserAnswer((String) selectedRadioButton.getTag());
             }
         });
     }

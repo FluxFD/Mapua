@@ -76,15 +76,15 @@ public class MultipleChoice extends AppCompatActivity {
         List<Map<String, Object>> scores = new ArrayList<>();
 
         for (ActivitiesReviewerListItem item : reviewerActivities) {
-            if (item.getAnswer().equals(item.getAnswer())) { // Compare with user's selected answer
+            if (item.getAnswer().equals(item.getUserAnswer())) { // Compare with user's selected answer
                 score++;
             }
 
             Map<String, Object> scoreItem = new HashMap<>();
             scoreItem.put("correctAnswer", item.getAnswer());
-            scoreItem.put("isCorrect", item.getAnswer().equals(item.getAnswer()));
+            scoreItem.put("isCorrect", item.getAnswer().equals(item.getUserAnswer()));
             scoreItem.put("question", item.getQuestion());
-            scoreItem.put("userAnswer", item.getAnswer()); // Use user's selected answer
+            scoreItem.put("userAnswer", item.getUserAnswer()); // Use user's selected answer
 
             scores.add(scoreItem);
         }
@@ -94,7 +94,7 @@ public class MultipleChoice extends AppCompatActivity {
         DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference("students").child(currentUser.getUid());
         DatabaseReference scoresRef = FirebaseDatabase.getInstance().getReference("Score"); // Move this outside the ValueEventListener
         String key = scoresRef.push().getKey();
-        int finalScore = score;
+        int finalScore = (int) (((double) score / reviewerActivities.size()) * 100);
         studentRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

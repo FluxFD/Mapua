@@ -1,5 +1,7 @@
 package com.example.mapua;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +31,25 @@ public class IdentificationAdapter extends RecyclerView.Adapter<IdentificationAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ActivitiesReviewerListItem activity = activities.get(position);
         holder.questionTextView.setText(activity.getQuestion());
+        holder.answerEditText.setText(activity.getUserAnswer()); // Set user's answer
+
         // Set a tag to identify the position of the EditText when retrieving answers
         holder.answerEditText.setTag(position);
+        holder.answerEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Update the user's answer when the text changes
+                activities.get(holder.getAdapterPosition()).setUserAnswer(s.toString());
+            }
+        });
     }
 
     @Override

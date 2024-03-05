@@ -62,10 +62,9 @@ public class Identification extends AppCompatActivity {
                 int correctAnswers = 0;
                 for (int i = 0; i < reviewerActivities.size(); i++) {
                     ActivitiesReviewerListItem activity = reviewerActivities.get(i);
-                    EditText answerEditText = recyclerView.findViewHolderForAdapterPosition(i)
-                            .itemView.findViewById(R.id.answerEditText);
-                    String userAnswer = answerEditText.getText().toString();
-                    if (userAnswer.equalsIgnoreCase(activity.getAnswer())) {
+                    // Retrieve user's answer from the corresponding ActivitiesReviewerListItem
+                    String userAnswer = activity.getUserAnswer();
+                    if (userAnswer != null && userAnswer.equalsIgnoreCase(activity.getAnswer())) {
                         correctAnswers++;
                     }
                 }
@@ -89,7 +88,7 @@ public class Identification extends AppCompatActivity {
         DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference("students").child(currentUser.getUid());
         DatabaseReference scoresRef = FirebaseDatabase.getInstance().getReference("Score"); // Move this outside the ValueEventListener
         String key = scoresRef.push().getKey();
-
+        int finalScore = (int) (((double) correctAnswers / reviewerActivities.size()) * 100);
         studentRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -101,15 +100,15 @@ public class Identification extends AppCompatActivity {
                             for (ActivitiesReviewerListItem item : reviewerActivities) {
                                 Map<String, Object> scoreItem = new HashMap<>();
                                 scoreItem.put("correctAnswer", item.getAnswer());
-                                scoreItem.put("userAnswer", item.getAnswer());
-                                scoreItem.put("isCorrect", item.getAnswer().equals(item.getAnswer()));
+                                scoreItem.put("userAnswer", item.getUserAnswer());
+                                scoreItem.put("isCorrect", item.getAnswer().equals(item.getUserAnswer()));
                                 scoreItem.put("question", item.getQuestion());
                                 scores.add(scoreItem);
                             }
 
                             Map<String, Object> scoreData = new HashMap<>();
                             scoreData.put("studentId", currentUser.getUid());
-                            scoreData.put("score", correctAnswers);
+                            scoreData.put("score", finalScore);
                             scoreData.put("studentName", studentName);
                             scoreData.put("taskName", title);
                             scoreData.put("scores", scores);

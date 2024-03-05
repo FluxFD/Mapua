@@ -84,13 +84,10 @@ public class Enumeration extends AppCompatActivity {
     }
 
     private void checkEnumAns(){
-
-
+        int totalScore = 0;
         for (int i = 0; i < activities.size(); i++){
-
             List <String> inputAnswers = adapter.getUserInput(i);
             List <String> correctAnswers = enumAnswerMap.get(i);
-
             EnumActivity activity = activities.get(i);
 
             HashMap<String, Object> scoreEntry = new HashMap<>();
@@ -99,22 +96,28 @@ public class Enumeration extends AppCompatActivity {
             scoreEntry.put("userEnumAnswers", inputAnswers);
             boolean isCorrect = false;
 
-
+            int questionScore = 0; // score for this question
             for (String input : inputAnswers){
                 if (correctAnswers.contains(input)){
-                   score++;
-                   isCorrect = true;
+                    questionScore++;
+                    isCorrect = true;
                 }
             }
             scoreEntry.put("isCorrect", isCorrect);
             userEnumScore.add(scoreEntry);
 
+            totalScore += questionScore; // accumulate score for each correct answer
         }
-        saveScoreToDb();
-        Log.d("Enumeration", "Your Score is " + score);
+        // Calculate the percentage of correct answers and scale it to a total of 100
+        double percentage = (double) totalScore / (double) activities.size() * 100;
+        // Round the percentage to the nearest integer
+        int roundedScore = (int) Math.round(percentage);
+        Log.d("Enumeration", "Your Score is " + roundedScore);
+        saveScoreToDb(roundedScore);
     }
 
-    private void saveScoreToDb(){
+
+    private void saveScoreToDb(final int roundedScore){
         HashMap<String, Object> enumUserScoreCollection = new HashMap<>();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null){
@@ -136,7 +139,7 @@ public class Enumeration extends AppCompatActivity {
                     if (studentName!=null){
                         if (taskName != null && key != null){
                             enumUserScoreCollection.put("studentId", currentUser.getUid());
-                            enumUserScoreCollection.put("score", score);
+                            enumUserScoreCollection.put("score", roundedScore);
                             enumUserScoreCollection.put("studentName", studentName);
                             enumUserScoreCollection.put("taskName", title);
                             enumUserScoreCollection.put("scores", userEnumScore);

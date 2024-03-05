@@ -73,12 +73,15 @@ class ActivitiesReviewerListItem extends BaseCourseContent implements Parcelable
     private String answer;
     private Map<String, String> choices;
 
+    private String userAnswer;
+
     public ActivitiesReviewerListItem(String activityId, String question,String questionType, String answer, Map<String, String> choices) {
         this.activityId = activityId;
         this.question = question;
         this.answer = answer;
         this.questionType = questionType;
         this.choices = choices;
+        this.userAnswer = "";
     }
 
     public String getActivityId() {
@@ -115,6 +118,13 @@ class ActivitiesReviewerListItem extends BaseCourseContent implements Parcelable
 
     public void setChoices(Map<String, String> choices) {
         this.choices = choices;
+    }
+
+    public String getUserAnswer(){
+        return userAnswer;
+    }
+    public void setUserAnswer(String userAnswer) {
+        this.userAnswer = userAnswer;
     }
 
     protected ActivitiesReviewerListItem(Parcel in) {
