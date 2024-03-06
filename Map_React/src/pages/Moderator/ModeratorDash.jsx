@@ -30,13 +30,13 @@ import axios from "axios";
 
 function ModeratorDashboard() {
   const [showModal, setShowModal] = useState(false);
-  const [editingUser, setEditingUser] = useState(null); // State to track the user being edited
+  const [editingUser, setEditingUser] = useState(null);
   const [students, setStudents] = useState([]);
+  const [selectedRole, setSelectedRole] = useState("Student"); // State to track selected role
   const nameRef = useRef(null);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const studentNoRef = useRef(null);
-  const roleRef = useRef(null);
   const [sortBy, setSortBy] = useState("");
   const [sortLabel, setSortLabel] = useState("Sort by");
 
@@ -45,6 +45,7 @@ function ModeratorDashboard() {
 
     onValue(studentsRef, (snapshot) => {
       const studentsData = snapshot.val();
+      
       if (studentsData) {
         const studentsArray = Object.values(studentsData);
         setStudents(studentsArray);
@@ -61,7 +62,7 @@ function ModeratorDashboard() {
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
     const studentNo = studentNoRef.current.value;
-    const role = roleRef.current.checked ? "Professor" : "Student";
+    const role = selectedRole === "Professor" ? "Professor" : "Student";
 
     //FIREBASE USER CREATION
     createUserWithEmailAndPassword(auth, email, password)
@@ -172,7 +173,7 @@ function ModeratorDashboard() {
     const newName = nameRef.current.value;
     const newEmail = emailRef.current.value;
     const newStudentNo = studentNoRef.current.value;
-    const newRole = roleRef.current.checked ? "Professor" : "Student";
+    const newRole = selectedRole === "Professor" ? "Professor" : "Student";
 
     const updatedUser = {
       name: newName,
@@ -362,7 +363,7 @@ function ModeratorDashboard() {
               <Form.Label>Student Number</Form.Label>
               <Form.Control
                 type="number"
-                disabled={editingUser !== null}
+                disabled={editingUser !== null || selectedRole === "Professor"}
                 ref={studentNoRef}
                 defaultValue={editingUser ? editingUser.studentNo : ""}
               />
@@ -396,10 +397,8 @@ function ModeratorDashboard() {
                   label="Student"
                   name="role"
                   id="student"
-                  defaultChecked={
-                    !editingUser || editingUser.role === "Student"
-                  }
-                  ref={roleRef}
+                  defaultChecked={selectedRole === "Student"}
+                  onChange={() => setSelectedRole("Student")}
                 />
                 <Form.Check
                   inline
@@ -407,10 +406,8 @@ function ModeratorDashboard() {
                   label="Professor"
                   name="role"
                   id="professor"
-                  defaultChecked={
-                    editingUser && editingUser.role === "Professor"
-                  }
-                  ref={roleRef}
+                  defaultChecked={selectedRole === "Professor"}
+                  onChange={() => setSelectedRole("Professor")}
                 />
               </div>
             </Form.Group>
@@ -439,3 +436,4 @@ function ModeratorDashboard() {
 }
 
 export default ModeratorDashboard;
+
