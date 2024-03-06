@@ -57,7 +57,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="331dp"
+        android:layout_width="329dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="51dp"
         android:orientation="vertical"
@@ -72,7 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:background="@color/blue"
+            android:background="@drawable/rounded_button"
             android:text="Message" />
 
         <Button
@@ -80,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:background="@color/blue"
+            android:background="@drawable/rounded_button"
             android:text="Grades" />
 
         <Button
@@ -88,7 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:background="@color/blue"
+            android:background="@drawable/rounded_button"
             android:text="Settings" />
 
         <Button
@@ -96,14 +96,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:background="@color/blue"
+            android:background="@drawable/rounded_button"
             android:text="Feedback" />
 
         <Button
             android:id="@+id/logoutBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/red"
+            android:background="@drawable/rounded_red_button"
             android:text="Logout" />
     </LinearLayout>
 
@@ -111,8 +111,9 @@
         android:id="@+id/toggleBio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="27dp"
+        android:layout_marginTop="10dp"
         android:text="ToggleButton"
+        app:layout_constraintBottom_toTopOf="@+id/textView3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -122,8 +123,7 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="19dp"
-        android:layout_marginBottom="64dp"
+        android:layout_marginBottom="40dp"
         android:text="Biometrics"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"

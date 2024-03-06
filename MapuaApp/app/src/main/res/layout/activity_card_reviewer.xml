@@ -43,7 +43,7 @@
             android:text="Flash Card"
             tools:layout_editor_absoluteX="127dp"
             tools:layout_editor_absoluteY="225dp"
-            android:background="@color/blue"/>
+            android:background="@drawable/rounded_button"/>
 
         <Button
             android:id="@+id/multipleChoice"
@@ -53,7 +53,7 @@
             android:text="Multiple Choice"
             tools:layout_editor_absoluteX="133dp"
             tools:layout_editor_absoluteY="304dp"
-            android:background="@color/blue"/>
+            android:background="@drawable/rounded_button"/>
 
         <Button
             android:id="@+id/identification"
@@ -63,7 +63,7 @@
             android:text="Identification"
             tools:layout_editor_absoluteX="136dp"
             tools:layout_editor_absoluteY="408dp"
-            android:background="@color/blue"/>
+            android:background="@drawable/rounded_button"/>
 
         <Button
             android:id="@+id/enumeration"
@@ -73,7 +73,7 @@
             android:text="Enumeration"
             tools:layout_editor_absoluteX="136dp"
             tools:layout_editor_absoluteY="408dp"
-            android:background="@color/blue"/>
+            android:background="@drawable/rounded_button"/>
 
         <Button
             android:id="@+id/practiceQuestion"
@@ -83,7 +83,7 @@
             android:text="Practice Question"
             tools:layout_editor_absoluteX="141dp"
             tools:layout_editor_absoluteY="489dp"
-            android:background="@color/blue"/>
+            android:background="@drawable/rounded_button"/>
 
         <Button
             android:id="@+id/videoActivity"
@@ -93,7 +93,7 @@
             android:text="Video Activity"
             tools:layout_editor_absoluteX="141dp"
             tools:layout_editor_absoluteY="489dp"
-            android:background="@color/blue"/>
+            android:background="@drawable/rounded_button"/>
 
 
     </LinearLayout>

@@ -12,7 +12,7 @@
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
+            android:background="@color/blue"
             app:tabMode="scrollable"
             app:tabGravity="fill" />
 

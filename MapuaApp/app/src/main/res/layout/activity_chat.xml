@@ -21,15 +21,17 @@
         android:layout_width="271dp"
         android:layout_height="56dp"
         android:hint="Type a message..."
+        android:textColorHint="@color/black"
         android:inputType="textMultiLine"
         android:maxLines="5"
         android:minLines="1"
         android:scrollbars="vertical"
-        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline12"
+        app:layout_constraintHorizontal_bias="0.551"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline11" />
+        app:layout_constraintTop_toTopOf="@+id/guideline11"
+        app:layout_constraintVertical_bias="0.511" />
 
     <Button
         android:id="@+id/buttonSend"
@@ -42,7 +44,8 @@
         app:layout_constraintHorizontal_bias="0.304"
         app:layout_constraintStart_toStartOf="@+id/guideline12"
         app:layout_constraintTop_toTopOf="@+id/guideline11"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        android:background="@drawable/rounded_button"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline11"
