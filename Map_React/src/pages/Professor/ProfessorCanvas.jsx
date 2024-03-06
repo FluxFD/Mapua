@@ -63,6 +63,10 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
 
   function modifyDateString(dateString) {
     const dateObj = new Date(dateString);
+    if (isNaN(dateObj.getTime())) {
+      // If not a valid date, return null or throw an error, depending on your requirements
+      return null; // You can change this to throw new Error("Invalid date string");
+    }
     dateObj.setUTCHours(dateObj.getUTCHours() + 8); // Adjust to UTC+8 timezone
     const isoDate = dateObj.toISOString().split("T")[0]; // Extract YYYY-MM-DD
     return isoDate;
