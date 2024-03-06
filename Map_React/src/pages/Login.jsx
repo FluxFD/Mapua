@@ -20,38 +20,38 @@ function LoginPage() {
     }
   }, []);
 
-  // const signIn = async (email, password) => {
-  //   try {
-  //     const userCredential = await signInWithEmailAndPassword(
-  //       auth,
-  //       email,
-  //       password
-  //     );
-  //     const user = userCredential.user;
+  const signIn = async (email, password) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
 
-  //     const studentRef = ref(database, `students/${user.uid}/role`);
-  //     const roleSnapshot = await get(studentRef);
-  //     const role = roleSnapshot.val();
+      const studentRef = ref(database, `students/${user.uid}/role`);
+      const roleSnapshot = await get(studentRef);
+      const role = roleSnapshot.val();
 
-  //     switch (role) {
-  //       case "Professor":
-  //         navigate("/ProfessorMain");
-  //         break;
-  //       case "Student":
-  //         navigate("/Main");
-  //         break;
-  //       case "Moderator":
-  //         navigate("/ModeratorMain");
-  //         break;
-  //       default:
-  //         console.error("Unknown role:", role);
-  //         break;
-  //     }
-  //   } catch (error) {
-  //     console.error("Authentication Error:", error.message);
-  //     throw error;
-  //   }
-  // };
+      switch (role) {
+        case "Professor":
+          navigate("/ProfessorMain");
+          break;
+        case "Student":
+          navigate("/Main");
+          break;
+        case "Moderator":
+          navigate("/ModeratorMain");
+          break;
+        default:
+          console.error("Unknown role:", role);
+          break;
+      }
+    } catch (error) {
+      console.error("Authentication Error:", error.message);
+      throw error;
+    }
+  };
   
   const handleLogin = async (e) => {
     e.preventDefault();
