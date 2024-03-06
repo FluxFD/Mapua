@@ -20,14 +20,17 @@
 
         <Button
             android:id="@+id/noTimerBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="Without Timer" />
+            android:text="Without Timer"
+            android:background="@color/blue"
+            android:layout_marginBottom="20dp"/>
 
         <Button
             android:id="@+id/timerBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="With Timer" />
+            android:text="With Timer"
+            android:background="@color/blue"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

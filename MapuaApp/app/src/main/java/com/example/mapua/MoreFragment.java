@@ -69,6 +69,7 @@ public class MoreFragment extends Fragment {
         TextView studentNumberTextView = view.findViewById(R.id.studentNumber);
         Button logoutButton = view.findViewById(R.id.logoutBtn);
         Button messageButton = view.findViewById(R.id.messageBtn);
+        Button gradeButton = view.findViewById(R.id.gradeBtn);
 
         ToggleButton bioBtn = view.findViewById(R.id.toggleBio);
 
@@ -103,6 +104,13 @@ public class MoreFragment extends Fragment {
 
         messageButton.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), MessageActivity.class);
+            intent.putExtra("username", username);
+            intent.putExtra("usernum", usernum);
+            startActivity(intent);
+        });
+
+        gradeButton.setOnClickListener(v->{
+            Intent intent = new Intent(getContext(), AllGradeBookActivity.class);
             intent.putExtra("username", username);
             intent.putExtra("usernum", usernum);
             startActivity(intent);
