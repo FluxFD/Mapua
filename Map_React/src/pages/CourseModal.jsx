@@ -1,5 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Modal, Button, Tab, Tabs, Card, Table } from "react-bootstrap";
+import {
+  Modal,
+  Button,
+  Tab,
+  Tabs,
+  Card,
+  Table,
+  Offcanvas,
+} from "react-bootstrap";
 import ScoreOffcanvas from "../components/ScoreOffCanvas";
 import ActivityOptionsOffcanvas from "../components/ActivityOptionOffCanvas";
 import { database } from "../services/Firebase";
@@ -12,8 +20,11 @@ import GradingIcon from "@mui/icons-material/Grading";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import SlideshowIcon from "@mui/icons-material/Slideshow";
+import { useNavigate } from "react-router-dom";
 
 function CourseModal({ course, show, handleClose }) {
+  const navigate = useNavigate();
+
   const { currentUser } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [userScores, setUserScores] = useState({});
@@ -177,11 +188,21 @@ function CourseModal({ course, show, handleClose }) {
 
   return (
     <>
-      <Modal show={show} onHide={handleClose} size="xl" backdrop="static">
-        <Modal.Header closeButton>
-          <Modal.Title>{course.id}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+      <Offcanvas
+        show={show}
+        onHide={handleClose}
+        placement="end"
+        backdrop="static"
+        style={{
+          width: "85%",
+          borderTopLeftRadius: "20px",
+          borderBottomLeftRadius: "20px",
+        }}
+      >
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title>{course.id}</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
           <div className="mt-1">
             <Tabs
               defaultActiveKey="home"
@@ -312,13 +333,13 @@ function CourseModal({ course, show, handleClose }) {
               </Tab>
             </Tabs>
           </div>
-        </Modal.Body>
-        <Modal.Footer>
+        </Offcanvas.Body>
+        {/* <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-        </Modal.Footer>
-      </Modal>
+        </Modal.Footer> */}
+      </Offcanvas>
 
       <ScoreOffcanvas
         show={showScore}
