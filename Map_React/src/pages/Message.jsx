@@ -121,7 +121,10 @@ function Message() {
       <Card className="mt-5" style={{ padding: "20px" }}>
         <Row>
           <Col sm={4}>
-            <Card className="mt-3" style={{ height: "80vh" }}>
+            <Card
+              className="mt-3"
+              style={{ height: "80vh", overflowX: "auto" }}
+            >
               <Card.Body>
                 <h1>Message</h1>
                 <hr />
