@@ -1,6 +1,7 @@
 package com.example.mapua;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -76,8 +77,13 @@ public class Enumeration extends AppCompatActivity {
         enumSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 checkEnumAns();
+
+
+                finish();
             }
+
         });
 
 

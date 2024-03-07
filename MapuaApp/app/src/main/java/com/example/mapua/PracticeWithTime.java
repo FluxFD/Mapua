@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -145,6 +146,8 @@ public class PracticeWithTime extends AppCompatActivity {
                 }
                 Log.d("PracticeWithTime", "Score: " + score);
                 saveScore(score);
+
+                finish();
             }
         });
 

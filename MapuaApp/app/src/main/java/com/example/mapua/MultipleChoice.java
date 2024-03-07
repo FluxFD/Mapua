@@ -58,6 +58,7 @@ public class MultipleChoice extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 saveScore();
+                finish();
             }
         });
 
