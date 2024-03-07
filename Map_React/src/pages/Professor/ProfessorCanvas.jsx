@@ -13,6 +13,7 @@ import {
 import "../../index.css";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import ArticleIcon from "@mui/icons-material/Article";
+import PublicIcon from '@mui/icons-material/Public';
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
@@ -407,6 +408,14 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       onClick={handleOpenCreateTaskModal}
                     >
                       <AddIcon /> Create Task
+                    </Link>
+                    <Link
+                      className="d-flex align-items-center"
+                      underline="hover"
+                      color="text.primary"
+                      href="http://localhost:3080/static/web-ui/server/1/projects"
+                    >
+                      <PublicIcon /> GNS3 Web GUI
                     </Link>
                   </Breadcrumbs>
 
