@@ -36,16 +36,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Title: "
+            android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/black"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/textViewActivitiesList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Activities: "
+            android:textColor="@color/black"
             android:textSize="14sp"
-            android:textColor="@color/black"/>
+            android:visibility="gone" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -9,8 +9,8 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
-        android:layout_width="388dp"
-        android:layout_height="243dp"
+        android:layout_width="389dp"
+        android:layout_height="554dp"
         android:layout_margin="8dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp"
@@ -70,8 +70,8 @@
                     android:layout_below="@id/answerTextView"
                     android:layout_alignParentStart="true"
                     android:layout_marginRight="20dp"
-                    android:text="Previous"
-                    android:background="@drawable/rounded_button"/>
+                    android:background="@drawable/rounded_button"
+                    android:text="Previous" />
 
                 <Button
                     android:id="@+id/nextButton"
@@ -101,7 +101,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="86dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="148dp"
         android:text="Click the question to reveal the answer"
         android:textColor="@color/black"

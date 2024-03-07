@@ -137,7 +137,7 @@ public class MoreFragment extends Fragment {
 
     private void logout() {
         // Add logout logic here, for example, sign out from Firebase Authentication
-        FirebaseAuth.getInstance().signOut();
+//        FirebaseAuth.getInstance().signOut();
 
         // Redirect to login activity or any other appropriate action
         Intent intent = new Intent(getActivity(), MainActivity.class);
