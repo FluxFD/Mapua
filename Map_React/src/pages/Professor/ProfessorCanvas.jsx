@@ -8,29 +8,25 @@ import {
   Card,
   Offcanvas,
   Table,
-  Row,
 } from "react-bootstrap";
 import "../../index.css";
-import ListAltIcon from "@mui/icons-material/ListAlt";
 import ArticleIcon from "@mui/icons-material/Article";
-import PublicIcon from '@mui/icons-material/Public';
+import PublicIcon from "@mui/icons-material/Public";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import Typography from "@mui/material/Typography";
 import "../../index.css";
 
 import CreateTaskModal from "./ModalCreateTask";
 import CreateAnnouncementModal from "./CreateAnnouncement";
-import ReviewerModal from "./ReviewerModal";
-import EnumerationModal from "./EnumerationModal";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import ReviewerActivityModal from "./ReviewerActivityModal";
 import ProfScoreView from "./ProfessorScoreView";
+import CreateFolder from "./CreateFolder";
+import FolderProf from "./CourseContent/ProfessorFolder";
 
 // Firebase
 import { database, storage, auth } from "../../services/Firebase";
@@ -50,30 +46,24 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const fileInputRef = useRef(null);
   const [title, setTitle] = useState("");
   const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
+  const [showCreateFolder, setShowCreateFolder] = useState(false);
   const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [scores, setScores] = useState([]);
-  const [selectedReviewer, setSelectedReviewer] = useState(null);
-  const [selectedEnumeration, setSelectedEnumeration] = useState(null);
-  const [enumerations, setEnumerations] = useState([]);
-  const [enumActivities, setEnumActivities] = useState({});
   const calendarRef = useRef(null);
-  const [calendarKey, setCalendarKey] = useState(Date.now()); // Key for FullCalendar component
-  const [tasks, setTasks] = useState([]);
+  const [calendarKey, setCalendarKey] = useState(Date.now());
+  const [folders, setFolders] = useState([]);
 
   function modifyDateString(dateString) {
     const dateObj = new Date(dateString);
     if (isNaN(dateObj.getTime())) {
-      // If not a valid date, return null or throw an error, depending on your requirements
-      return null; // You can change this to throw new Error("Invalid date string");
+      return null;
     }
-    dateObj.setUTCHours(dateObj.getUTCHours() + 8); // Adjust to UTC+8 timezone
-    const isoDate = dateObj.toISOString().split("T")[0]; // Extract YYYY-MM-DD
+    dateObj.setUTCHours(dateObj.getUTCHours() + 8);
+    const isoDate = dateObj.toISOString().split("T")[0];
     return isoDate;
   }
-  const [selectedReviewerActivity, setSelectedReviewerActivity] =
-    useState(null);
   const [selectedScore, setSelectedScore] = useState(null);
 
   const handleOpenScoreView = (score) => {
@@ -92,36 +82,20 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
     setShowCreateTaskModal(false);
   };
 
+  const handleOpenCreateFolder = () => {
+    setShowCreateFolder(true);
+  };
+
+  const handleCloseCreateFolder = () => {
+    setShowCreateFolder(false);
+  };
+
   const handleOpenAnnouncementModal = () => {
     setShowAnnouncementModal(true);
   };
 
   const handleCloseAnnouncementModal = () => {
     setShowAnnouncementModal(false);
-  };
-
-  const handleOpenReviewerModal = (reviewer) => {
-    setSelectedReviewer(reviewer);
-  };
-
-  const handleCloseReviewerModal = () => {
-    setSelectedReviewer(null);
-  };
-
-  const handleOpenEnumerationrModal = (enumerationId) => {
-    setSelectedEnumeration(enumerationId);
-  };
-
-  const handleCloseEnumerationModal = () => {
-    setSelectedEnumeration(null);
-  };
-
-  const handleOpenReviewerActivityModal = (activity) => {
-    setSelectedReviewerActivity(activity);
-  };
-
-  const handleCloseReviewerActivityModal = () => {
-    setSelectedReviewerActivity(null);
   };
 
   const handleDeleteConfirmation = (itemId) => {
@@ -131,10 +105,9 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
 
   useEffect(() => {
     const reviewersRef = ref(database, "Reviewer");
-    const reviewerActivityRef = ref(database, "ReviewerActivity");
     const announcementsRef = ref(database, "Announcement");
     const scoresRef = ref(database, "Score");
-    const enumerationsRef = ref(database, "Enumeration");
+    const foldersRef = ref(database, "Folders");
 
     const unsubscribeReviewers = onValue(reviewersRef, (snapshot) => {
       const reviewersData = snapshot.val() || {};
@@ -148,42 +121,6 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
 
       setReviewers(reviewersArray);
     });
-
-    const unsubscribeReviewerActivity = onValue(
-      reviewerActivityRef,
-      (snapshot) => {
-        const reviewerActivityData = snapshot.val() || {};
-        const reviewerActivityArray = [];
-
-        Object.entries(reviewerActivityData).forEach(
-          ([activityId, activity]) => {
-            if (activity.Course === selectedCourse.uid) {
-              reviewerActivityArray.push({ id: activityId, ...activity });
-            }
-          }
-        );
-
-        reviewerActivityArray.forEach(async (activity) => {
-          const activitiesRef = ref(
-            database,
-            `ReviewerActivity/${activity.id}/activities`
-          );
-          const activitiesSnapshot = await get(activitiesRef);
-          const activitiesData = activitiesSnapshot.val() || {};
-
-          const activitiesArray = Object.entries(activitiesData).map(
-            ([activityId, activityData]) => ({
-              id: activityId,
-              ...activityData,
-            })
-          );
-
-          activity.activities = activitiesArray;
-        });
-
-        setReviewerActivity(reviewerActivityArray);
-      }
-    );
 
     const unsubscribeAnnouncements = onValue(announcementsRef, (snapshot) => {
       const announcementsData = snapshot.val() || {};
@@ -216,37 +153,25 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
       setScores(scoresArray);
     });
 
-    const unsubscribeEnumerations = onValue(enumerationsRef, (snapshot) => {
-      const enumerationsData = snapshot.val() || {};
-      const enumerationsArray = [];
-      const activitiesObject = {};
-
-      Object.entries(enumerationsData).forEach(
-        ([enumerationId, enumeration]) => {
-          if (enumeration.Course === selectedCourse.uid) {
-            enumerationsArray.push({ id: enumerationId, ...enumeration });
-            const enumActivitiesRef = ref(
-              database,
-              `Enumeration/${enumerationId}/activities`
-            );
-            onValue(enumActivitiesRef, (snapshot) => {
-              const activitiesData = snapshot.val() || {};
-              activitiesObject[enumerationId] = activitiesData;
-              setEnumActivities(activitiesObject);
-            });
-          }
-        }
+    const unsubscribeFolders = onValue(foldersRef, (snapshot) => {
+      const foldersData = snapshot.val() || {};
+      const foldersArray = Object.entries(foldersData).flatMap(
+        ([course, folders]) =>
+          Object.entries(folders).map(([folderId, folder]) => ({
+            id: folderId,
+            ...folder,
+            Course: course,
+          }))
       );
-
-      setEnumerations(enumerationsArray);
+      setFolders(foldersArray);
+      console.log("Hello", foldersArray);
     });
 
     return () => {
       unsubscribeReviewers();
-      unsubscribeReviewerActivity();
       unsubscribeAnnouncements();
       unsubscribeScores();
-      unsubscribeEnumerations();
+      unsubscribeFolders();
     };
   }, [selectedCourse.uid]);
 
@@ -315,14 +240,8 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
         case "Reviewer":
           itemRef = ref(database, `Reviewer/${id}`);
           break;
-        case "ReviewerActivity":
-          itemRef = ref(database, `ReviewerActivity/${id}`);
-          break;
         case "Announcement":
           itemRef = ref(database, `Announcement/${id}`);
-          break;
-        case "Enumeration":
-          itemRef = ref(database, `Enumeration/${id}`);
           break;
         default:
           console.error("Invalid item type for deletion");
@@ -347,20 +266,6 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
       setCalendarKey(Date.now()); // Update calendar key to force remount
     }
   };
-
-  // const tasksRef = ref(database, "ReviewerActivity");
-  // onValue(tasksRef, (snapshot) => {
-  //   const tasksData = snapshot.val() || {};
-  //   const tasksArray = [];
-
-  //   Object.entries(tasksData).forEach(([taskId, task]) => {
-  //     if (task.Course === selectedCourse.uid) {
-  //       tasksArray.push({ id: taskId, ...task });
-  //     }
-  //   });
-
-  //   setTasks(tasksArray);
-  // });
 
   return (
     <>
@@ -413,6 +318,14 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       className="d-flex align-items-center"
                       underline="hover"
                       color="text.primary"
+                      onClick={handleOpenCreateFolder}
+                    >
+                      <AddIcon /> Create Folder
+                    </Link>
+                    <Link
+                      className="d-flex align-items-center"
+                      underline="hover"
+                      color="text.primary"
                       href="http://localhost:3080/static/web-ui/server/1/projects"
                     >
                       <PublicIcon /> GNS3 Web GUI
@@ -424,121 +337,17 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     onHide={handleCloseCreateTaskModal}
                     selectedCourse={selectedCourse}
                   />
+                  <CreateFolder
+                    show={showCreateFolder}
+                    onHide={handleCloseCreateFolder}
+                    selectedCourse={selectedCourse}
+                  />
+
                   <hr />
-                  {reviewers.map((reviewer) => (
-                    <Card
-                      onClick={() => handleOpenReviewerModal(reviewer)}
-                      key={reviewer.id}
-                      style={{ cursor: "pointer" }}
-                      className="title-header mt-3"
-                    >
-                      <Card.Body>
-                        <div className="d-flex align-items-center justify-content-between">
-                          <span>
-                            <ArticleIcon className="me-2" />
-                            {reviewer.title} - Due Date: {reviewer.date}
-                          </span>
-
-                          <DeleteIcon
-                            color="error"
-                            className="cursor-pointer"
-                            onClick={() =>
-                              handleDeleteConfirmation({
-                                id: reviewer.id,
-                                type: "Reviewer",
-                              })
-                            }
-                          />
-                        </div>
-                      </Card.Body>
-                    </Card>
-                  ))}
-
-                  {selectedReviewer && (
-                    <ReviewerModal
-                      show={selectedReviewer !== null}
-                      onHide={handleCloseReviewerModal}
-                      reviewer={selectedReviewer}
-                    />
-                  )}
-
-                  {reviewerActivity.map((activity) => (
-                    <Card
-                      key={activity.id}
-                      className="title-header mt-3 cursor-pointer"
-                      onClick={() => handleOpenReviewerActivityModal(activity)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <Card.Body>
-                        <div className="d-flex align-items-center justify-content-between">
-                          <span>
-                            <ListAltIcon className="me-2" />
-                            {activity.title} - Date: {activity.date}
-                          </span>
-                          <div className="d-flex align-items-center">
-                            <DeleteIcon
-                              color="error"
-                              className="cursor-pointer"
-                              onClick={() =>
-                                handleDeleteConfirmation({
-                                  id: activity.id,
-                                  type: "ReviewerActivity",
-                                })
-                              }
-                            />
-                          </div>
-                        </div>
-                      </Card.Body>
-                    </Card>
-                  ))}
-
-                  {selectedReviewerActivity && (
-                    <ReviewerActivityModal
-                      show={selectedReviewerActivity !== null}
-                      onHide={handleCloseReviewerActivityModal}
-                      activity={selectedReviewerActivity}
-                    />
-                  )}
-
-                  {enumerations.map((enumeration) => (
-                    <Card
-                      key={enumeration.id}
-                      className="title-header mt-3 cursor-pointer"
-                      style={{ cursor: "pointer" }}
-                    >
-                      <Card.Body
-                        onClick={() =>
-                          handleOpenEnumerationrModal(enumeration.id)
-                        }
-                      >
-                        <div className="d-flex align-items-center justify-content-between">
-                          <span>
-                            <ListAltIcon className="me-2" />
-                            {enumeration.title} - Date: {enumeration.date}
-                          </span>
-                          <div className="d-flex align-items-center">
-                            <DeleteIcon
-                              color="error"
-                              className="cursor-pointer"
-                              onClick={() =>
-                                handleDeleteConfirmation({
-                                  id: enumeration.id,
-                                  type: "Enumeration",
-                                })
-                              }
-                            />
-                          </div>
-                        </div>
-                      </Card.Body>
-                      {selectedEnumeration && (
-                        <EnumerationModal
-                          show={selectedEnumeration === enumeration.id}
-                          onHide={handleCloseEnumerationModal}
-                          enumeration={enumeration}
-                        />
-                      )}
-                    </Card>
-                  ))}
+                  <FolderProf
+                    folders={folders}
+                    selectedCourse={selectedCourse}
+                  />
                 </Tab>
                 <Tab eventKey="announcement" title="Announcement">
                   <Breadcrumbs
