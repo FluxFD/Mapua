@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from 'react'
 import {
   Modal,
   Button,
@@ -7,183 +7,193 @@ import {
   Card,
   Table,
   Offcanvas,
-} from "react-bootstrap";
-import ScoreOffcanvas from "../components/ScoreOffCanvas";
-import ActivityOptionsOffcanvas from "../components/ActivityOptionOffCanvas";
-import { database } from "../services/Firebase";
-import { ref, onValue } from "firebase/database";
-import useAuth from "../services/Auth";
-import ListAltIcon from "@mui/icons-material/ListAlt";
-import CampaignIcon from "@mui/icons-material/Campaign";
-import ArticleIcon from "@mui/icons-material/Article";
-import GradingIcon from "@mui/icons-material/Grading";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import SlideshowIcon from "@mui/icons-material/Slideshow";
-import { useNavigate } from "react-router-dom";
+} from 'react-bootstrap'
+import ScoreOffcanvas from '../components/ScoreOffCanvas'
+import ActivityOptionsOffcanvas from '../components/ActivityOptionOffCanvas'
+import { database } from '../services/Firebase'
+import { ref, onValue } from 'firebase/database'
+import useAuth from '../services/Auth'
+import CampaignIcon from '@mui/icons-material/Campaign'
+import FullCalendar from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import { useNavigate } from 'react-router-dom'
+
+// CourseModal components
+import FoldersList from '../courseModalContent/FoldersList'
+import TaskList from '../courseModalContent/TaskList'
+import ReviewersList from '../courseModalContent/ReviewersList'
+import VideoActivitiesList from '../courseModalContent/VideoActivitiesList'
 
 function CourseModal({ course, show, handleClose }) {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  const { currentUser } = useAuth();
-  const [tasks, setTasks] = useState([]);
-  const [userScores, setUserScores] = useState({});
-  const [userName, setUserName] = useState("");
-  const [showScore, setShowScore] = useState(false);
-  const [scoreValue, setScoreValue] = useState(0);
-  const [taskName, setTaskName] = useState("");
-  const [announcements, setAnnouncements] = useState([]);
-  const [reviewers, setReviewers] = useState([]);
-  const [reviewerActivities, setReviewerActivities] = useState([]);
-  const [videoActivities, setVideoActivities] = useState([]);
-  const [selectedActivity, setSelectedActivity] = useState(null);
-  const [calendarKey, setCalendarKey] = useState(Date.now()); // Key for FullCalendar component
+  const { currentUser } = useAuth()
+  const [tasks, setTasks] = useState([])
+  const [folderedTask, setFolderedTask] = useState([])
+  const [userScores, setUserScores] = useState({})
+  const [userName, setUserName] = useState('')
+  const [showScore, setShowScore] = useState(false)
+  const [scoreValue, setScoreValue] = useState(0)
+  const [taskName, setTaskName] = useState('')
+  const [announcements, setAnnouncements] = useState([])
+  const [reviewers, setReviewers] = useState([])
+  const [reviewerActivities, setReviewerActivities] = useState([])
+  const [videoActivities, setVideoActivities] = useState([])
+  const [selectedActivity, setSelectedActivity] = useState(null)
+  const [calendarKey, setCalendarKey] = useState(Date.now()) // Key for FullCalendar component
+  const [folders, setFolders] = useState([])
+  const [openFolderId, setOpenFolderId] = useState(null)
 
-  const calendarRef = useRef(null);
+  const calendarRef = useRef(null)
   // const [rerenderCalendar, setRerenderCalendar] = useState(false); // State to trigger rerender of calendar
 
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser) return
 
-    const scoresRef = ref(database, "Score");
+    const scoresRef = ref(database, 'Score')
     onValue(scoresRef, (snapshot) => {
-      const scoresData = snapshot.val() || {};
-      setUserScores(scoresData);
-      console.log(scoresData);
-    });
+      const scoresData = snapshot.val() || {}
+      setUserScores(scoresData)
+      console.log(scoresData)
+    })
 
-    const userRef = ref(database, `students/${currentUser.uid}/name`);
+    const userRef = ref(database, `students/${currentUser.uid}/name`)
     onValue(userRef, (snapshot) => {
-      const name = snapshot.val();
-      setUserName(name);
-    });
+      const name = snapshot.val()
+      setUserName(name)
+    })
 
-    const tasksRef = ref(database, "Task");
+    const foldersRef = ref(database, `Folders/${course.id}`)
+    onValue(foldersRef, (snapshot) => {
+      const folderData = snapshot.val() || {}
+      const folderArray = Object.entries(folderData).map(
+        ([folderId, folder]) => ({
+          id: folderId,
+          ...folder,
+        })
+      )
+
+      setFolders(folderArray)
+    })
+
+    const tasksRef = ref(database, 'Tasks')
     onValue(tasksRef, (snapshot) => {
-      const tasksData = snapshot.val() || {};
-      const tasksArray = [];
+      const tasksData = snapshot.val() || {}
+      const tasksArray = []
 
       Object.entries(tasksData).forEach(([taskId, task]) => {
-        if (task.Course === course.id) {
-          tasksArray.push({ id: taskId, ...task });
+        if (task.Course === course.id && !task.FolderName) {
+          tasksArray.push({ id: taskId, ...task })
         }
-      });
+      })
 
-      setTasks(tasksArray);
-    });
+      setTasks(tasksArray)
+    })
 
-    const announcementsRef = ref(database, "Announcement");
+    const FolderedTasksRef = ref(database, 'Tasks')
+    onValue(FolderedTasksRef, (snapshot) => {
+      const tasksData = snapshot.val() || {}
+      const tasksArray = []
+
+      Object.entries(tasksData).forEach(([taskId, task]) => {
+        if (task.Course === course.id && task.FolderName) {
+          tasksArray.push({ id: taskId, ...task })
+        }
+      })
+
+      setFolderedTask(tasksArray)
+    })
+
+    const announcementsRef = ref(database, 'Announcement')
     onValue(announcementsRef, (snapshot) => {
-      const announcementsData = snapshot.val() || {};
-      const announcementsArray = [];
+      const announcementsData = snapshot.val() || {}
+      const announcementsArray = []
 
       Object.entries(announcementsData).forEach(
         ([announcementId, announcement]) => {
           if (announcement.Course === course.id) {
-            announcementsArray.push({ id: announcementId, ...announcement });
+            announcementsArray.push({ id: announcementId, ...announcement })
           }
         }
-      );
+      )
 
-      setAnnouncements(announcementsArray);
-    });
+      setAnnouncements(announcementsArray)
+    })
 
-    const reviewersRef = ref(database, "Reviewer");
+    const reviewersRef = ref(database, 'Reviewer')
     onValue(reviewersRef, (snapshot) => {
-      const reviewersData = snapshot.val() || {};
-      const reviewersArray = [];
+      const reviewersData = snapshot.val() || {}
+      const reviewersArray = []
 
       Object.entries(reviewersData).forEach(([reviewerId, reviewer]) => {
         if (reviewer.Course === course.id) {
-          reviewersArray.push({ id: reviewerId, ...reviewer });
+          reviewersArray.push({ id: reviewerId, ...reviewer })
         }
-      });
+      })
 
-      setReviewers(reviewersArray);
-    });
+      setReviewers(reviewersArray)
+    })
 
-    const reviewerActivityRef = ref(database, "ReviewerActivity");
-    onValue(reviewerActivityRef, (snapshot) => {
-      const reviewerActivityData = snapshot.val() || {};
-      const reviewerActivityArray = [];
-
-      Object.entries(reviewerActivityData).forEach(([activityId, activity]) => {
-        if (activity.Course === course.id) {
-          reviewerActivityArray.push({ id: activityId, ...activity });
-        }
-      });
-
-      setReviewerActivities(reviewerActivityArray);
-    });
-
-    const videoActivityRef = ref(database, "VideoActivity");
+    const videoActivityRef = ref(database, 'VideoActivity')
     onValue(videoActivityRef, (snapshot) => {
       // Log the raw data received from Firebase
-      console.log("Raw Video Activity Data:", snapshot.val());
+      console.log('Raw Video Activity Data:', snapshot.val())
 
-      const videoActivityData = snapshot.val() || {};
-      const videoActivityArray = [];
+      const videoActivityData = snapshot.val() || {}
+      const videoActivityArray = []
 
       Object.entries(videoActivityData).forEach(([videoId, videoActivity]) => {
         if (videoActivity.Course === course.id) {
-          videoActivityArray.push({ id: videoId, ...videoActivity });
+          videoActivityArray.push({ id: videoId, ...videoActivity })
         }
-      });
+      })
 
-      setVideoActivities(videoActivityArray);
-    });
+      setVideoActivities(videoActivityArray)
+    })
 
-    return () => {};
-  }, [course.id, currentUser]);
-
-  // useEffect(() => {
-  //   if (rerenderCalendar && calendarRef.current) {
-  //     calendarRef.current.getApi().render(); // Manually trigger a rerender of the calendar
-  //     setRerenderCalendar(false); // Reset the state after rerendering
-  //   }
-  // }, [rerenderCalendar]);
+    return () => {}
+  }, [course.id, currentUser])
 
   const handleTabChange = (key) => {
-    if (key === "calendar") {
-      setCalendarKey(Date.now()); // Update calendar key to force remount
+    if (key === 'calendar') {
+      setCalendarKey(Date.now()) // Update calendar key to force remount
     }
-  };
+  }
 
   const handleClick = (taskId, taskName) => {
-    const userScoreKeys = Object.keys(userScores);
+    const userScoreKeys = Object.keys(userScores)
     const matchingScore = userScoreKeys.find((uid) => {
-      const score = userScores[uid];
-      return score.taskName === taskName && score.studentName === userName;
-    });
+      const score = userScores[uid]
+      return score.taskName === taskName && score.studentName === userName
+    })
 
     if (matchingScore) {
-      setShowScore(true);
-      setScoreValue(userScores[matchingScore].score);
-      setTaskName(taskName);
-      handleClose();
+      setShowScore(true)
+      setScoreValue(userScores[matchingScore].score)
+      setTaskName(taskName)
+      handleClose()
     } else {
-      window.location.href = `/task/${taskId}/${taskName}`;
+      window.location.href = `/task/${taskId}/${taskName}`
     }
-  };
+  }
 
   const handleReviewerClick = (fileUrl) => {
-    navigate(`/preview/${encodeURIComponent(fileUrl)}`);
-  };
+    navigate(`/preview/${encodeURIComponent(fileUrl)}`)
+  }
 
   const handleVideoClick = (videoActivity) => {
-    navigate(`/video/${videoActivity.title}`);
-  };
-
-  const handleActivityClick = (activity) => {
-    setSelectedActivity(activity);
-    handleClose();
-  };
+    navigate(`/video/${videoActivity.title}`)
+  }
 
   function modifyDateString(dateString) {
-    const dateObj = new Date(dateString);
-    dateObj.setUTCHours(dateObj.getUTCHours() + 8); // Adjust to UTC+8 timezone
-    const isoDate = dateObj.toISOString().split("T")[0]; // Extract YYYY-MM-DD
-    return isoDate;
+    const dateObj = new Date(dateString)
+    dateObj.setUTCHours(dateObj.getUTCHours() + 8) // Adjust to UTC+8 timezone
+    const isoDate = dateObj.toISOString().split('T')[0] // Extract YYYY-MM-DD
+    return isoDate
+  }
+
+  const handleToggle = (folderId) => {
+    setOpenFolderId(folderId === openFolderId ? null : folderId)
   }
 
   return (
@@ -194,9 +204,9 @@ function CourseModal({ course, show, handleClose }) {
         placement="end"
         backdrop="static"
         style={{
-          width: "85%",
-          borderTopLeftRadius: "20px",
-          borderBottomLeftRadius: "20px",
+          width: '85%',
+          borderTopLeftRadius: '20px',
+          borderBottomLeftRadius: '20px',
         }}
       >
         <Offcanvas.Header closeButton>
@@ -213,67 +223,26 @@ function CourseModal({ course, show, handleClose }) {
               <Tab eventKey="home" title="Content">
                 Course Content
                 <hr />
-                {/* Displaying tasks */}
-                {tasks.map((task) => (
-                  <Card
-                    style={{ cursor: "pointer" }}
-                    key={task.id}
-                    className="title-header mt-3"
-                    onClick={() => handleClick(task.id, task.taskName)}
-                  >
-                    <Card.Body>
-                      <ListAltIcon />
-                      {task.taskName} - Due Date: {task.dueDate}
-                    </Card.Body>
-                  </Card>
-                ))}
-                {/* Displaying reviewers */}
-                {reviewers.map((reviewer) => (
-                  <Card
-                    style={{ cursor: "pointer" }}
-                    key={reviewer.id}
-                    className="title-header mt-3"
-                    onClick={() => handleReviewerClick(reviewer.file)}
-                  >
-                    <Card.Body>
-                      <ArticleIcon />
-                      {reviewer.title}
-                    </Card.Body>
-                  </Card>
-                ))}
-                {/* Displaying ReviewerActivity */}
-                {reviewerActivities.map((activity) => (
-                  <Card
-                    style={{ cursor: "pointer" }}
-                    key={activity.id}
-                    className="title-header mt-3"
-                    onClick={() => handleActivityClick(activity)}
-                  >
-                    <Card.Body>
-                      <GradingIcon />
-                      {activity.title} - Date: {activity.date}
-                    </Card.Body>
-                  </Card>
-                ))}
-                {/* Displaying VideoAct */}
-                {videoActivities.map((videoActivity) => (
-                  <Card
-                    style={{ cursor: "pointer" }}
-                    key={videoActivity.id}
-                    className="title-header mt-3"
-                    onClick={() => handleVideoClick(videoActivity)}
-                  >
-                    <Card.Body>
-                      <SlideshowIcon />
-                      {videoActivity.title} - Date: {videoActivity.date}
-                    </Card.Body>
-                  </Card>
-                ))}
+                <FoldersList
+                  folders={folders}
+                  folderedTask={folderedTask}
+                  handleToggle={handleToggle}
+                  openFolderId={openFolderId}
+                />
+                <TaskList tasks={tasks} handleClick={handleClick} />
+                <ReviewersList
+                  reviewers={reviewers}
+                  handleReviewerClick={handleReviewerClick}
+                />
+                <VideoActivitiesList
+                  videoActivities={videoActivities}
+                  handleVideoClick={handleVideoClick}
+                />
               </Tab>
               <Tab eventKey="announcement" title="Announcement">
                 {announcements.map((announcement) => (
                   <Card
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: 'pointer' }}
                     key={announcement.id}
                     className="title-header mt-3"
                   >
@@ -285,12 +254,12 @@ function CourseModal({ course, show, handleClose }) {
                 ))}
               </Tab>
               <Tab eventKey="calendar" title="Calendar">
-                <div id="calendar" style={{ margin: "20px" }}>
+                <div id="calendar" style={{ margin: '20px' }}>
                   <FullCalendar
-                    key={calendarKey} // Key to force remounting of FullCalendar
+                    key={calendarKey}
                     ref={calendarRef}
                     plugins={[dayGridPlugin]}
-                    initialView={"dayGridWeek"}
+                    initialView={'dayGridWeek'}
                     height="69vh"
                     events={reviewerActivities.map((activities) => ({
                       title: activities.title,
@@ -300,7 +269,7 @@ function CourseModal({ course, show, handleClose }) {
                 </div>
               </Tab>
               <Tab eventKey="gradebook" title="Gradebook">
-                <div style={{ height: "69vh", overflowY: "auto" }}>
+                <div style={{ height: '69vh', overflowY: 'auto' }}>
                   <Table className="table" size="md">
                     <thead>
                       <tr>
@@ -316,16 +285,16 @@ function CourseModal({ course, show, handleClose }) {
                           // Find the corresponding score based on taskName
                           const score = Object.values(userScores).find(
                             (score) => score.taskName === task.taskName
-                          );
+                          )
                           return (
                             <tr key={task.title}>
                               <td>{task.title}</td>
                               {/* Display the due date from the task object */}
-                              <td>{task ? task.date : "-"}</td>
+                              <td>{task ? task.date : '-'}</td>
                               {/* <td>{score.status}</td> */}
-                              <td>{score ? score.score : "-"}</td>
+                              <td>{score ? score.score : '-'}</td>
                             </tr>
-                          );
+                          )
                         })}
                     </tbody>
                   </Table>
@@ -334,11 +303,6 @@ function CourseModal({ course, show, handleClose }) {
             </Tabs>
           </div>
         </Offcanvas.Body>
-        {/* <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer> */}
       </Offcanvas>
 
       <ScoreOffcanvas
@@ -354,7 +318,7 @@ function CourseModal({ course, show, handleClose }) {
         selectedActivity={selectedActivity}
       />
     </>
-  );
+  )
 }
 
-export default CourseModal;
+export default CourseModal
