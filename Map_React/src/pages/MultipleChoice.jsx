@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { database } from '../services/Firebase'
-import { ref, get, child, set, push } from 'firebase/database'
+import { ref, get, child, push, set } from 'firebase/database'
 import {
   Container,
   Form,
@@ -14,8 +14,9 @@ import {
 } from 'react-bootstrap'
 import useAuth from '../services/Auth'
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft'
+
 function MultipleChoice() {
-  const { activityId } = useParams()
+  const { taskId } = useParams()
   const [selectedOptions, setSelectedOptions] = useState([])
   const [activities, setActivities] = useState([])
   const { currentUser } = useAuth()
@@ -23,16 +24,17 @@ function MultipleChoice() {
   const [isLoading, setIsLoading] = useState(false)
   const [activityTitle, setActivityTitle] = useState('')
 
-  const handleOptionChange = (index, option) => {
-    const updatedOptions = [...selectedOptions]
-    updatedOptions[index] = option
-    setSelectedOptions(updatedOptions)
+  const handleOptionChange = (questionId, optionValue) => {
+    setSelectedOptions((prevOptions) => ({
+      ...prevOptions,
+      [questionId]: optionValue,
+    }))
   }
 
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const activityRef = ref(database, `ReviewerActivity/${activityId}`)
+        const activityRef = ref(database, `Tasks/${taskId}`)
         const activitySnapshot = await get(activityRef)
 
         if (activitySnapshot.exists()) {
@@ -40,12 +42,15 @@ function MultipleChoice() {
           const title = activityData.title
           setActivityTitle(title)
 
-          const questionsSnapshot = await get(child(activityRef, 'activities'))
+          const questionsSnapshot = await get(child(activityRef, 'Activities'))
 
           if (questionsSnapshot.exists()) {
             const questions = []
             questionsSnapshot.forEach((childSnapshot) => {
-              questions.push(childSnapshot.val())
+              const question = childSnapshot.val()
+              if (question.QuestionType === 'Multiplechoice') {
+                questions.push(question)
+              }
             })
             setActivities(questions)
           }
@@ -56,71 +61,100 @@ function MultipleChoice() {
     }
 
     fetchActivities()
-  }, [activityId])
+  }, [taskId])
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e?.preventDefault()
     setIsLoading(true)
-  
-    // Simulate a delay before navigating
+    console.log('Selected Options:', selectedOptions)
+    const scores = []
+
     setTimeout(() => {
-      let correctAnswers = 0;
-    const scores = []; // Array to store scores for each question
+      let correctAnswers = 0
+      activities.forEach((question) => {
+        const userAnswer = selectedOptions[question.id]
+        let correctAnswersArray
 
-    activities.forEach((question, index) => {
-      const userAnswer = selectedOptions[index];
-      const correctAnswer = question.answer;
-      const isCorrect = userAnswer === correctAnswer;
+        if (question.QuestionType === 'Enumeration') {
+          correctAnswersArray = question.Answer.map((answer) => answer.trim())
+          const userAnswerArray = Object.values(userAnswer || {}).map((value) =>
+            value.trim()
+          )
 
-      if (isCorrect) {
-        correctAnswers++;
-      }
+          const isCorrect =
+            userAnswerArray.length > 0 &&
+            correctAnswersArray.every((correctAnswer) =>
+              userAnswerArray.includes(correctAnswer)
+            )
 
-      scores.push({
-        question: question.question,
-        userAnswer: userAnswer,
-        correctAnswer: correctAnswer,
-        isCorrect: isCorrect
-      });
-    });
-  
-      const score = (correctAnswers / activities.length) * 100;
-  
-      const studentRef = ref(database, `students/${currentUser.uid}`);
+          if (isCorrect) {
+            correctAnswers++
+          }
+
+          scores.push({
+            question: question.Question,
+            userAnswer: userAnswerArray.join(', '),
+            correctAnswer: correctAnswersArray.join(', '),
+            isCorrect: isCorrect,
+          })
+        } else {
+          correctAnswersArray = [question.Answer.trim()]
+
+          const isCorrect =
+            userAnswer !== undefined && correctAnswersArray.includes(userAnswer)
+
+          if (isCorrect) {
+            correctAnswers++
+          }
+
+          scores.push({
+            question: question.Question,
+            userAnswer: userAnswer || '',
+            correctAnswer: correctAnswersArray.join(', '),
+            isCorrect: isCorrect,
+          })
+        }
+      })
+
+      console.log('Scores:', scores) // Log scores array
+
+      const score = (correctAnswers / activities.length) * 100
+
+      const studentRef = ref(database, `students/${currentUser.uid}`)
       get(studentRef)
         .then((snapshot) => {
           if (snapshot.exists()) {
-            const studentName = snapshot.val().name;
-  
-            const scoreRef = ref(database, `Score`);
-            const newScoreRef = push(scoreRef);
+            const studentName = snapshot.val().name
+
+            const scoreRef = ref(database, `Score`)
+            const newScoreRef = push(scoreRef)
             set(newScoreRef, {
-              taskName: activityTitle,
+              taskName: taskId,
               score: score,
               studentName: studentName,
               studentId: currentUser.uid,
+              scores: scores,
             })
-            .then(() => {
-              console.log('Score saved successfully.');
-              setIsLoading(false);
-              navigate('/main');
-            })
-            .catch((error) => {
-              console.error('Error saving score:', error);
-            });
+              .then(() => {
+                console.log('Score saved successfully.')
+                setIsLoading(false)
+                navigate('/main')
+              })
+              .catch((error) => {
+                console.error('Error saving score:', error)
+              })
           } else {
-            console.log('Student data not found.');
+            console.log('Student data not found.')
           }
         })
         .catch((error) => {
-          console.error('Error fetching student data:', error);
-        });
-  
-      setSelectedOptions([]);
-    }, 3000); // 3 seconds delay
+          console.error('Error fetching student data:', error)
+        })
+
+      setSelectedOptions({})
+      setIsLoading(false)
+    }, 3000)
   }
-  
-  
 
   const navigateToMain = () => {
     navigate('/main')
@@ -140,10 +174,15 @@ function MultipleChoice() {
         <Card className="mt-5 p-4">
           <Row>
             <Col className="col-md-2 d-flex align-items-center">
-              <Image className="" src="/logo.png" style={{ width: '80%' }} />
+              <Image
+                className=""
+                src="/logo.png"
+                style={{ width: '80%' }}
+                alt="Logo"
+              />
             </Col>
             <Col className="d-flex align-items-center">
-              <h2>Task: {activityTitle}</h2>
+              <h2>Task: {taskId}</h2>
             </Col>
           </Row>
           {activities && activities.length > 0 && (
@@ -152,23 +191,27 @@ function MultipleChoice() {
                 <div key={index}>
                   <p>Question {index + 1}</p>
                   <h5 className="mb-3">
-                    {index + 1}. {question.question}
+                    {index + 1}. {question.Question}
                   </h5>
                   <Form className="mb-4">
-                    {question.choices &&
-                      Object.entries(question.choices).map(([key, choice]) => (
+                    {question.Choices &&
+                      Object.entries(question.Choices).map(([key, choice]) => (
                         <Card
                           className="mb-3 title-header d-flex justify-content-center"
                           style={{ height: '40px' }}
+                          key={key}
                         >
                           <Form.Check
                             className="ms-2"
-                            key={key}
                             type="radio"
-                            id={`${key}-${index}`}
+                            id={`${question.id}-${key}`}
+                            name={`question-${question.id}`}
                             label={choice}
-                            checked={selectedOptions[index] === key}
-                            onChange={() => handleOptionChange(index, key)}
+                            value={key}
+                            checked={selectedOptions[question.id] === key}
+                            onChange={() =>
+                              handleOptionChange(question.id, key)
+                            }
                           />
                         </Card>
                       ))}

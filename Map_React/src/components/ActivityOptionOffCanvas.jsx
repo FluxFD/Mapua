@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import { Offcanvas, Button, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import ViewScoreModal from './ViewScoreModal';
+import ViewScoreModal from './ViewScoreModal'
 
 function ActivityOptionsOffcanvas({ show, handleClose, selectedActivity }) {
-  const [showViewScoreModal, setShowViewScoreModal] = useState(false);
+  const [showViewScoreModal, setShowViewScoreModal] = useState(false)
 
-  const handleViewScoreModalClose = () => setShowViewScoreModal(false);
+  const handleViewScoreModalClose = () => setShowViewScoreModal(false)
   const handleViewScoreModalShow = async () => {
-    setShowViewScoreModal(true);
-
+    setShowViewScoreModal(true)
   }
-
 
   const handleFlashcardClick = () => {
     handleClose()
@@ -25,36 +23,34 @@ function ActivityOptionsOffcanvas({ show, handleClose, selectedActivity }) {
         </Offcanvas.Title>
       </Offcanvas.Header>
       <Offcanvas.Body style={{ display: 'flex', flexDirection: 'column' }}>
-
         <Row>
           <Button
             className="mt-2"
             variant="primary"
-            // onClick={""}
           >
             <Link
-              to={`/flashcards/${selectedActivity?.id}`}
+              to={`/flashcards/${selectedActivity?.taskId}`}
               style={{ color: 'white', textDecoration: 'none' }}
             >
               Flash Cards
             </Link>
           </Button>
+
           <Button
             className="mt-2"
             variant="primary"
-            // onClick={""}
           >
             <Link
-              to={`/multiplechoice/${selectedActivity?.id}`}
+              to={`/multiplechoice/${selectedActivity?.taskId}`}
               style={{ color: 'white', textDecoration: 'none' }}
             >
               Multiple Choice
             </Link>
           </Button>
+
           <Button
             className="mt-2"
             variant="primary"
-            // onClick={""}
           >
             <Link
               to={`/identification/${selectedActivity?.id}`}
@@ -63,13 +59,10 @@ function ActivityOptionsOffcanvas({ show, handleClose, selectedActivity }) {
               Identification
             </Link>
           </Button>
-          <Button
-            className="mt-2"
-            variant="primary"
-            // onClick={""}
-          >
+
+          <Button className="mt-2" variant="primary">
             <Link
-              to={`/practiceQuestion/${selectedActivity?.id}`}
+              to={`/task/${selectedActivity?.taskId}/${selectedActivity?.taskName}`}
               style={{ color: 'white', textDecoration: 'none' }}
             >
               Practice Question
@@ -80,13 +73,12 @@ function ActivityOptionsOffcanvas({ show, handleClose, selectedActivity }) {
           <Button
             className="mb-3"
             variant="success"
-             onClick={handleViewScoreModalShow}
+            onClick={handleViewScoreModalShow}
           >
             View Score
           </Button>
         </div>
-        </Offcanvas.Body>
-      {/* Conditionally render ViewScoreModal only when selectedActivity is available */}
+      </Offcanvas.Body>
       {selectedActivity && (
         <ViewScoreModal
           show={showViewScoreModal}
