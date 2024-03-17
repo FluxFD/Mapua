@@ -7,7 +7,7 @@ import useAuth from '../services/Auth';
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 
 function Identification() {
-    const { activityId } = useParams();
+    const { taskId } = useParams();
     const [activities, setActivities] = useState([]);
     const { currentUser } = useAuth();
     const navigate = useNavigate();
@@ -16,45 +16,47 @@ function Identification() {
 
     useEffect(() => {
         const fetchActivities = async () => {
-            try {
-                const activityRef = ref(database, `ReviewerActivity/${activityId}`);
-                const activitySnapshot = await get(activityRef);
-
-                if (activitySnapshot.exists()) {
-                    const activityData = activitySnapshot.val();
-                    const title = activityData.title;
-                    setActivityTitle(title);
-
-                    const questionsSnapshot = await get(child(activityRef, 'activities'));
-
-                    if (questionsSnapshot.exists()) {
-                        const questions = [];
-                        questionsSnapshot.forEach((childSnapshot) => {
-                            questions.push(childSnapshot.val());
-                        });
-                        setActivities(questions);
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching activities:', error);
+          try {
+            const activityRef = ref(database, `Tasks/${taskId}`)
+            const activitySnapshot = await get(activityRef)
+    
+            if (activitySnapshot.exists()) {
+              const activityData = activitySnapshot.val()
+              const title = activityData.title
+              setActivityTitle(title)
+    
+              const questionsSnapshot = await get(child(activityRef, 'Activities'))
+    
+              if (questionsSnapshot.exists()) {
+                const questions = []
+                questionsSnapshot.forEach((childSnapshot) => {
+                  const question = childSnapshot.val()
+                  if (question.QuestionType === 'Identification') {
+                    questions.push(question)
+                  }
+                })
+                setActivities(questions)
+              }
             }
-        };
-
-        fetchActivities();
-    }, [activityId]);
+          } catch (error) {
+            console.error('Error fetching activities:', error)
+          }
+        }
+    
+        fetchActivities()
+      }, [taskId])
 
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsLoading(true);
-    
-        // Simulate a delay before navigating
+
         setTimeout(() => {
             let correctAnswers = 0;
             const scores = [];
     
             activities.forEach((question, index) => {
                 const userAnswer = e.target[index].value;
-                const correctAnswer = question.answer;
+                const correctAnswer = question.Answer;
                 const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
     
                 if (isCorrect) {
@@ -62,7 +64,7 @@ function Identification() {
                 }
     
                 scores.push({
-                    question: question.question,
+                    question: question.Question,
                     userAnswer: userAnswer,
                     correctAnswer: correctAnswer,
                     isCorrect: isCorrect
@@ -80,7 +82,7 @@ function Identification() {
                         const scoreRef = ref(database, `Score`);
                         const newScoreRef = push(scoreRef);
                         set(newScoreRef, {
-                            taskName: activityTitle,
+                            taskName: taskId,
                             score: score,
                             scores: scores,
                             studentName: studentName,
@@ -123,7 +125,7 @@ function Identification() {
                             <Image className="" src="/logo.png" style={{ width: '80%' }} />
                         </Col>
                         <Col className="d-flex align-items-center">
-                            <h2>Task: {activityTitle}</h2>
+                            <h2>Task: {taskId}</h2>
                         </Col>
                     </Row>
                     {activities && activities.length > 0 && (
@@ -133,7 +135,7 @@ function Identification() {
                                     <div key={index}>
                                         <p>Question {index + 1}</p>
                                         <h5 className="mb-3">
-                                            {index + 1}. {question.question}
+                                            {index + 1}. {question.Question}
                                         </h5>
                                         <Form.Control
                                             type="text"

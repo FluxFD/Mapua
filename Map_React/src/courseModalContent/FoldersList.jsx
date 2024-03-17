@@ -1,9 +1,17 @@
-import React from 'react';
-import { Card } from 'react-bootstrap';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import ListAltIcon from '@mui/icons-material/ListAlt';
+import React, { useState } from 'react'
+import { Card } from 'react-bootstrap'
+import FolderOpenIcon from '@mui/icons-material/FolderOpen'
+import ListAltIcon from '@mui/icons-material/ListAlt'
+import ActivityOptionsOffcanvas from '../components/ActivityOptionOffCanvas'
 
 function FoldersList({ folders, folderedTask, handleToggle, openFolderId }) {
+  const [selectedActivity, setSelectedActivity] = useState(null)
+
+  const handleActivityClick = (taskId, taskName) => {
+    setSelectedActivity({ taskId, taskName })
+    console.log('Selected Activity:', { taskId, taskName }) // Log selected activity
+  }
+
   return (
     <div>
       {folders.map((folder) => (
@@ -28,7 +36,15 @@ function FoldersList({ folders, folderedTask, handleToggle, openFolderId }) {
               {folderedTask
                 .filter((task) => task.FolderName === folder.id)
                 .map((task) => (
-                  <Card key={task.id} style={{ cursor: 'pointer' }}>
+                  <Card
+                    key={task.id}
+                    style={{ cursor: 'pointer' }}
+                    onClick={(event) => {
+                      event.stopPropagation(); // Stop event propagation here
+                      handleActivityClick(task.id, task.taskName);
+                    }}
+                  
+                  >
                     <Card.Body>
                       <ListAltIcon /> {''}
                       {task.taskName} - Due Date: {task.dueDate}
@@ -39,8 +55,16 @@ function FoldersList({ folders, folderedTask, handleToggle, openFolderId }) {
           )}
         </Card>
       ))}
+      <ActivityOptionsOffcanvas
+        show={selectedActivity !== null}
+        handleClose={() => {
+          console.log('Closing Activity Options Offcanvas')
+          setSelectedActivity(null)
+        }}
+        selectedActivity={selectedActivity}
+      />
     </div>
-  );
+  )
 }
 
-export default FoldersList;
+export default FoldersList

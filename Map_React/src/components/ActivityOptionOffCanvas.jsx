@@ -53,7 +53,7 @@ function ActivityOptionsOffcanvas({ show, handleClose, selectedActivity }) {
             variant="primary"
           >
             <Link
-              to={`/identification/${selectedActivity?.id}`}
+              to={`/identification/${selectedActivity?.taskId}`}
               style={{ color: 'white', textDecoration: 'none' }}
             >
               Identification

@@ -71,7 +71,7 @@ function App() {
             />
 
             <Route
-              path="/identification/:activityId"
+              path="/identification/:taskId"
               element={<Identification />}
             />
             <Route
