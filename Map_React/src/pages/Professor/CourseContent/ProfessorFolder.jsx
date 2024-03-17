@@ -5,7 +5,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { ref, push, set } from "firebase/database";
+import { ref, remove } from "firebase/database";
 import { database, auth } from "../../../services/Firebase";
 
 function FolderProf({ folders, selectedCourse, tasks, deleteFolder }) {
@@ -29,6 +29,17 @@ function FolderProf({ folders, selectedCourse, tasks, deleteFolder }) {
 
   const handleDeleteFolder = (folderId) => {
     deleteFolder(folderId);
+  };
+
+  const handleDeleteTask = (taskId) => {
+    const taskRef = ref(database, `Tasks/${taskId}`);
+    remove(taskRef)
+      .then(() => {
+        console.log(`Task ${taskId} deleted successfully`);
+      })
+      .catch((error) => {
+        console.error(`Error deleting task ${taskId}:`, error);
+      });
   };
 
   return (
@@ -86,6 +97,11 @@ function FolderProf({ folders, selectedCourse, tasks, deleteFolder }) {
                         >
                           <ListAltIcon className="me-2" />
                           {task.taskName} - {task.dueDate}
+                          <DeleteIcon
+                            color="error"
+                            className="cursor-pointer"
+                            onClick={() => handleDeleteTask(task.id)}
+                          />
                         </div>
                       ))}
                   </div>
@@ -116,7 +132,11 @@ function FolderProf({ folders, selectedCourse, tasks, deleteFolder }) {
                 <ListAltIcon className="me-2" />
                 {task.taskName} - {task.dueDate}
               </div>
-              <DeleteIcon color="error" className="cursor-pointer" />
+              <DeleteIcon
+                color="error"
+                className="cursor-pointer"
+                onClick={() => handleDeleteTask(task.id)}
+              />
             </Card.Header>
           </Card>
         ))}
