@@ -28,7 +28,7 @@ const TaskDetailsPage = () => {
       try {
         const snapshot = await get(questionRef)
         const data = snapshot.val()
-        setQuestionData(data) // Update questionData state with fetched data
+        setQuestionData(data)
       } catch (error) {
         console.error('Error fetching question data:', error)
       }
@@ -48,21 +48,20 @@ const TaskDetailsPage = () => {
     e?.preventDefault();
     setIsLoading(true);
   
-    const scores = []; // Array to hold scores for each question
+    const scores = [];
   
     setTimeout(() => {
       let correctAnswers = 0;
       Object.entries(questionData).forEach(([questionId, question]) => {
-        const userAnswer = selectedOptions[questionId]; // Check userAnswer for debugging
+        const userAnswer = selectedOptions[questionId];
         let correctAnswersArray;
   
         if (question.QuestionType === 'Enumeration') {
           correctAnswersArray = question.Answer.map((answer) => answer.trim());
           const userAnswerArray = Object.values(userAnswer || {}).map((value) => value.trim());
   
-          console.log('User Answer Array:', userAnswerArray); // Log user's answer array
+          console.log('User Answer Array:', userAnswerArray);
   
-          // Compare user's answer array to correct answers array for enumeration question type
           const isCorrect =
             userAnswerArray.length > 0 &&
             correctAnswersArray.every((correctAnswer) => userAnswerArray.includes(correctAnswer));
@@ -73,12 +72,12 @@ const TaskDetailsPage = () => {
   
           scores.push({
             question: question.Question,
-            userAnswer: userAnswerArray.join(', '), // Ensure userAnswer is formatted
-            correctAnswer: correctAnswersArray.join(', '), // Ensure correctAnswer is formatted
+            userAnswer: userAnswerArray.join(', '),
+            correctAnswer: correctAnswersArray.join(', '),
             isCorrect: isCorrect,
           });
         } else {
-          correctAnswersArray = [question.Answer.trim()]; // For other question types
+          correctAnswersArray = [question.Answer.trim()];
   
           const isCorrect =
             userAnswer !== undefined && correctAnswersArray.includes(userAnswer);
@@ -89,8 +88,8 @@ const TaskDetailsPage = () => {
   
           scores.push({
             question: question.Question,
-            userAnswer: userAnswer || '', // Ensure userAnswer is not undefined
-            correctAnswer: correctAnswersArray.join(', '), // Ensure correctAnswer is formatted
+            userAnswer: userAnswer || '',
+            correctAnswer: correctAnswersArray.join(', '),
             isCorrect: isCorrect,
           });
         }
@@ -136,12 +135,6 @@ const TaskDetailsPage = () => {
     }, 3000); // 3 seconds delay
   };
   
-  
-  
-  
-  
-  
-
   return (
     <Container>
       <div
