@@ -75,7 +75,7 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
 
       try {
         if (questionType === "Enumeration") {
-          const enumerationRef = ref(database, "Enumeration");
+          const enumerationRef = ref(database, "Tasks");
 
           const newEnumerationRef = push(enumerationRef);
           const newEnumKey = newEnumerationRef.key;
@@ -83,13 +83,13 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
           await set(newEnumerationRef, {
             Course: selectedCourse.uid,
             createdBy: createdBy,
-            date: formattedDate,
-            title: quizName,
+            dueDate: formattedDate,
+            taskName: quizName,
           });
 
           const activitiesEnumRef = ref(
             database,
-            `Enumeration/${newEnumKey}/activities`
+            `Tasks/${newEnumKey}/activities`
           );
           const newActivityEnumRef = push(activitiesEnumRef);
           const newActivityEnumKey = newActivityEnumRef.key;
@@ -105,21 +105,18 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
           setNumberOfItems(1);
           console.log("Enumeration question created successfully");
         } else {
-          const taskRef = ref(database, "ReviewerActivity");
+          const taskRef = ref(database, "Tasks");
           const newTaskRef = push(taskRef);
           const newTaskKey = newTaskRef.key;
 
           await set(newTaskRef, {
             Course: selectedCourse.uid,
             createdBy: createdBy,
-            date: formattedDate,
-            title: quizName,
+            dueDate: formattedDate,
+            taskName: quizName,
           });
 
-          const activitiesRef = ref(
-            database,
-            `ReviewerActivity/${newTaskKey}/activities`
-          );
+          const activitiesRef = ref(database, `Tasks/${newTaskKey}/activities`);
           const newActivityRef = push(activitiesRef);
           const newActivityKey = newActivityRef.key;
 
