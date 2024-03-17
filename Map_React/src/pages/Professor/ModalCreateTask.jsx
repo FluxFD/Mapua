@@ -89,15 +89,15 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
 
           const activitiesEnumRef = ref(
             database,
-            `Tasks/${newEnumKey}/activities`
+            `Tasks/${newEnumKey}/Activities`
           );
           const newActivityEnumRef = push(activitiesEnumRef);
           const newActivityEnumKey = newActivityEnumRef.key;
 
           await set(newActivityEnumRef, {
-            question: question,
-            questionType: questionType,
-            answer: enumerationItems,
+            Question: question,
+            QuestionType: questionType,
+            Answer: enumerationItems,
           });
 
           setQuestionType("");
@@ -116,7 +116,7 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
             taskName: quizName,
           });
 
-          const activitiesRef = ref(database, `Tasks/${newTaskKey}/activities`);
+          const activitiesRef = ref(database, `Tasks/${newTaskKey}/Activities`);
           const newActivityRef = push(activitiesRef);
           const newActivityKey = newActivityRef.key;
 
@@ -129,10 +129,10 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
               : {};
 
           await set(newActivityRef, {
-            question: question,
-            questionType: questionType,
-            answer: answer,
-            choices: choicesToSave,
+            Question: question,
+            QuestionType: questionType,
+            Answer: answer,
+            Choices: choicesToSave,
           });
 
           console.log("Other types of questions created successfully");
