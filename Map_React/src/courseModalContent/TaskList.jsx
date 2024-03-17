@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from 'react-bootstrap';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 
-function TasksList({ tasks, handleClick }) {
+function TaskList({ tasks, handleClick }) {
   return (
     <div>
       {tasks.map((task) => (
@@ -10,7 +10,7 @@ function TasksList({ tasks, handleClick }) {
           style={{ cursor: 'pointer' }}
           key={task.id}
           className="title-header mt-3"
-          onClick={() => handleClick(task.id, task.taskName)}
+          onClick={() => handleClick(task, task.id, task.taskName)}
         >
           <Card.Body>
             <ListAltIcon />
@@ -22,4 +22,4 @@ function TasksList({ tasks, handleClick }) {
   );
 }
 
-export default TasksList;
+export default TaskList;
