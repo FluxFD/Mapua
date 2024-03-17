@@ -108,7 +108,7 @@ const TaskDetailsPage = () => {
             const scoreRef = ref(database, `Score`);
             const newScoreRef = push(scoreRef);
             set(newScoreRef, {
-              taskName: taskName,
+              taskName: taskId,
               score: score,
               studentName: studentName,
               studentId: currentUser.uid,
