@@ -30,7 +30,17 @@ import FolderProf from "./CourseContent/ProfessorFolder";
 
 // Firebase
 import { database, storage, auth } from "../../services/Firebase";
-import { ref, onValue, update, push, remove, get } from "firebase/database";
+import {
+  ref,
+  onValue,
+  update,
+  push,
+  remove,
+  get,
+  query,
+  orderByChild,
+  equalTo,
+} from "firebase/database";
 import {
   getStorage,
   ref as storageRef,
@@ -54,6 +64,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const calendarRef = useRef(null);
   const [calendarKey, setCalendarKey] = useState(Date.now());
   const [folders, setFolders] = useState([]);
+  const [tasks, setTasks] = useState([]);
 
   function modifyDateString(dateString) {
     const dateObj = new Date(dateString);
@@ -108,6 +119,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
     const announcementsRef = ref(database, "Announcement");
     const scoresRef = ref(database, "Score");
     const foldersRef = ref(database, "Folders");
+    const tasksRef = ref(database, "Tasks");
 
     const unsubscribeReviewers = onValue(reviewersRef, (snapshot) => {
       const reviewersData = snapshot.val() || {};
@@ -164,7 +176,32 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
           }))
       );
       setFolders(foldersArray);
-      console.log("Hello", foldersArray);
+    });
+
+    const unsubscribeTasks = onValue(tasksRef, (snapshot) => {
+      const tasksData = snapshot.val() || {};
+
+      const tasksWithFolderName = [];
+      const tasksWithoutFolderName = [];
+
+      Object.entries(tasksData).forEach(([taskId, task]) => {
+        if (task.hasOwnProperty("FolderName")) {
+          tasksWithFolderName.push({
+            id: taskId,
+            ...task,
+          });
+        } else {
+          tasksWithoutFolderName.push({
+            id: taskId,
+            ...task,
+          });
+        }
+      });
+
+      setTasks([...tasksWithFolderName, ...tasksWithoutFolderName]);
+
+      console.log("Tasks with FolderName:", tasksWithFolderName);
+      console.log("Tasks without FolderName:", tasksWithoutFolderName);
     });
 
     return () => {
@@ -172,6 +209,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
       unsubscribeAnnouncements();
       unsubscribeScores();
       unsubscribeFolders();
+      unsubscribeTasks();
     };
   }, [selectedCourse.uid]);
 
@@ -267,6 +305,49 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
     }
   };
 
+  const deleteFolder = (folderId) => {
+    const tasksToDeleteRef = ref(database, "Tasks");
+    const tasksToDeleteQuery = query(
+      tasksToDeleteRef,
+      orderByChild("FolderName"),
+      equalTo(folderId)
+    );
+
+    get(tasksToDeleteQuery)
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          const tasksToDelete = snapshot.val();
+          Object.keys(tasksToDelete).forEach((taskId) => {
+            const taskRef = ref(database, `Tasks/${taskId}`);
+            remove(taskRef)
+              .then(() => {
+                console.log(
+                  `Task ${taskId} associated with folder ${folderId} deleted successfully`
+                );
+              })
+              .catch((error) => {
+                console.error(`Error deleting task ${taskId}:`, error);
+              });
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error retrieving tasks:", error);
+      });
+
+    const folderRef = ref(
+      database,
+      `Folders/${selectedCourse.uid}/${folderId}`
+    );
+    remove(folderRef)
+      .then(() => {
+        console.log(`Folder ${folderId} deleted successfully`);
+      })
+      .catch((error) => {
+        console.error("Error deleting folder:", error);
+      });
+  };
+
   return (
     <>
       {selectedCourse && (
@@ -344,9 +425,12 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                   />
 
                   <hr />
+
                   <FolderProf
                     folders={folders}
                     selectedCourse={selectedCourse}
+                    tasks={tasks}
+                    deleteFolder={deleteFolder}
                   />
                 </Tab>
                 <Tab eventKey="announcement" title="Announcement">
