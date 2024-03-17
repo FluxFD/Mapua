@@ -61,12 +61,12 @@ function App() {
               element={<TaskDetailsPage />}
             />
             <Route
-              path="/flashcards/:activityId"
+              path="/flashcards/:taskId"
               element={<FlashcardsPage />}
             />
 
             <Route
-              path="/multiplechoice/:activityId"
+              path="/multiplechoice/:taskId"
               element={<MultipleChoice />}
             />
 

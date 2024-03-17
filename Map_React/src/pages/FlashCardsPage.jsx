@@ -5,7 +5,7 @@ import { ref, get, child } from 'firebase/database'
 import Flashcard from '../components/FlashCard'
 
 function FlashcardPage() {
-  const { activityId } = useParams()
+  const { taskId } = useParams()
   const [activities, setActivities] = useState([])
   const [currentCardIndex, setCurrentCardIndex] = useState(0)
   const [showAnswer, setShowAnswer] = useState(false)
@@ -14,7 +14,7 @@ function FlashcardPage() {
     const fetchActivities = async () => {
       try {
         const snapshot = await get(
-          child(ref(database), `ReviewerActivity/${activityId}/activities`)
+          child(ref(database), `Tasks/${taskId}/Activities`)
         )
         if (snapshot.exists()) {
           setActivities(Object.values(snapshot.val()))
@@ -25,7 +25,7 @@ function FlashcardPage() {
     }
 
     fetchActivities()
-  }, [activityId])
+  }, [taskId])
 
   const handleNext = () => {
     setCurrentCardIndex((prevIndex) => (prevIndex + 1) % activities.length)
@@ -47,8 +47,8 @@ function FlashcardPage() {
     <div>
       {activities.length > 0 && (
         <Flashcard
-          question={activities[currentCardIndex].question}
-          answer={activities[currentCardIndex].answer}
+          question={activities[currentCardIndex].Question}
+          answer={activities[currentCardIndex].Answer}
           onFlip={handleFlip}
           showAnswer={showAnswer}
           onNext={handleNext}

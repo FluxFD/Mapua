@@ -196,6 +196,12 @@ function CourseModal({ course, show, handleClose }) {
     setOpenFolderId(folderId === openFolderId ? null : folderId)
   }
 
+  const handleActivityClick = (tasks, taskId, taskName) => {
+    setSelectedActivity({ tasks, taskId, taskName });
+    console.log('Selected Activity:', { tasks, taskId, taskName }); // Log selected activity
+    handleClose();
+  };
+
   return (
     <>
       <Offcanvas
@@ -229,7 +235,7 @@ function CourseModal({ course, show, handleClose }) {
                   handleToggle={handleToggle}
                   openFolderId={openFolderId}
                 />
-                <TaskList tasks={tasks} handleClick={handleClick} />
+                <TaskList tasks={tasks} handleClick={(task, taskId, taskName) => handleActivityClick(task, taskId, taskName)} />
                 <ReviewersList
                   reviewers={reviewers}
                   handleReviewerClick={handleReviewerClick}
@@ -312,11 +318,14 @@ function CourseModal({ course, show, handleClose }) {
         scoreValue={scoreValue}
       />
 
-      <ActivityOptionsOffcanvas
-        show={selectedActivity !== null}
-        handleClose={() => setSelectedActivity(null)}
-        selectedActivity={selectedActivity}
-      />
+<ActivityOptionsOffcanvas
+  show={selectedActivity !== null}
+  handleClose={() => {
+    console.log('Closing Activity Options Offcanvas');
+    setSelectedActivity(null);
+  }}
+  selectedActivity={selectedActivity}
+/>
     </>
   )
 }

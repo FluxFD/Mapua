@@ -27,17 +27,23 @@ function Flashcard({ question, answer, onFlip, showAnswer, onNext, onPrev }) {
     setShowTooltip(false)
   }
 
+  const renderAnswer = () => {
+    if (Array.isArray(answer)) {
+      return answer.join(', ');
+    }
+    return answer;
+  };
+
   return (
     <Container style={{ height: '100vh' }}>
       <div>
         <Button className="mt-5" onClick={navigateToMain}>
           <ArrowCircleLeftIcon />
         </Button>
-        <div className='mb-5 d-flex justify-content-center'>
-            <Image className="" src="/logo.png" style={{ width: "15%" }} />
+        <div className="mb-5 d-flex justify-content-center">
+          <Image className="" src="/logo.png" style={{ width: '15%' }} />
+        </div>
       </div>
-      </div>
-
 
       <div
         style={{
@@ -47,8 +53,6 @@ function Flashcard({ question, answer, onFlip, showAnswer, onNext, onPrev }) {
           height: '60vh',
         }}
       >
-
-        
         <OverlayTrigger
           show={showTooltip}
           target=".card"
@@ -68,18 +72,14 @@ function Flashcard({ question, answer, onFlip, showAnswer, onNext, onPrev }) {
             <div className="card-inner">
               <div className="card-front d-flex justify-content-center align-items-center">
                 <Card.Body>
-                  <Card.Text>
-                    <h1>{question}</h1>
-                  </Card.Text>
+                  <h1>{question}</h1>
                 </Card.Body>
               </div>
               <div className="card-back d-flex justify-content-center align-items-center">
                 <Card.Body>
-                  <Card.Text>
-                    <h1>
-                      <span>Answer:</span> {answer}
-                    </h1>
-                  </Card.Text>
+                  <h1>
+                  <span>Answer:</span> {renderAnswer()}
+                  </h1>
                 </Card.Body>
               </div>
             </div>
