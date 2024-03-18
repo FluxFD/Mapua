@@ -17,7 +17,7 @@ function ViewScoreModal({ show, handleClose, selectedActivity }) {
 
       // Filter scores for the current user and selected activity
       const filteredScores = Object.values(scoresData).filter(score => {
-        return score.studentId === currentUser.uid && score.taskName === selectedActivity.taskId;
+        return score.studentId === currentUser.uid && score.taskName === selectedActivity.taskName;
       });
 
       // Set the filtered scores to state
@@ -29,7 +29,7 @@ function ViewScoreModal({ show, handleClose, selectedActivity }) {
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Scores: {selectedActivity && selectedActivity.taskId}</Modal.Title>
+        <Modal.Title>Scores: {selectedActivity && selectedActivity.taskName}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
