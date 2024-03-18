@@ -225,9 +225,6 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
       });
 
       setTasks([...tasksWithFolderName, ...tasksWithoutFolderName]);
-
-      console.log("Tasks with FolderName:", tasksWithFolderName);
-      console.log("Tasks without FolderName:", tasksWithoutFolderName);
     });
 
     return () => {
