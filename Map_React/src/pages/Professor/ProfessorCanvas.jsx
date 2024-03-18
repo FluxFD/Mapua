@@ -27,6 +27,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import ProfScoreView from "./ProfessorScoreView";
 import CreateFolder from "./CreateFolder";
 import FolderProf from "./CourseContent/ProfessorFolder";
+import ReviewerModal from "./ReviewerModal";
 
 // Firebase
 import { database, storage, auth } from "../../services/Firebase";
@@ -65,6 +66,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [calendarKey, setCalendarKey] = useState(Date.now());
   const [folders, setFolders] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [selectedReviewer, setSelectedReviewer] = useState(null);
 
   function modifyDateString(dateString) {
     const dateObj = new Date(dateString);
@@ -112,6 +114,14 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const handleDeleteConfirmation = (itemId) => {
     setDeleteItemId(itemId);
     setShowDeleteConfirmation(true);
+  };
+
+  const handleOpenReviewerModal = (reviewer) => {
+    setSelectedReviewer(reviewer);
+  };
+
+  const handleCloseReviewerModal = () => {
+    setSelectedReviewer(null);
   };
 
   useEffect(() => {
@@ -425,6 +435,43 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                   />
 
                   <hr />
+
+                  {reviewers.map((reviewer) => (
+                    <Card
+                      onClick={() => handleOpenReviewerModal(reviewer)}
+                      key={reviewer.id}
+                      style={{ cursor: "pointer" }}
+                      className="title-header mt-3"
+                    >
+                      <Card.Body>
+                        <div className="d-flex align-items-center justify-content-between">
+                          <span>
+                            <ArticleIcon className="me-2" />
+                            {reviewer.title} - Due Date: {reviewer.date}
+                          </span>
+
+                          <DeleteIcon
+                            color="error"
+                            className="cursor-pointer"
+                            onClick={() =>
+                              handleDeleteConfirmation({
+                                id: reviewer.id,
+                                type: "Reviewer",
+                              })
+                            }
+                          />
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  ))}
+
+                  {selectedReviewer && (
+                    <ReviewerModal
+                      show={selectedReviewer !== null}
+                      onHide={handleCloseReviewerModal}
+                      reviewer={selectedReviewer}
+                    />
+                  )}
 
                   <FolderProf
                     folders={folders}

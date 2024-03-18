@@ -104,6 +104,7 @@ function FolderProf({ folders, selectedCourse, tasks, deleteFolder }) {
                             color="error"
                             className="cursor-pointer"
                             onClick={() => handleDeleteTask(task.id)}
+                            style={{ fontSize: "18px" }}
                           />
                         </div>
                       ))}
