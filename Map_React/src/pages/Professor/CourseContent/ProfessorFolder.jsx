@@ -101,7 +101,7 @@ function FolderProf({
       const formattedDate = `${month}/${date}/${year}`;
 
       try {
-        const storage = getStorage(); // Initialize storage here
+        const storage = getStorage();
         const fileRef = storageRef(storage, file.name);
         await uploadBytes(fileRef, file);
         console.log("File uploaded successfully");
@@ -302,9 +302,6 @@ function FolderProf({
                           }
                         />
                       </Form.Group>
-                      {selectedFolder && (
-                        <p>Selected Folder: {selectedFolder}</p>
-                      )}
                     </Form>
                   </Modal.Body>
                   <Modal.Footer>
