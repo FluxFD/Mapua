@@ -1,16 +1,19 @@
-import React, { useState } from 'react'
-import { Card } from 'react-bootstrap'
-import FolderOpenIcon from '@mui/icons-material/FolderOpen'
-import ListAltIcon from '@mui/icons-material/ListAlt'
-import ActivityOptionsOffcanvas from '../components/ActivityOptionOffCanvas'
+import React, { useState } from 'react';
+import { Card } from 'react-bootstrap';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import ActivityOptionsOffcanvas from '../components/ActivityOptionOffCanvas';
+import ReviewersList from './ReviewersList';
+import VideoActivitiesList from './VideoActivitiesList';
 
-function FoldersList({ folders, folderedTask, handleToggle, openFolderId }) {
-  const [selectedActivity, setSelectedActivity] = useState(null)
+function FoldersList({ folders, folderedTask, handleToggle, openFolderId, reviewers, handleReviewerClick, videoActivities,
+  handleVideoClick }) {
+  const [selectedActivity, setSelectedActivity] = useState(null);
 
   const handleActivityClick = (taskId, taskName) => {
-    setSelectedActivity({ taskId, taskName })
-    console.log('Selected Activity:', { taskId, taskName }) // Log selected activity
-  }
+    setSelectedActivity({ taskId, taskName });
+    console.log('Selected Activity:', { taskId, taskName });
+  };
 
   return (
     <div>
@@ -40,10 +43,9 @@ function FoldersList({ folders, folderedTask, handleToggle, openFolderId }) {
                     key={task.id}
                     style={{ cursor: 'pointer' }}
                     onClick={(event) => {
-                      event.stopPropagation(); // Stop event propagation here
+                      event.stopPropagation();
                       handleActivityClick(task.id, task.taskName);
                     }}
-                  
                   >
                     <Card.Body>
                       <ListAltIcon /> {''}
@@ -51,6 +53,13 @@ function FoldersList({ folders, folderedTask, handleToggle, openFolderId }) {
                     </Card.Body>
                   </Card>
                 ))}
+              <ReviewersList
+                reviewers={reviewers.filter((reviewer) => reviewer.FolderName === folder.id)}
+                handleReviewerClick={handleReviewerClick}
+              />
+              <VideoActivitiesList
+              videoActivities={videoActivities.filter((videoActivity) => videoActivity.FolderName === folder.id)}
+              handleVideoClick={handleVideoClick}/>
             </Card.Body>
           )}
         </Card>
@@ -58,13 +67,13 @@ function FoldersList({ folders, folderedTask, handleToggle, openFolderId }) {
       <ActivityOptionsOffcanvas
         show={selectedActivity !== null}
         handleClose={() => {
-          console.log('Closing Activity Options Offcanvas')
-          setSelectedActivity(null)
+          console.log('Closing Activity Options Offcanvas');
+          setSelectedActivity(null);
         }}
         selectedActivity={selectedActivity}
       />
     </div>
-  )
+  );
 }
 
-export default FoldersList
+export default FoldersList;
