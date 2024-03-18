@@ -10,6 +10,8 @@ import Link from "@mui/material/Link";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ArticleIcon from "@mui/icons-material/Article";
 
+import ReviewerModal from "../ReviewerModal";
+
 import { ref, remove, push, update } from "firebase/database";
 import { database, auth } from "../../../services/Firebase";
 import {
@@ -46,6 +48,15 @@ function FolderProf({
     file: null,
   });
   const fileInputRef = useRef(null);
+  const [selectedReviewer, setSelectedReviewer] = useState(null);
+
+  const handleReviewerClick = (reviewer) => {
+    setSelectedReviewer(reviewer);
+  };
+
+  const handleCloseReviewerModal = () => {
+    setSelectedReviewer(null);
+  };
 
   const toggleFolder = (folderId) => {
     if (expandedFolder === folderId) {
@@ -220,6 +231,7 @@ function FolderProf({
                       key={reviewer.id}
                       className="d-flex align-items-center justify-content-between mt-2 ms-3"
                       style={{ cursor: "pointer" }}
+                      onClick={() => handleReviewerClick(reviewer)}
                     >
                       <div className="d-flex align-items-center">
                         <ArticleIcon className="me-2" />
@@ -234,6 +246,14 @@ function FolderProf({
                       />
                     </div>
                   ))}
+
+                {selectedReviewer && (
+                  <ReviewerModal
+                    show={selectedReviewer !== null}
+                    onHide={handleCloseReviewerModal}
+                    reviewer={selectedReviewer}
+                  />
+                )}
 
                 {!folderHasTasks &&
                   reviewersWithFolderName.filter(
