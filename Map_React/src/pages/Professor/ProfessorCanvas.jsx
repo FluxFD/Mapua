@@ -477,7 +477,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       style={{ cursor: "pointer" }}
                       className="title-header mt-3"
                     >
-                      <Card.Body>
+                      <Card.Header className="p-3">
                         <div className="d-flex align-items-center justify-content-between">
                           <span>
                             <ArticleIcon className="me-2" />
@@ -495,7 +495,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                             }
                           />
                         </div>
-                      </Card.Body>
+                      </Card.Header>
                     </Card>
                   ))}
 
