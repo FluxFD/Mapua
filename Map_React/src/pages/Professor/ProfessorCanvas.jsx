@@ -18,6 +18,7 @@ import Link from "@mui/material/Link";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 import "../../index.css";
 
 import CreateTaskModal from "./ModalCreateTask";
@@ -28,6 +29,7 @@ import ProfScoreView from "./ProfessorScoreView";
 import CreateFolder from "./CreateFolder";
 import FolderProf from "./CourseContent/ProfessorFolder";
 import ReviewerModal from "./ReviewerModal";
+import CreateVideoModal from "./CourseContent/ProfessorVideo";
 
 // Firebase
 import { database, storage, auth } from "../../services/Firebase";
@@ -54,6 +56,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [reviewerActivity, setReviewerActivity] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
   const fileInputRef = useRef(null);
   const [title, setTitle] = useState("");
   const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
@@ -67,6 +70,9 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [folders, setFolders] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
+  const [reviewersWithoutFolderName, setReviewersWithoutFolderName] = useState(
+    []
+  );
 
   function modifyDateString(dateString) {
     const dateObj = new Date(dateString);
@@ -141,6 +147,16 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
         }
       });
 
+      const reviewersWithFolderName = reviewersArray.filter(
+        (reviewer) => reviewer.FolderName
+      );
+      const reviewersWithoutFolderName = reviewersArray.filter(
+        (reviewer) => !reviewer.FolderName
+      );
+
+      setReviewers(reviewersWithFolderName);
+      setReviewersWithoutFolderName(reviewersWithoutFolderName);
+
       setReviewers(reviewersArray);
     });
 
@@ -209,9 +225,6 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
       });
 
       setTasks([...tasksWithFolderName, ...tasksWithoutFolderName]);
-
-      console.log("Tasks with FolderName:", tasksWithFolderName);
-      console.log("Tasks without FolderName:", tasksWithoutFolderName);
     });
 
     return () => {
@@ -229,6 +242,14 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
 
   const handleCloseModal = () => {
     setShowModal(false);
+  };
+
+  const handleOpenVideoModal = () => {
+    setShowVideoModal(true);
+  };
+
+  const handleCloseVideoModal = () => {
+    setShowVideoModal(false);
   };
 
   const handleFileUpload = async () => {
@@ -311,7 +332,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
 
   const handleTabChange = (key) => {
     if (key === "calendar") {
-      setCalendarKey(Date.now()); // Update calendar key to force remount
+      setCalendarKey(Date.now());
     }
   };
 
@@ -393,6 +414,14 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       className="d-flex align-items-center"
                       underline="hover"
                       color="text.primary"
+                      onClick={handleOpenVideoModal}
+                    >
+                      <OndemandVideoIcon className="me-2" /> Upload Video
+                    </Link>
+                    <Link
+                      className="d-flex align-items-center"
+                      underline="hover"
+                      color="text.primary"
                       onClick={handleOpenModal}
                     >
                       <AttachFileIcon /> Upload File
@@ -433,10 +462,15 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     onHide={handleCloseCreateFolder}
                     selectedCourse={selectedCourse}
                   />
+                  <CreateVideoModal
+                    show={showVideoModal}
+                    onHide={handleCloseVideoModal}
+                    selectedCourse={selectedCourse}
+                  />
 
                   <hr />
 
-                  {reviewers.map((reviewer) => (
+                  {reviewersWithoutFolderName.map((reviewer) => (
                     <Card
                       onClick={() => handleOpenReviewerModal(reviewer)}
                       key={reviewer.id}
@@ -477,6 +511,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     folders={folders}
                     selectedCourse={selectedCourse}
                     tasks={tasks}
+                    reviewers={reviewers}
                     deleteFolder={deleteFolder}
                   />
                 </Tab>
