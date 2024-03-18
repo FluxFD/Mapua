@@ -27,7 +27,7 @@ function PracticeQuestion() {
   const [showModal, setShowModal] = useState(true)
   const [timerInput, setTimerInput] = useState(0)
   const [displayTimer, setDisplayTimer] = useState('')
-  const [timerExpired, setTimerExpired] = useState(false);
+  const [timerExpired, setTimerExpired] = useState(false)
 
   const handleCloseModal = () => setShowModal(false)
 
@@ -69,74 +69,71 @@ function PracticeQuestion() {
   }, [activityId])
 
   const handleSubmit = (e) => {
-    e?.preventDefault();
-    setIsLoading(true);
-  
-    const scores = []; // Array to hold scores for each question
-  
-    // Simulate a delay before navigating
+    e?.preventDefault()
+    setIsLoading(true)
+
+    const scores = []
+
     setTimeout(() => {
-      let correctAnswers = 0;
+      let correctAnswers = 0
       activities.forEach((question, index) => {
-        const userAnswer = selectedOptions[index];
-        const correctAnswer = question.answer;
+        const userAnswer = selectedOptions[index]
+        const correctAnswer = question.answer
         const isCorrect =
           userAnswer !== undefined &&
           correctAnswer !== undefined &&
           (question.questionType === 'Identification'
             ? userAnswer.toLowerCase() === correctAnswer.toLowerCase()
-            : userAnswer === correctAnswer);
-  
+            : userAnswer === correctAnswer)
+
         if (isCorrect) {
-          correctAnswers++;
+          correctAnswers++
         }
-  
+
         scores.push({
           question: question.question,
-          userAnswer: userAnswer || '', // Ensure userAnswer is not undefined
-          correctAnswer: correctAnswer || '', // Ensure correctAnswer is not undefined
+          userAnswer: userAnswer || '',
+          correctAnswer: correctAnswer || '',
           isCorrect: isCorrect,
-        });
-      });
-  
-      const score = (correctAnswers / activities.length) * 100;
-  
-      const studentRef = ref(database, `students/${currentUser.uid}`);
+        })
+      })
+
+      const score = (correctAnswers / activities.length) * 100
+
+      const studentRef = ref(database, `students/${currentUser.uid}`)
       get(studentRef)
         .then((snapshot) => {
           if (snapshot.exists()) {
-            const studentName = snapshot.val().name;
-  
-            const scoreRef = ref(database, `Score`);
-            const newScoreRef = push(scoreRef);
+            const studentName = snapshot.val().name
+
+            const scoreRef = ref(database, `Score`)
+            const newScoreRef = push(scoreRef)
             set(newScoreRef, {
               taskName: activityTitle,
               score: score,
               studentName: studentName,
               studentId: currentUser.uid,
-              scores: scores, // Include scores array in the score data
+              scores: scores,
             })
               .then(() => {
-                console.log('Score saved successfully.');
-                setIsLoading(false);
-                navigate('/main');
+                console.log('Score saved successfully.')
+                setIsLoading(false)
+                navigate('/main')
               })
               .catch((error) => {
-                console.error('Error saving score:', error);
-              });
+                console.error('Error saving score:', error)
+              })
           } else {
-            console.log('Student data not found.');
+            console.log('Student data not found.')
           }
         })
         .catch((error) => {
-          console.error('Error fetching student data:', error);
-        });
-  
-      setSelectedOptions([]);
-    }, 3000); // 3 seconds delay
-  };
-  
-  
+          console.error('Error fetching student data:', error)
+        })
+
+      setSelectedOptions([])
+    }, 3000)
+  }
 
   const navigateToMain = () => {
     navigate('/main')
@@ -149,39 +146,36 @@ function PracticeQuestion() {
   }
 
   const startTimer = () => {
-    let seconds = timerInput * 60;
+    let seconds = timerInput * 60
     const timerInterval = setInterval(() => {
       if (seconds > 0) {
-        setDisplayTimer(formatTime(seconds)); // Update display timer
-        seconds--;
+        setDisplayTimer(formatTime(seconds))
+        seconds--
       } else {
-        clearInterval(timerInterval);
-        // Set the flag indicating the timer has expired
-        setTimerExpired(true);
+        clearInterval(timerInterval)
+        setTimerExpired(true)
       }
-    }, 1000);
-  };
+    }, 1000)
+  }
 
   useEffect(() => {
     if (timerExpired) {
-      handleSubmit(); // Automatically submit the form when timer expires
+      handleSubmit()
     }
-  }, [timerExpired]);
-  
+  }, [timerExpired])
+
   const handleSubmission = (withTimer, e) => {
     if (e) {
-      e.preventDefault();
+      e.preventDefault()
     }
-  
-    if (withTimer) {
-      startTimer();
-      handleCloseModal();
-    } else {
-      handleCloseModal();
-    }
-  };
-  
 
+    if (withTimer) {
+      startTimer()
+      handleCloseModal()
+    } else {
+      handleCloseModal()
+    }
+  }
 
   return (
     <Container>
@@ -293,15 +287,13 @@ function PracticeQuestion() {
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-  <Button variant="secondary" onClick={() => handleSubmission(false)}>
-    Proceed without Timer
-  </Button>
-  <Button variant="primary" onClick={() => handleSubmission(true)}>
-    Proceed with Timer
-  </Button>
-</Modal.Footer>
-
-
+          <Button variant="secondary" onClick={() => handleSubmission(false)}>
+            Proceed without Timer
+          </Button>
+          <Button variant="primary" onClick={() => handleSubmission(true)}>
+            Proceed with Timer
+          </Button>
+        </Modal.Footer>
       </Modal>
     </Container>
   )

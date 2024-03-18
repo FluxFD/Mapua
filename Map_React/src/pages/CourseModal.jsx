@@ -40,7 +40,7 @@ function CourseModal({ course, show, handleClose }) {
   const [reviewerActivities, setReviewerActivities] = useState([])
   const [videoActivities, setVideoActivities] = useState([])
   const [selectedActivity, setSelectedActivity] = useState(null)
-  const [calendarKey, setCalendarKey] = useState(Date.now()) // Key for FullCalendar component
+  const [calendarKey, setCalendarKey] = useState(Date.now())
   const [folders, setFolders] = useState([])
   const [openFolderId, setOpenFolderId] = useState(null)
 
@@ -197,10 +197,10 @@ function CourseModal({ course, show, handleClose }) {
   }
 
   const handleActivityClick = (tasks, taskId, taskName) => {
-    setSelectedActivity({ tasks, taskId, taskName });
-    console.log('Selected Activity:', { tasks, taskId, taskName }); // Log selected activity
-    handleClose();
-  };
+    setSelectedActivity({ tasks, taskId, taskName })
+    console.log('Selected Activity:', { tasks, taskId, taskName }) // Log selected activity
+    handleClose()
+  }
 
   return (
     <>
@@ -224,24 +224,35 @@ function CourseModal({ course, show, handleClose }) {
               defaultActiveKey="home"
               id="uncontrolled-tab-example"
               className="mb-3"
-              onSelect={handleTabChange} // Add event handler for tab selection
+              onSelect={handleTabChange}
             >
               <Tab eventKey="home" title="Content">
                 Course Content
                 <hr />
                 <FoldersList
+                  reviewers={reviewers}
                   folders={folders}
                   folderedTask={folderedTask}
                   handleToggle={handleToggle}
                   openFolderId={openFolderId}
+                  handleReviewerClick={handleReviewerClick}
+                  videoActivities={videoActivities}
+                  handleVideoClick={handleVideoClick}
                 />
-                <TaskList tasks={tasks} handleClick={(task, taskId, taskName) => handleActivityClick(task, taskId, taskName)} />
+                <TaskList
+                  tasks={tasks}
+                  handleClick={(task, taskId, taskName) =>
+                    handleActivityClick(task, taskId, taskName)
+                  }
+                />
                 <ReviewersList
-                  reviewers={reviewers}
+                  reviewers={reviewers.filter(
+                    (reviewer) => !reviewer.FolderName
+                  )}
                   handleReviewerClick={handleReviewerClick}
                 />
                 <VideoActivitiesList
-                  videoActivities={videoActivities}
+                  videoActivities={videoActivities.filter(videoActivity => !videoActivity.FolderName)}
                   handleVideoClick={handleVideoClick}
                 />
               </Tab>
@@ -281,23 +292,19 @@ function CourseModal({ course, show, handleClose }) {
                       <tr>
                         <th>Task Name</th>
                         <th>Due Date</th>
-                        {/* <th>Status</th> */}
                         <th>Grade</th>
                       </tr>
                     </thead>
                     <tbody>
                       {tasks &&
                         Object.values(tasks).map((task) => {
-                          // Find the corresponding score based on taskName
                           const score = Object.values(userScores).find(
                             (score) => score.taskName === task.taskName
                           )
                           return (
                             <tr key={task.title}>
                               <td>{task.title}</td>
-                              {/* Display the due date from the task object */}
                               <td>{task ? task.date : '-'}</td>
-                              {/* <td>{score.status}</td> */}
                               <td>{score ? score.score : '-'}</td>
                             </tr>
                           )
@@ -318,14 +325,14 @@ function CourseModal({ course, show, handleClose }) {
         scoreValue={scoreValue}
       />
 
-<ActivityOptionsOffcanvas
-  show={selectedActivity !== null}
-  handleClose={() => {
-    console.log('Closing Activity Options Offcanvas');
-    setSelectedActivity(null);
-  }}
-  selectedActivity={selectedActivity}
-/>
+      <ActivityOptionsOffcanvas
+        show={selectedActivity !== null}
+        handleClose={() => {
+          console.log('Closing Activity Options Offcanvas')
+          setSelectedActivity(null)
+        }}
+        selectedActivity={selectedActivity}
+      />
     </>
   )
 }
