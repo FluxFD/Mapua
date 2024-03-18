@@ -67,6 +67,9 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [folders, setFolders] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
+  const [reviewersWithoutFolderName, setReviewersWithoutFolderName] = useState(
+    []
+  );
 
   function modifyDateString(dateString) {
     const dateObj = new Date(dateString);
@@ -140,6 +143,16 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
           reviewersArray.push({ id: reviewerId, ...reviewer });
         }
       });
+
+      const reviewersWithFolderName = reviewersArray.filter(
+        (reviewer) => reviewer.FolderName
+      );
+      const reviewersWithoutFolderName = reviewersArray.filter(
+        (reviewer) => !reviewer.FolderName
+      );
+
+      setReviewers(reviewersWithFolderName);
+      setReviewersWithoutFolderName(reviewersWithoutFolderName);
 
       setReviewers(reviewersArray);
     });
@@ -436,7 +449,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
 
                   <hr />
 
-                  {reviewers.map((reviewer) => (
+                  {reviewersWithoutFolderName.map((reviewer) => (
                     <Card
                       onClick={() => handleOpenReviewerModal(reviewer)}
                       key={reviewer.id}
@@ -477,6 +490,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     folders={folders}
                     selectedCourse={selectedCourse}
                     tasks={tasks}
+                    reviewers={reviewers}
                     deleteFolder={deleteFolder}
                   />
                 </Tab>
