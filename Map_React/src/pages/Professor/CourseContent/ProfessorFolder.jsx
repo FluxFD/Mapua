@@ -4,6 +4,7 @@ import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CloseIcon from "@mui/icons-material/Close";
 
 import { ref, remove } from "firebase/database";
 import { database, auth } from "../../../services/Firebase";
@@ -92,12 +93,14 @@ function FolderProf({ folders, selectedCourse, tasks, deleteFolder }) {
                       .map((task) => (
                         <div
                           key={task.id}
-                          className="d-flex align-items-center"
+                          className="d-flex align-items-center justify-content-between mt-2"
                           style={{ cursor: "pointer" }}
                         >
-                          <ListAltIcon className="me-2" />
-                          {task.taskName} - {task.dueDate}
-                          <DeleteIcon
+                          <div className="d-flex align-items-center">
+                            <ListAltIcon className="me-2" />
+                            {task.taskName} - {task.dueDate}
+                          </div>
+                          <CloseIcon
                             color="error"
                             className="cursor-pointer"
                             onClick={() => handleDeleteTask(task.id)}
