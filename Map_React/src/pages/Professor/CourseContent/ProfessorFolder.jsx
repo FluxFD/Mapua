@@ -140,7 +140,7 @@ function FolderProf({
         const folderHasTasks = foldersWithTasks.some((f) => f.id === folder.id);
 
         return (
-          <Card key={index} className="title-header mt-3">
+          <Card key={folder.id} className="title-header mt-3">
             <Card.Header
               className="d-flex align-items-center justify-content-between p-3"
               onClick={() => toggleFolder(folder.id)}
