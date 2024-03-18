@@ -108,7 +108,7 @@ const TaskDetailsPage = () => {
             const scoreRef = ref(database, `Score`);
             const newScoreRef = push(scoreRef);
             set(newScoreRef, {
-              taskName: taskId,
+              taskName: taskName,
               score: score,
               studentName: studentName,
               studentId: currentUser.uid,
@@ -147,7 +147,7 @@ const TaskDetailsPage = () => {
               <Image className="" src="/logo.png" style={{ width: '80%' }} />
             </Col>
             <Col className="d-flex align-items-center">
-              <h2>Task: {taskId}</h2>
+              <h2>Task: {taskName}</h2>
             </Col>
           </Row>
 

@@ -22,7 +22,7 @@ function Identification() {
     
             if (activitySnapshot.exists()) {
               const activityData = activitySnapshot.val()
-              const title = activityData.title
+              const title = activityData.taskName
               setActivityTitle(title)
     
               const questionsSnapshot = await get(child(activityRef, 'Activities'))
@@ -82,7 +82,7 @@ function Identification() {
                         const scoreRef = ref(database, `Score`);
                         const newScoreRef = push(scoreRef);
                         set(newScoreRef, {
-                            taskName: taskId,
+                            taskName: activityTitle,
                             score: score,
                             scores: scores,
                             studentName: studentName,
@@ -125,7 +125,7 @@ function Identification() {
                             <Image className="" src="/logo.png" style={{ width: '80%' }} />
                         </Col>
                         <Col className="d-flex align-items-center">
-                            <h2>Task: {taskId}</h2>
+                            <h2>Task: {activityTitle}</h2>
                         </Col>
                     </Row>
                     {activities && activities.length > 0 && (
