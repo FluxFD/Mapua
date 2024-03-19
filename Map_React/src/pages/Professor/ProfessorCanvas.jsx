@@ -575,9 +575,9 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       plugins={[dayGridPlugin]}
                       initialView={"dayGridWeek"}
                       height="69vh"
-                      events={reviewerActivity.map((reviewer) => ({
-                        title: reviewer.title,
-                        date: modifyDateString(reviewer.date),
+                      events={tasks.map((task) => ({
+                        title: task.taskName,
+                        date: modifyDateString(task.dueDate),
                       }))}
                     />
                   </div>
