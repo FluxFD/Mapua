@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const otpGenerator = require('otp-generator');
 const nodemailer = require('nodemailer');
+const cors = require('cors'); // Add cors package
 require('dotenv').config(); // Load environment variables from .env file
 
 const app = express();
@@ -9,6 +10,8 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
+// Enable CORS for all routes
+app.use(cors());
 
 // Nodemailer transporter
 const transporter = nodemailer.createTransport({
@@ -76,17 +79,6 @@ app.post('/verify', (req, res) => {
         // OTP is incorrect
         res.status(400).json({ error: 'Incorrect OTP' });
     }
-});
-
-// Protected route (example)
-app.get('/protected', (req, res) => {
-    const { userId } = req.query;
-
-    if (!userId || !verifiedUsers[userId]) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    res.json({ message: 'Welcome to the protected resource!' });
 });
 
 app.listen(PORT, () => {
