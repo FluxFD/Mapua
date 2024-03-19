@@ -13,6 +13,7 @@ import OndemandVideoIcon from "@mui/icons-material/OndemandVideo"; // Add this i
 
 import ReviewerModal from "../ReviewerModal";
 import TaskModal from "./TaskModal";
+import CreateVideoModalFolder from "./FolderVideo";
 
 import { ref, remove, push, update } from "firebase/database";
 import { database, auth } from "../../../services/Firebase";
@@ -58,6 +59,7 @@ function FolderProf({
   const fileInputRef = useRef(null);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [showModal, setShowModal] = useState(null);
 
   const handleTaskClick = (task) => {
     setSelectedTask(task);
@@ -186,6 +188,23 @@ function FolderProf({
                       color="text.primary"
                       onClick={() => {
                         setSelectedFolder(folder.id);
+                        setShowModal(true);
+                      }}
+                    >
+                      <OndemandVideoIcon
+                        color="primary"
+                        className="me-1"
+                        style={{ fontSize: "18px" }}
+                      />
+                      Upload Video
+                    </Link>
+
+                    <Link
+                      className="d-flex align-items-center"
+                      underline="hover"
+                      color="text.primary"
+                      onClick={() => {
+                        setSelectedFolder(folder.id);
                         setShowUploadModal(true);
                       }}
                     >
@@ -210,6 +229,13 @@ function FolderProf({
                     </Link>
                   </Breadcrumbs>
                 </div>
+
+                <CreateVideoModalFolder
+                  show={showModal} // Using the correct variable name
+                  onHide={() => setShowModal(false)} // Using the correct function name
+                  selectedCourse={selectedCourse}
+                  folderId={folder.id} // Passing the folder ID to CreateVideoModal
+                />
 
                 {folderHasTasks && (
                   <div className="ms-3">
@@ -273,7 +299,7 @@ function FolderProf({
                     >
                       <div className="d-flex align-items-center">
                         <OndemandVideoIcon className="me-2" />
-                        {videoActivity.title} - Due Date:
+                        {videoActivity.title} - Due Date: {""}
                         {videoActivity.date}
                       </div>
 
@@ -292,11 +318,13 @@ function FolderProf({
                     reviewer={selectedReviewer}
                   />
                 )}
-
                 {!folderHasTasks &&
-                  reviewersWithFolderName.filter(
+                  !reviewersWithFolderName.some(
                     (reviewer) => reviewer.FolderName === folder.id
-                  ).length === 0 && (
+                  ) &&
+                  !videoActivitiesForFolder.some(
+                    (videoActivity) => videoActivity.FolderName === folder.id
+                  ) && (
                     <div
                       className="ms-3 text-muted"
                       style={{ cursor: "pointer" }}
