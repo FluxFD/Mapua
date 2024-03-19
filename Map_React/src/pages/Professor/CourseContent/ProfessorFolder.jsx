@@ -11,6 +11,7 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ArticleIcon from "@mui/icons-material/Article";
 
 import ReviewerModal from "../ReviewerModal";
+import TaskModal from "./TaskModal";
 
 import { ref, remove, push, update } from "firebase/database";
 import { database, auth } from "../../../services/Firebase";
@@ -49,6 +50,11 @@ function FolderProf({
   });
   const fileInputRef = useRef(null);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
+
+  const handleTaskClick = (task) => {
+    setSelectedTask(task);
+  };
 
   const handleReviewerClick = (reviewer) => {
     setSelectedReviewer(reviewer);
@@ -207,6 +213,7 @@ function FolderProf({
                           key={task.id}
                           className="d-flex align-items-center justify-content-between mt-2"
                           style={{ cursor: "pointer" }}
+                          onClick={() => handleTaskClick(task)}
                         >
                           <div className="d-flex align-items-center">
                             <ListAltIcon className="me-2" />
@@ -327,7 +334,10 @@ function FolderProf({
           (task) => !task.FolderName && task.Course === selectedCourse.uid
         )
         .map((task) => (
-          <Card className="title-header mt-3">
+          <Card
+            className="title-header mt-3"
+            onClick={() => handleTaskClick(task)}
+          >
             <Card.Header className="d-flex justify-content-between align-items-center p-3">
               <div className="d-flex align-items-center">
                 <ListAltIcon className="me-2" />
@@ -341,6 +351,14 @@ function FolderProf({
             </Card.Header>
           </Card>
         ))}
+
+      {selectedTask && (
+        <TaskModal
+          show={selectedTask !== null}
+          onHide={() => setSelectedTask(null)}
+          task={selectedTask}
+        />
+      )}
     </div>
   );
 }

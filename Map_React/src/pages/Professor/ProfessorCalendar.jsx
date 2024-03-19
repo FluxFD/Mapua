@@ -17,7 +17,7 @@ function ProfessorCalendar() {
 
   useEffect(() => {
     const fetchData = () => {
-      const eventsRef = ref(database, "ReviewerActivity");
+      const eventsRef = ref(database, "Tasks");
       onValue(eventsRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
@@ -26,8 +26,8 @@ function ProfessorCalendar() {
             const parsedDate = new Date(year, month - 1, day);
 
             return {
-              title: data[key].title,
-              date: parsedDate,
+              taskName: data[key].title,
+              dueDate: parsedDate,
             };
           });
           console.log("Fetched events:", formattedEvents);

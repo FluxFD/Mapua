@@ -575,9 +575,9 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                       plugins={[dayGridPlugin]}
                       initialView={"dayGridWeek"}
                       height="69vh"
-                      events={reviewerActivity.map((reviewer) => ({
-                        title: reviewer.title,
-                        date: modifyDateString(reviewer.date),
+                      events={tasks.map((task) => ({
+                        title: task.taskName,
+                        date: modifyDateString(task.dueDate),
                       }))}
                     />
                   </div>
@@ -594,8 +594,8 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     </thead>
                     <tbody className="text-center">
                       {scores.map((score) => {
-                        const matchedActivity = reviewerActivity.find(
-                          (activity) => activity.title === score.taskName
+                        const matchedActivity = tasks.find(
+                          (activity) => activity.taskName === score.taskName
                         );
                         const shouldDisplayScore =
                           matchedActivity !== undefined;
