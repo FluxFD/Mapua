@@ -12,8 +12,6 @@ import {
   orderByChild,
   equalTo,
 } from 'firebase/database'
-import video1 from '../assets/video1.mp4'
-import video2 from '../assets/video2.mp4'
 
 const VideoActivity = () => {
   const { currentUser } = useAuth()
@@ -28,11 +26,6 @@ const VideoActivity = () => {
   const [selectedChoice, setSelectedChoice] = useState(null)
   const [shakeKey, setShakeKey] = useState(null)
 
-  const videoMap = {
-    video1: video1,
-    video2: video2,
-  }
-
   const playVideo = () => {
     if (videoRef.current) {
       videoRef.current.play()
@@ -42,34 +35,31 @@ const VideoActivity = () => {
   useEffect(() => {
     const fetchVideo = async () => {
       try {
-        const db = getDatabase() // Initialize the database
-        const snapshot = await get(child(ref(db), 'VideoActivity'))
+        const db = getDatabase();
+        const snapshot = await get(child(ref(db), 'VideoActivity'));
         if (snapshot.exists()) {
           snapshot.forEach((childSnapshot) => {
-            const data = childSnapshot.val()
+            const data = childSnapshot.val();
             if (data.title === title) {
-              const videoName = data.video
-              if (videoMap.hasOwnProperty(videoName)) {
-                setVideoSrc(videoMap[videoName])
-                setVideoDataId(childSnapshot.key)
-              } else {
-                console.error(`Video ${videoName} is not supported`)
-              }
+              const videoName = data.video;
+              setVideoSrc(videoName);
+              setVideoDataId(childSnapshot.key);
             }
-          })
+          });
         }
       } catch (error) {
-        console.error('Error fetching video:', error)
+        console.error('Error fetching video:', error);
       }
-    }
-
-    fetchVideo()
-  }, [title])
+    };
+  
+    fetchVideo();
+  }, [title]);
+  
 
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        if (!videoDataId) return // Skip if videoDataId is not set yet
+        if (!videoDataId) return
         const db = getDatabase()
         const activityRef = ref(db, `VideoActivity/${videoDataId}/activities`)
         const snapshot = await get(activityRef)
@@ -81,13 +71,10 @@ const VideoActivity = () => {
           })
           setActivities(activitiesData)
 
-          // Check if any activity matches the current time
           activitiesData.forEach((activity) => {
-            const activityTimeInSeconds = convertTimeToSeconds(activity.time) // Convert activity time to seconds
-            const currentTimeInSeconds = Math.floor(currentTime) // Convert current time to seconds
+            const activityTimeInSeconds = convertTimeToSeconds(activity.time)
+            const currentTimeInSeconds = Math.floor(currentTime)
             if (activityTimeInSeconds === currentTimeInSeconds) {
-              // Show modal when the current time matches the activity's time
-
               if (videoRef.current) {
                 videoRef.current.pause()
               }
@@ -101,9 +88,7 @@ const VideoActivity = () => {
     }
 
     fetchActivities()
-  }, [videoDataId, currentTime]) // Include currentTime in dependencies
-
-  // Function to convert time in 'mm:ss' format to seconds
+  }, [videoDataId, currentTime])
   const convertTimeToSeconds = (time) => {
     const [minutes, seconds] = time.split(':')
     return parseInt(minutes) * 60 + parseInt(seconds)
@@ -136,32 +121,23 @@ const VideoActivity = () => {
   }
 
   useEffect(() => {
-    // Function to handle video playback when modal closes
     const handleModalClose = () => {
-      // Check if the video element exists and if the modal is closed
       if (videoRef.current && !showModal) {
-        // Fast forward video by 1 second
         videoRef.current.currentTime += 1
-        // Resume video playback
         videoRef.current.play()
       }
     }
 
-    // Call the handleModalClose function when showModal state changes
     handleModalClose()
 
-    // Check if the video has finished playing
     const handleVideoEnd = () => {
-      // Navigate to /main when video finishes
       window.location.href = '/main'
     }
 
-    // Add event listener for video end
     if (videoRef.current) {
       videoRef.current.addEventListener('ended', handleVideoEnd)
     }
 
-    // Cleanup the event listener
     return () => {
       if (videoRef.current) {
         videoRef.current.removeEventListener('ended', handleVideoEnd)
@@ -169,7 +145,6 @@ const VideoActivity = () => {
     }
   }, [showModal])
 
-  // Listen for changes in showModal state
 
   return (
     <Container>
@@ -203,15 +178,9 @@ const VideoActivity = () => {
               const handleChoiceClick = (selectedChoice) => {
                 setSelectedChoice(selectedChoice)
                 if (selectedChoice === activity.answer) {
-                  // If the selected choice matches the correct answer
-                  // Display the correct icon and close the modal
                   setShowModal(false)
-                  // Additional logic if needed
                 } else {
-                  // If the selected choice is wrong
-                  // Display the wrong icon
-                  // Additional logic if needed
-                  setShakeKey(Date.now()) // Update the key to trigger re-rendering
+                  setShakeKey(Date.now())
                 }
               }
 
@@ -220,7 +189,7 @@ const VideoActivity = () => {
                   <h4>{activity.question}</h4>
                   {Object.keys(activity.choices).map((key) => (
                     <Card
-                      key={`${activity.id}-${key}-${shakeKey}`} // Update the key
+                      key={`${activity.id}-${key}-${shakeKey}`}
                       className={
                         selectedChoice !== activity.answer &&
                         selectedChoice === key
