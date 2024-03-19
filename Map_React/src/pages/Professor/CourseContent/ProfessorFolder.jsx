@@ -9,6 +9,7 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ArticleIcon from "@mui/icons-material/Article";
+import OndemandVideoIcon from "@mui/icons-material/OndemandVideo"; // Add this import
 
 import ReviewerModal from "../ReviewerModal";
 import TaskModal from "./TaskModal";
@@ -28,6 +29,7 @@ function FolderProf({
   tasks,
   reviewers,
   deleteFolder,
+  videoActivities,
 }) {
   const filteredFolders = folders.filter(
     (folder) => folder.Course === selectedCourse.uid
@@ -41,9 +43,14 @@ function FolderProf({
     (reviewer) => reviewer.FolderName
   );
 
+  const [selectedFolder, setSelectedFolder] = useState(null);
+
+  const videoActivitiesForFolder = videoActivities.filter(
+    (activity) => activity.FolderName
+  );
+
   const [expandedFolder, setExpandedFolder] = useState(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [selectedFolder, setSelectedFolder] = useState(null);
   const [fileDetails, setFileDetails] = useState({
     fileName: "",
     file: null,
@@ -254,6 +261,30 @@ function FolderProf({
                     </div>
                   ))}
 
+                {videoActivitiesForFolder
+                  .filter(
+                    (videoActivity) => videoActivity.FolderName === folder.id
+                  )
+                  .map((videoActivity) => (
+                    <div
+                      key={videoActivity.id}
+                      style={{ cursor: "pointer" }}
+                      className="d-flex align-items-center justify-content-between mt-2 ms-3"
+                    >
+                      <div className="d-flex align-items-center">
+                        <OndemandVideoIcon className="me-2" />
+                        {videoActivity.title} - Due Date:
+                        {videoActivity.date}
+                      </div>
+
+                      <CloseIcon
+                        color="error"
+                        className="cursor-pointer"
+                        style={{ fontSize: "18px" }}
+                      />
+                    </div>
+                  ))}
+
                 {selectedReviewer && (
                   <ReviewerModal
                     show={selectedReviewer !== null}
@@ -337,6 +368,7 @@ function FolderProf({
           <Card
             className="title-header mt-3"
             onClick={() => handleTaskClick(task)}
+            style={{ cursor: "pointer" }}
           >
             <Card.Header className="d-flex justify-content-between align-items-center p-3">
               <div className="d-flex align-items-center">

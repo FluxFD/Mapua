@@ -73,6 +73,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
   const [reviewersWithoutFolderName, setReviewersWithoutFolderName] = useState(
     []
   );
+  const [videoActivities, setVideoActivities] = useState([]);
 
   function modifyDateString(dateString) {
     const dateObj = new Date(dateString);
@@ -136,6 +137,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
     const scoresRef = ref(database, "Score");
     const foldersRef = ref(database, "Folders");
     const tasksRef = ref(database, "Tasks");
+    const videoActivitiesRef = ref(database, "VideoActivity");
 
     const unsubscribeReviewers = onValue(reviewersRef, (snapshot) => {
       const reviewersData = snapshot.val() || {};
@@ -227,12 +229,34 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
       setTasks([...tasksWithFolderName, ...tasksWithoutFolderName]);
     });
 
+    const unsubscribeVideoActivities = onValue(
+      videoActivitiesRef,
+      (snapshot) => {
+        const videoActivitiesData = snapshot.val() || {};
+        const videoActivitiesArray = [];
+
+        Object.entries(videoActivitiesData).forEach(
+          ([videoActivityId, videoActivity]) => {
+            if (videoActivity.Course === selectedCourse.uid) {
+              videoActivitiesArray.push({
+                id: videoActivityId,
+                ...videoActivity,
+              });
+            }
+          }
+        );
+
+        setVideoActivities(videoActivitiesArray);
+      }
+    );
+
     return () => {
       unsubscribeReviewers();
       unsubscribeAnnouncements();
       unsubscribeScores();
       unsubscribeFolders();
       unsubscribeTasks();
+      unsubscribeVideoActivities();
     };
   }, [selectedCourse.uid]);
 
@@ -499,6 +523,31 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     </Card>
                   ))}
 
+                  {videoActivities
+                    .filter((videoActivity) => !videoActivity.FolderName)
+                    .map((videoActivity) => (
+                      <Card
+                        key={videoActivity.id}
+                        style={{ cursor: "pointer" }}
+                        className="title-header mt-3"
+                      >
+                        <Card.Header className="p-3">
+                          <div className="d-flex align-items-center justify-content-between">
+                            <span>
+                              <OndemandVideoIcon className="me-2" />
+                              {videoActivity.title} - Due Date:
+                              {videoActivity.date}
+                            </span>
+
+                            <DeleteIcon
+                              color="error"
+                              className="cursor-pointer"
+                            />
+                          </div>
+                        </Card.Header>
+                      </Card>
+                    ))}
+
                   {selectedReviewer && (
                     <ReviewerModal
                       show={selectedReviewer !== null}
@@ -513,6 +562,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     tasks={tasks}
                     reviewers={reviewers}
                     deleteFolder={deleteFolder}
+                    videoActivities={videoActivities}
                   />
                 </Tab>
                 <Tab eventKey="announcement" title="Announcement">
