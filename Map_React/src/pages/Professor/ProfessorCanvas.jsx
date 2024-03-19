@@ -594,8 +594,8 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     </thead>
                     <tbody className="text-center">
                       {scores.map((score) => {
-                        const matchedActivity = reviewerActivity.find(
-                          (activity) => activity.title === score.taskName
+                        const matchedActivity = tasks.find(
+                          (activity) => activity.taskName === score.taskName
                         );
                         const shouldDisplayScore =
                           matchedActivity !== undefined;
