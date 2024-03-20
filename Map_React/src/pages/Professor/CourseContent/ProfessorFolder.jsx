@@ -9,11 +9,12 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ArticleIcon from "@mui/icons-material/Article";
-import OndemandVideoIcon from "@mui/icons-material/OndemandVideo"; // Add this import
+import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 
 import ReviewerModal from "../ReviewerModal";
 import TaskModal from "./TaskModal";
 import CreateVideoModalFolder from "./FolderVideo";
+import CreateTaskModalFolder from "./FolderCreateTask";
 
 import { ref, remove, push, update } from "firebase/database";
 import { database, auth } from "../../../services/Firebase";
@@ -60,6 +61,7 @@ function FolderProf({
   const [selectedReviewer, setSelectedReviewer] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
   const [showModal, setShowModal] = useState(null);
+  const [showCreateTaskModal, setShowCreateTaskModal] = useState(null);
 
   const handleTaskClick = (task) => {
     setSelectedTask(task);
@@ -219,6 +221,10 @@ function FolderProf({
                       className="d-flex align-items-center"
                       underline="hover"
                       color="text.primary"
+                      onClick={() => {
+                        setSelectedFolder(folder.id);
+                        setShowCreateTaskModal(true);
+                      }}
                     >
                       <AddCircleOutlineIcon
                         color="primary"
@@ -231,10 +237,17 @@ function FolderProf({
                 </div>
 
                 <CreateVideoModalFolder
-                  show={showModal} // Using the correct variable name
-                  onHide={() => setShowModal(false)} // Using the correct function name
+                  show={showModal}
+                  onHide={() => setShowModal(false)}
                   selectedCourse={selectedCourse}
-                  folderId={folder.id} // Passing the folder ID to CreateVideoModal
+                  folderId={folder.id}
+                />
+
+                <CreateTaskModalFolder
+                  show={showCreateTaskModal}
+                  onHide={() => setShowCreateTaskModal(false)}
+                  selectedCourse={selectedCourse}
+                  folderId={folder.id}
                 />
 
                 {folderHasTasks && (
@@ -299,7 +312,7 @@ function FolderProf({
                     >
                       <div className="d-flex align-items-center">
                         <OndemandVideoIcon className="me-2" />
-                        {videoActivity.title} - Due Date: {""}
+                        {videoActivity.title} - Due Date:
                         {videoActivity.date}
                       </div>
 
