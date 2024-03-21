@@ -74,7 +74,7 @@ function TaskModal({ show, onHide, task, selectedTask, setSelectedTask }) {
         Question: newQuestion,
         Choices: choicesToSave,
         questionType: questionType,
-        Answer: selectedChoiceIndex, // Update the Answer to hold the selected choice index
+        Answer: selectedChoiceIndex,
       };
     } else {
       newActivity = {
