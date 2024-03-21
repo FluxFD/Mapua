@@ -360,6 +360,17 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
     }
   };
 
+  const handleDeleteVideoActivity = (videoActivityId) => {
+    const videoActivityRef = ref(database, `VideoActivity/${videoActivityId}`);
+    remove(videoActivityRef)
+      .then(() => {
+        console.log("Video activity deleted successfully");
+      })
+      .catch((error) => {
+        console.error("Error deleting video activity:", error);
+      });
+  };
+
   const handleTabChange = (key) => {
     if (key === "calendar") {
       setCalendarKey(Date.now());
@@ -517,12 +528,12 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                           <DeleteIcon
                             color="error"
                             className="cursor-pointer"
-                            onClick={() =>
+                            onClick={(event) => {
                               handleDeleteConfirmation({
                                 id: reviewer.id,
                                 type: "Reviewer",
-                              })
-                            }
+                              });
+                            }}
                           />
                         </div>
                       </Card.Header>
@@ -549,6 +560,10 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                             <DeleteIcon
                               color="error"
                               className="cursor-pointer"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleDeleteVideoActivity(videoActivity.id);
+                              }}
                             />
                           </div>
                         </Card.Header>

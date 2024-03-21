@@ -104,6 +104,20 @@ function FolderProf({
       });
   };
 
+  const handleDeleteVideoActivity = (videoActivityId) => {
+    const videoActivityRef = ref(database, `VideoActivity/${videoActivityId}`);
+    remove(videoActivityRef)
+      .then(() => {
+        console.log(`Video activity ${videoActivityId} deleted successfully`);
+      })
+      .catch((error) => {
+        console.error(
+          `Error deleting video activity ${videoActivityId}:`,
+          error
+        );
+      });
+  };
+
   const handleFileUpload = async () => {
     const { fileName, file } = fileDetails;
     const user = auth.currentUser;
@@ -327,6 +341,10 @@ function FolderProf({
                         color="error"
                         className="cursor-pointer"
                         style={{ fontSize: "18px" }}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleDeleteVideoActivity(videoActivity.id);
+                        }}
                       />
                     </div>
                   ))}
