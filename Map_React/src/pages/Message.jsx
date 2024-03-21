@@ -61,7 +61,7 @@ function Message() {
 
     const fetchMessages = () => {
       if (!currentUser || !clickedText) return;
-      const messageRef = ref(database, "Message");
+      const messageRef = ref(database, "students/" + currentUser.uid + "/Message");
       onValue(messageRef, (snapshot) => {
         const messagesData = snapshot.val();
         if (messagesData) {
@@ -88,7 +88,7 @@ function Message() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (currentUser && selectedCourse) {
-      const messageRef = ref(database, "Message");
+      const messageRef = ref(database, "students/" + currentUser.uid + "/Message");
       const messageData = {
         Course: selectedCourse.id,
         date: new Date().toISOString(),

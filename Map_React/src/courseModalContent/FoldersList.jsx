@@ -40,6 +40,7 @@ function FoldersList({ folders, folderedTask, handleToggle, openFolderId, review
                 .filter((task) => task.FolderName === folder.id)
                 .map((task) => (
                   <Card
+                  className='mt-3 title-header'
                     key={task.id}
                     style={{ cursor: 'pointer' }}
                     onClick={(event) => {
