@@ -300,7 +300,10 @@ function FolderProf({
                           <CloseIcon
                             color="error"
                             className="cursor-pointer"
-                            onClick={() => handleDeleteTask(task.id)}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleDeleteTask(task.id);
+                            }}
                             style={{ fontSize: "18px" }}
                           />
                         </div>
