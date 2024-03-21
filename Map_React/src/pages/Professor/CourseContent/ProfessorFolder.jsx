@@ -118,6 +118,17 @@ function FolderProf({
       });
   };
 
+  const handleDeleteReviewer = (reviewerId) => {
+    const reviewerRef = ref(database, `Reviewer/${reviewerId}`);
+    remove(reviewerRef)
+      .then(() => {
+        console.log(`Reviewer ${reviewerId} deleted successfully`);
+      })
+      .catch((error) => {
+        console.error(`Error deleting reviewer ${reviewerId}:`, error);
+      });
+  };
+
   const handleFileUpload = async () => {
     const { fileName, file } = fileDetails;
     const user = auth.currentUser;
@@ -314,7 +325,10 @@ function FolderProf({
                       <CloseIcon
                         color="error"
                         className="cursor-pointer"
-                        onClick={() => handleDeleteTask(reviewer.id)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleDeleteReviewer(reviewer.id);
+                        }}
                         style={{ fontSize: "18px" }}
                       />
                     </div>
