@@ -20,14 +20,18 @@ function ProfessorCalendar() {
       const eventsRef = ref(database, "Tasks");
       onValue(eventsRef, (snapshot) => {
         const data = snapshot.val();
+        console.log("Data from Firebase:", data);
         if (data) {
           const formattedEvents = Object.keys(data).map((key) => {
-            const [month, day, year] = data[key].date.split("/");
-            const parsedDate = new Date(year, month - 1, day);
+            // Parse the date string to a Date object
+            const parts = data[key].dueDate.split("/");
+            const formattedDate = new Date(
+              `${parts[2]}-${parts[0]}-${parts[1]}`
+            );
 
             return {
-              taskName: data[key].title,
-              dueDate: parsedDate,
+              title: data[key].taskName,
+              start: formattedDate.toISOString().split("T")[0], // Convert to ISO 8601 format
             };
           });
           console.log("Fetched events:", formattedEvents);
@@ -60,18 +64,10 @@ function ProfessorCalendar() {
             }}
             height="90vh"
             initialView="dayGridMonth"
-            events={events}
-            eventDisplay="block"
-            eventContent={(eventInfo) => {
-              const eventDate = eventInfo.event.start;
-              const formattedDate = `${
-                eventDate.getMonth() + 1
-              }/${eventDate.getDate()}/${eventDate.getFullYear()}`;
-              const isPastEvent = eventDate < new Date();
-              return {
-                html: `<div style="text-align: center; padding: 3px; color: "white"};"><div>${eventInfo.event.title}</div><div>${formattedDate}</div></div>`,
-              };
-            }}
+            events={events.map((event) => ({
+              title: event.title,
+              start: new Date(event.start).toISOString().split("T")[0], // Convert to ISO 8601 format
+            }))}
           />
         </div>
       </Card>
