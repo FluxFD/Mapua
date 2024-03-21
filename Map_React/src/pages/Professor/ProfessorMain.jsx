@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import ProfessorMiniDrawer from "../../components/ProfessorDrawer";
 import ProfessorDashboard from "./ProfessorDash";
 import ProfessorCourse from "./ProfessorCourses";
-import Message from "../Message";
+import Message from "./ProfMessage";
 import ProfessorCalander from "./ProfessorCalendar";
 import ProfessorProfile from "./ProfessorProfile";
 
