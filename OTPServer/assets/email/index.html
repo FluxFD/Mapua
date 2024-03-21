@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>OTP Confirmation</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    .logo {
+        margin-bottom: 20px;
+        background-color: white;
+    }
+    h1 {
+        color: #333;
+    }
+    p {
+        color: #666;
+        text-align: center;
+    }
+    .otp-code {
+        font-size: 24px;
+        font-weight: bold;
+        color: #007bff;
+    }
+    .footer {
+        margin-top: 20px;
+        text-align: center;
+        color: #999;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <img src="https://mcl.edu.ph/wp-content/uploads/2022/04/OPTIMIZED_MMCL_Logo_Horizontal.webp" alt="Logo" class="logo">
+    <h1>OTP Confirmation</h1>
+    <p>Your One-Time Password (OTP) is:</p>
+    <p class="otp-code">{{OTP}}</p>
+    <p>Please use this OTP to complete your authentication process.</p>
+    <div class="footer">
+        <p>This email is auto-generated. Please do not reply.</p>
+    </div>
+</div>
+</body>
+</html>

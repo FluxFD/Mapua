@@ -17,6 +17,11 @@ import { ref, onValue, set } from "firebase/database";
 import useAuth from "../services/Auth";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { updatePassword as updateFirebasePassword } from "firebase/auth"; // Import the updatePassword function from Firebase Auth
+
+const updatePassword = (user, newPassword) => {
+  return updateFirebasePassword(user, newPassword);
+};
 
 function Profile() {
   const { currentUser } = useAuth();
@@ -112,11 +117,17 @@ function Profile() {
   // Handlers for modal submission
   function handlePasswordUpdate() {
     if (isPasswordValid(password) && password === reenterPassword) {
-      // Proceed with password update
-      // You can call your update password function here
-      // For example:
-      // updatePasswordFunction(password);
-      handlePasswordModal(); // Close the modal after successful password update
+      // Update password in Firebase Auth
+      updatePassword(currentUser, password)
+        .then(() => {
+          toast.success("Password updated successfully.");
+          setPassword("");
+          setReenterPassword("");
+          handlePasswordModal(); // Close the modal after successful password update
+        })
+        .catch((error) => {
+          toast.error("Failed to update password: " + error.message);
+        });
     } else {
       // Show error or handle invalid input
       if (!isPasswordValid(password)) {
