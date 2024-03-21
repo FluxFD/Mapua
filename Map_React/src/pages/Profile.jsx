@@ -29,6 +29,9 @@ function Profile() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOTP] = useState("");
+  const [reenterPassword, setReenterPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [reenterPasswordVisible, setReenterPasswordVisible] = useState(false);
 
   useEffect(() => {
     const fetchStudentData = () => {
@@ -108,10 +111,20 @@ function Profile() {
 
   // Handlers for modal submission
   function handlePasswordUpdate() {
-    if (isEmailValid(email) && isPasswordValid(password)) {
+    if (isPasswordValid(password) && password === reenterPassword) {
       // Proceed with password update
+      // You can call your update password function here
+      // For example:
+      // updatePasswordFunction(password);
+      handlePasswordModal(); // Close the modal after successful password update
     } else {
       // Show error or handle invalid input
+      if (!isPasswordValid(password)) {
+        toast.error("Password must be at least 6 characters long.");
+      }
+      if (password !== reenterPassword) {
+        toast.error("Passwords do not match.");
+      }
     }
   }
 
@@ -156,6 +169,14 @@ function Profile() {
       toast.error("Invalid OTP.");
     }
   }
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
+  const toggleReenterPasswordVisibility = () => {
+    setReenterPasswordVisible(!reenterPasswordVisible);
+  };
 
   return (
     <Container fluid style={{ paddingLeft: "15%", paddingRight: "1%" }}>
@@ -352,34 +373,46 @@ function Profile() {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <FloatingLabel
-              controlId="email"
-              label="Email address"
-              className="mb-3"
-            >
+            <InputGroup style={{ marginBottom: "20px" }}>
               <Form.Control
-                type="email"
-                placeholder="name@example.com"
-                value={studentData ? studentData.email : ""}
-                onChange={(e) => setEmail(e.target.value)}
-                isInvalid={email !== "" && !isEmailValid(email)}
-              />
-              <Form.Control.Feedback type="invalid">
-                Please enter a valid email address.
-              </Form.Control.Feedback>
-            </FloatingLabel>
-            <FloatingLabel controlId="password" label="Password">
-              <Form.Control
-                type="password"
+                type={passwordVisible ? "text" : "password"}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 isInvalid={password !== "" && !isPasswordValid(password)}
               />
+              <InputGroup.Text
+                onClick={togglePasswordVisibility}
+                style={{ cursor: "pointer" }}
+              >
+                {passwordVisible ? <VisibilityOff /> : <Visibility />}
+              </InputGroup.Text>
               <Form.Control.Feedback type="invalid">
                 Password must be at least 8 characters long.
               </Form.Control.Feedback>
-            </FloatingLabel>
+            </InputGroup>
+
+            <InputGroup>
+              <Form.Control
+                type={reenterPasswordVisible ? "text" : "password"}
+                placeholder="Re-enter Password"
+                value={reenterPassword}
+                onChange={(e) => setReenterPassword(e.target.value)}
+                isInvalid={
+                  reenterPassword !== "" && reenterPassword !== password
+                }
+              />
+              <InputGroup.Text
+                onClick={toggleReenterPasswordVisibility}
+                style={{ cursor: "pointer" }}
+              >
+                {reenterPasswordVisible ? <VisibilityOff /> : <Visibility />}
+              </InputGroup.Text>
+
+              <Form.Control.Feedback type="invalid">
+                Passwords do not match.
+              </Form.Control.Feedback>
+            </InputGroup>
           </Form>
         </Modal.Body>
         <Modal.Footer>
