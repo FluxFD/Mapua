@@ -62,6 +62,11 @@ function FolderProf({
   const [selectedTask, setSelectedTask] = useState(null);
   const [showModal, setShowModal] = useState(null);
   const [showCreateTaskModal, setShowCreateTaskModal] = useState(null);
+  const [showEnumerationModal, setShowEnumerationModal] = useState(false);
+
+  const handleEnumerationClick = (enumeration) => {
+    setSelectedEnumeration(enumeration);
+  };
 
   const handleTaskClick = (task) => {
     setSelectedTask(task);
@@ -430,6 +435,8 @@ function FolderProf({
           show={selectedTask !== null}
           onHide={() => setSelectedTask(null)}
           task={selectedTask}
+          selectedTask={selectedTask}
+          setSelectedTask={setSelectedTask}
         />
       )}
     </div>
