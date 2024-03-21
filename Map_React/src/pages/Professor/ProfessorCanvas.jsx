@@ -529,6 +529,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                             color="error"
                             className="cursor-pointer"
                             onClick={(event) => {
+                              event.stopPropagation();
                               handleDeleteConfirmation({
                                 id: reviewer.id,
                                 type: "Reviewer",

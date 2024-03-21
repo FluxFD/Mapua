@@ -461,7 +461,10 @@ function FolderProf({
               <DeleteIcon
                 color="error"
                 className="cursor-pointer"
-                onClick={() => handleDeleteTask(task.id)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleDeleteTask(task.id);
+                }}
               />
             </Card.Header>
           </Card>

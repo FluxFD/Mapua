@@ -260,11 +260,8 @@ function TaskModal({ show, onHide, task, selectedTask, setSelectedTask }) {
                             }
                           />
                         }
-                        // checked={selectedChoiceIndex === index} // Add checked prop to mark the selected radio button
-                        // onClick={() => handleRadioChange(index)}
-
-                        checked={selectedChoiceIndex === index} // Add checked prop
-                        onChange={() => handleRadioChange(choice)} // Add onChange handler
+                        checked={selectedChoiceIndex === index}
+                        onChange={() => handleRadioChange(choice)}
                       />
                     </Col>
                   </Row>
