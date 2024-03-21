@@ -1,14 +1,18 @@
 const express = require('express');
+const { db } = require('./services/Firebase'); // Assuming db is exported from Firebase initialization file
 const bodyParser = require('body-parser');
 const otpGenerator = require('otp-generator');
 const nodemailer = require('nodemailer');
-require('dotenv').config(); // Load environment variables from .env file
+const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
+// Enable CORS for all routes
+app.use(cors());
 
 // Nodemailer transporter
 const transporter = nodemailer.createTransport({
@@ -19,74 +23,78 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// In-memory storage for generated OTPs (replace this with a proper database in production)
-const otpStorage = {};
+const fs = require('fs');
+
+// Read HTML template file
+const htmlTemplate = fs.readFileSync('assets/email/index.html', 'utf8');
+
+// Function to replace placeholder with OTP value
+function replaceOTP(html, otp) {
+    return html.replace('{{OTP}}', otp);
+}
 
 // Generate OTP route
-app.post('/generate', (req, res) => {
-    const { userId, email } = req.body;
+app.post('/generate', async (req, res) => {
+  const { userId, email } = req.body;
+  
+  if (!userId || !email) {
+      return res.status(400).json({ error: 'userId and email are required' });
+  }
 
-    if (!userId || !email) {
-        return res.status(400).json({ error: 'userId and email are required' });
-    }
+  // Generate a 6-digit OTP
+  const otp = otpGenerator.generate(6, { upperCase: false, specialChars: false });
 
-    // Generate a 6-digit OTP
-    const otp = otpGenerator.generate(6, { upperCase: false, specialChars: false });
+  try {
+      // Save the OTP in Firestore
+      await db.collection('OTP').doc(userId).set({ otp, email });
 
-    // Save the OTP in storage
-    otpStorage[userId] = otp;
+      // Send OTP via email
+      const htmlWithOTP = replaceOTP(htmlTemplate, otp);
+      await transporter.sendMail({
+          from: process.env.EMAIL_ADDRESS, // Use environment variable for sender address
+          to: email,
+          subject: 'Password Change',
+          html: htmlWithOTP
+      });
 
-    // Send OTP via email
-    transporter.sendMail({
-        from: process.env.EMAIL_ADDRESS, // Use environment variable for sender address
-        to: email,
-        subject: 'Password Change',
-        text: `Your OTP is: ${otp}`
-    }, (err, info) => {
-        if (err) {
-            console.error('Error sending email:', err);
-            return res.status(500).json({ error: 'Failed to send OTP via email' });
-        }
-        console.log('Email sent:', info.response);
-        res.json({ message: 'OTP sent successfully via email' });
-    });
+      res.json({ message: 'OTP sent successfully via email' });
+  } catch (error) {
+      console.error('Error generating OTP:', error);
+      res.status(500).json({ error: 'Failed to generate OTP' });
+  }
 });
 
 // Verify OTP route
-app.post('/verify', (req, res) => {
+app.post('/verify', async (req, res) => {
     const { userId, otp } = req.body;
 
     if (!userId || !otp) {
         return res.status(400).json({ error: 'userId and otp are required' });
     }
 
-    // Retrieve the OTP from storage
-    const storedOTP = otpStorage[userId];
+    try {
+        // Retrieve the OTP from Firestore
+        const otpDoc = await db.collection('OTP').doc(userId).get();
 
-    if (!storedOTP) {
-        return res.status(404).json({ error: 'No OTP found for this user' });
+        if (!otpDoc.exists) {
+            return res.status(404).json({ error: 'No OTP found for this user' });
+        }
+
+        const storedOTP = otpDoc.data().otp;
+
+        if (otp === storedOTP) {
+            // OTP is correct
+            // Delete OTP document from Firestore
+            await db.collection('OTP').doc(userId).delete();
+            res.json({ message: 'OTP verified successfully' });
+        } else {
+            // OTP is incorrect
+            res.status(400).json({ error: 'Incorrect OTP' });
+        }
+    } catch (error) {
+        console.error('Error verifying OTP:', error);
+        res.status(500).json({ error: 'Failed to verify OTP' });
     }
-
-    if (otp === storedOTP) {
-        // OTP is correct
-        // Mark user as verified
-        delete otpStorage[userId];
-        res.json({ message: 'OTP verified successfully' });
-    } else {
-        // OTP is incorrect
-        res.status(400).json({ error: 'Incorrect OTP' });
-    }
-});
-
-// Protected route (example)
-app.get('/protected', (req, res) => {
-    const { userId } = req.query;
-
-    if (!userId || !verifiedUsers[userId]) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    res.json({ message: 'Welcome to the protected resource!' });
 });
 
 app.listen(PORT, () => {

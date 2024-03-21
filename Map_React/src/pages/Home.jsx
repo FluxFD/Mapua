@@ -149,7 +149,7 @@ function HomePage() {
                     // Update course object with module count
                     course.excerciseAnswered = excerciseAnswered;
                     // console.log(moduleAnswered, 'moduleAnswered');
-                    console.log(excercisesData, 'excercisesData');
+                    // console.log(excercisesData, 'excercisesData');
                     // console.log(course.scoreArray);
                   } else {
                     course.excerciseAnswered = 0;
