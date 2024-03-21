@@ -30,6 +30,7 @@ import CreateFolder from "./CreateFolder";
 import FolderProf from "./CourseContent/ProfessorFolder";
 import ReviewerModal from "./ReviewerModal";
 import CreateVideoModal from "./CourseContent/ProfessorVideo";
+import VideoModalFolder from "./CourseContent/VideoModalFolder";
 
 // Firebase
 import { database, storage, auth } from "../../services/Firebase";
@@ -74,6 +75,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
     []
   );
   const [videoActivities, setVideoActivities] = useState([]);
+  const [selectedVideoActivity, setSelectedVideoActivity] = useState(null);
 
   function modifyDateString(dateString) {
     const dateObj = new Date(dateString);
@@ -129,6 +131,10 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
 
   const handleCloseReviewerModal = () => {
     setSelectedReviewer(null);
+  };
+
+  const handleVideoActivityClick = (videoActivity) => {
+    setSelectedVideoActivity(videoActivity);
   };
 
   useEffect(() => {
@@ -530,6 +536,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                         key={videoActivity.id}
                         style={{ cursor: "pointer" }}
                         className="title-header mt-3"
+                        onClick={() => handleVideoActivityClick(videoActivity)}
                       >
                         <Card.Header className="p-3">
                           <div className="d-flex align-items-center justify-content-between">
@@ -564,6 +571,14 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                     deleteFolder={deleteFolder}
                     videoActivities={videoActivities}
                   />
+
+                  {selectedVideoActivity && (
+                    <VideoModalFolder
+                      show={selectedVideoActivity !== null}
+                      onHide={() => setSelectedVideoActivity(null)}
+                      videoActivity={selectedVideoActivity}
+                    />
+                  )}
                 </Tab>
                 <Tab eventKey="announcement" title="Announcement">
                   <Breadcrumbs
