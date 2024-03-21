@@ -15,6 +15,7 @@ import ReviewerModal from "../ReviewerModal";
 import TaskModal from "./TaskModal";
 import CreateVideoModalFolder from "./FolderVideo";
 import CreateTaskModalFolder from "./FolderCreateTask";
+import VideoModalFolder from "./VideoModalFolder";
 
 import { ref, remove, push, update } from "firebase/database";
 import { database, auth } from "../../../services/Firebase";
@@ -62,10 +63,10 @@ function FolderProf({
   const [selectedTask, setSelectedTask] = useState(null);
   const [showModal, setShowModal] = useState(null);
   const [showCreateTaskModal, setShowCreateTaskModal] = useState(null);
-  const [showEnumerationModal, setShowEnumerationModal] = useState(false);
+  const [selectedVideoActivity, setSelectedVideoActivity] = useState(null);
 
-  const handleEnumerationClick = (enumeration) => {
-    setSelectedEnumeration(enumeration);
+  const handleVideoActivityClick = (videoActivity) => {
+    setSelectedVideoActivity(videoActivity);
   };
 
   const handleTaskClick = (task) => {
@@ -314,6 +315,7 @@ function FolderProf({
                       key={videoActivity.id}
                       style={{ cursor: "pointer" }}
                       className="d-flex align-items-center justify-content-between mt-2 ms-3"
+                      onClick={() => handleVideoActivityClick(videoActivity)}
                     >
                       <div className="d-flex align-items-center">
                         <OndemandVideoIcon className="me-2" />
@@ -437,6 +439,14 @@ function FolderProf({
           task={selectedTask}
           selectedTask={selectedTask}
           setSelectedTask={setSelectedTask}
+        />
+      )}
+
+      {selectedVideoActivity && (
+        <VideoModalFolder
+          show={selectedVideoActivity !== null}
+          onHide={() => setSelectedVideoActivity(null)}
+          videoActivity={selectedVideoActivity}
         />
       )}
     </div>
