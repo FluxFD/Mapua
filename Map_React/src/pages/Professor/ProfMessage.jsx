@@ -13,6 +13,18 @@ function Message() {
   const [studentsWithMessages, setStudentsWithMessages] = useState([])
   const [courseMessagesToggle, setCourseMessagesToggle] = useState(false)
 
+  const formatDate = (isoDate) => {
+    const dateObj = new Date(isoDate);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const date = String(dateObj.getDate()).padStart(2, "0");
+    let hours = dateObj.getHours();
+    const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+    const meridian = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12; // Convert to 12-hour format
+    return `${year}-${month}-${date} ${hours}:${minutes} ${meridian}`;
+  };
+
   useEffect(() => {
     const studentsRef = ref(database, 'students')
     onValue(studentsRef, (snapshot) => {
@@ -189,10 +201,10 @@ function Message() {
                               {message.name}
                             </Typography>
                             <Typography variant="overline" display="block">
-                              {message.date}
+                            {formatDate(message.date)}
                             </Typography>
                             <Typography className="ms-4 mt-3" variant="body2">
-                              {message.message}
+                             - {message.message}
                             </Typography>
                           </Col>
                           <hr className="mt-3" />
