@@ -30,7 +30,7 @@ import CreateFolder from "./CreateFolder";
 import FolderProf from "./CourseContent/ProfessorFolder";
 import ReviewerModal from "./ReviewerModal";
 import CreateVideoModal from "./CourseContent/ProfessorVideo";
-import VideoModalFolder from "./CourseContent/VideoModalFolder";
+import VideoModal from "./CourseContent/VideoModal";
 
 // Firebase
 import { database, storage, auth } from "../../services/Firebase";
@@ -573,7 +573,7 @@ function ProfessorOffcanvas({ show, onHide, selectedCourse }) {
                   />
 
                   {selectedVideoActivity && (
-                    <VideoModalFolder
+                    <VideoModal
                       show={selectedVideoActivity !== null}
                       onHide={() => setSelectedVideoActivity(null)}
                       videoActivity={selectedVideoActivity}

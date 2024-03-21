@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 
-function VideoModalFolder({ show, onHide, videoActivity }) {
+function VideoModal({ show, onHide, videoActivity }) {
   // Convert activities object keys to an array
   const activityKeys = Object.keys(videoActivity.activities);
 
@@ -73,4 +73,4 @@ function VideoModalFolder({ show, onHide, videoActivity }) {
   );
 }
 
-export default VideoModalFolder;
+export default VideoModal;

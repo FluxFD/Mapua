@@ -15,7 +15,7 @@ import ReviewerModal from "../ReviewerModal";
 import TaskModal from "./TaskModal";
 import CreateVideoModalFolder from "./FolderVideo";
 import CreateTaskModalFolder from "./FolderCreateTask";
-import VideoModalFolder from "./VideoModalFolder";
+import VideoModal from "./VideoModal";
 
 import { ref, remove, push, update } from "firebase/database";
 import { database, auth } from "../../../services/Firebase";
@@ -443,7 +443,7 @@ function FolderProf({
       )}
 
       {selectedVideoActivity && (
-        <VideoModalFolder
+        <VideoModal
           show={selectedVideoActivity !== null}
           onHide={() => setSelectedVideoActivity(null)}
           videoActivity={selectedVideoActivity}
