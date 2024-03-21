@@ -27,7 +27,14 @@ function ProfessorCourse() {
   const [courseName, setCourseName] = useState("");
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [showModalContent, setShowModalContent] = useState(false);
-  const [show, setShow] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (user) {
+      setUserEmail(user.email);
+    }
+  }, []);
 
   useEffect(() => {
     const coursesRef = ref(database, "Course");
@@ -94,19 +101,21 @@ function ProfessorCourse() {
           </Col>
         </Row>
 
-        {courses.map((course) => (
-          <div key={course.uid} onClick={() => handleCardClick(course)}>
-            <Card
-              className="title-header  p-3 mt-2"
-              style={{ cursor: "pointer" }}
-            >
-              <div>
-                <b>{course.uid}</b>
-                <p>{course.createdBy}</p>
-              </div>
-            </Card>
-          </div>
-        ))}
+        {courses
+          .filter((course) => course.createdBy === userEmail)
+          .map((course) => (
+            <div key={course.uid} onClick={() => handleCardClick(course)}>
+              <Card
+                className="title-header  p-3 mt-2"
+                style={{ cursor: "pointer" }}
+              >
+                <div>
+                  <b>{course.uid}</b>
+                  <p>{course.createdBy}</p>
+                </div>
+              </Card>
+            </div>
+          ))}
       </Row>
 
       {selectedCourse && (
