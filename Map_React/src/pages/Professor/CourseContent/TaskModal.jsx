@@ -63,9 +63,9 @@ function TaskModal({ show, onHide, task, selectedTask, setSelectedTask }) {
       newActivity = {
         Question: newQuestion,
         Answer: enumerationItems,
-        questionType: questionType,
+        QuestionType: questionType,
       };
-    } else if (questionType === "MultipleChoice") {
+    } else if (questionType === "Multiplechoice") {
       const choicesToSave = choices.reduce((acc, choice, index) => {
         acc[String.fromCharCode(65 + index)] = choice;
         return acc;
@@ -73,14 +73,14 @@ function TaskModal({ show, onHide, task, selectedTask, setSelectedTask }) {
       newActivity = {
         Question: newQuestion,
         Choices: choicesToSave,
-        questionType: questionType,
+        QuestionType: questionType,
         Answer: selectedChoiceIndex,
       };
     } else {
       newActivity = {
         Question: newQuestion,
         Answer: answer,
-        questionType: questionType,
+        QuestionType: questionType,
       };
     }
 
@@ -177,7 +177,7 @@ function TaskModal({ show, onHide, task, selectedTask, setSelectedTask }) {
               value={questionType}
             >
               <option>Choose question type</option>
-              <option value="MultipleChoice">Multiple Choice</option>
+              <option value="Multiplechoice">Multiple Choice</option>
               <option value="Identification">Identification</option>
               <option value="Enumeration">Enumeration</option>
             </Form.Select>
@@ -235,7 +235,7 @@ function TaskModal({ show, onHide, task, selectedTask, setSelectedTask }) {
               </Form.Group>
             )}
 
-            {questionType === "MultipleChoice" && (
+            {questionType === "Multiplechoice" && (
               <Row className="justify-content-center">
                 <Form.Label>Enter choices</Form.Label>
                 {choices.map((choice, index) => (

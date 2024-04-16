@@ -66,7 +66,7 @@ function CreateTaskModalFolder({ show, onHide, selectedCourse, folderId }) {
 
       let answer;
 
-      if (questionType === "MultipleChoice") {
+      if (questionType === "Multiplechoice") {
         answer = choices[selectedChoiceIndex];
       } else if (questionType === "Identification") {
         answer = document.getElementById("answer").value;
@@ -124,7 +124,7 @@ function CreateTaskModalFolder({ show, onHide, selectedCourse, folderId }) {
           const newActivityKey = newActivityRef.key;
 
           const choicesToSave =
-            questionType === "MultipleChoice"
+            questionType === "Multiplechoice"
               ? choices.reduce((acc, choice, index) => {
                   acc[String.fromCharCode(65 + index)] = choice;
                   return acc;
@@ -211,7 +211,7 @@ function CreateTaskModalFolder({ show, onHide, selectedCourse, folderId }) {
             value={questionType}
           >
             <option>Choose question type</option>
-            <option value="MultipleChoice">Multiple Choice</option>
+            <option value="Multiplechoice">Multiple Choice</option>
             <option value="Identification">Identification</option>
             <option value="Enumeration">Enumeration</option>
           </Form.Select>
@@ -269,7 +269,7 @@ function CreateTaskModalFolder({ show, onHide, selectedCourse, folderId }) {
             </Form.Group>
           )}
 
-          {questionType === "MultipleChoice" && (
+          {questionType === "Multiplechoice" && (
             <Row className="justify-content-center">
               <Form.Label>Enter choices</Form.Label>
               {choices.map((choice, index) => (

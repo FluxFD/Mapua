@@ -38,7 +38,7 @@ function EnumerationModal({ show, onHide, enumeration }) {
     set(newActivityRef, {
       question: newQuestion,
       answer: newAnswers,
-      questionType: "Enumeration",
+      QuestionType: "Enumeration",
     })
       .then(() => {
         console.log("New question and answers added successfully");

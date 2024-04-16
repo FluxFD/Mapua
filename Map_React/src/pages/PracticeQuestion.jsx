@@ -213,7 +213,7 @@ function PracticeQuestion() {
                     {index + 1}. {question.question}
                   </h5>
                   <h5>{question.questionType}</h5>
-                  {question.questionType === 'MultipleChoice' && (
+                  {question.questionType === 'Multiplechoice' && (
                     <Form className="mb-4">
                       {question.choices &&
                         Object.entries(question.choices).map(

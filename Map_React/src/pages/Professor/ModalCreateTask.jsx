@@ -65,7 +65,7 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
 
       let answer;
 
-      if (questionType === "MultipleChoice") {
+      if (questionType === "Multiplechoice") {
         answer = choices[selectedChoiceIndex];
       } else if (questionType === "Identification") {
         answer = document.getElementById("answer").value;
@@ -121,7 +121,7 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
           const newActivityKey = newActivityRef.key;
 
           const choicesToSave =
-            questionType === "MultipleChoice"
+            questionType === "Multiplechoice"
               ? choices.reduce((acc, choice, index) => {
                   acc[String.fromCharCode(65 + index)] = choice;
                   return acc;
@@ -208,7 +208,7 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
             value={questionType}
           >
             <option>Choose question type</option>
-            <option value="MultipleChoice">Multiple Choice</option>
+            <option value="Multiplechoice">Multiple Choice</option>
             <option value="Identification">Identification</option>
             <option value="Enumeration">Enumeration</option>
           </Form.Select>
@@ -266,7 +266,7 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
             </Form.Group>
           )}
 
-          {questionType === "MultipleChoice" && (
+          {questionType === "Multiplechoice" && (
             <Row className="justify-content-center">
               <Form.Label>Enter choices</Form.Label>
               {choices.map((choice, index) => (
