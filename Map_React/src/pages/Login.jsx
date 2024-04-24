@@ -4,12 +4,17 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, database } from "../services/Firebase";
 import { useNavigate } from "react-router-dom";
 import { ref, get, update } from "firebase/database";
+import { ToastContainer, toast } from "react-toastify";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const storedCredentials = localStorage.getItem("credentials");
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [resetTimer, setResetTimer] = useState(false);
+  const MAX_LOGIN_ATTEMPTS = 3;
+  const RESET_TIME = 30;
 
   useEffect(() => {
     if (storedCredentials !== null) {
@@ -19,6 +24,16 @@ function LoginPage() {
       localStorage.removeItem("credentials");
     }
   }, []);
+
+  useEffect(() => {
+    if (resetTimer) {
+      const timer = setTimeout(() => {
+        setLoginAttempts(0);
+        setResetTimer(false);
+      }, RESET_TIME * 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resetTimer]);
 
   const signIn = async (email, password) => {
     try {
@@ -49,10 +64,18 @@ function LoginPage() {
       }
     } catch (error) {
       console.error("Authentication Error:", error.message);
-      throw error;
+
+      setLoginAttempts(loginAttempts + 1);
+      if (loginAttempts + 1 === MAX_LOGIN_ATTEMPTS) {
+        toast.error("Maximum login attempts reached. Please try again later.");
+        setResetTimer(true);
+      } else {
+        const attemptsLeft = MAX_LOGIN_ATTEMPTS - (loginAttempts + 1);
+        toast.warn(`You have ${attemptsLeft} attempts left.`);
+      }
     }
   };
-  
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -66,7 +89,7 @@ function LoginPage() {
       // Update isActive field to true
       const activeRef = ref(database, `students/${user.uid}`);
       await update(activeRef, {
-        isActive: true
+        isActive: true,
       });
 
       const studentRef = ref(database, `students/${user.uid}/role`);
@@ -87,11 +110,21 @@ function LoginPage() {
           console.error("Unknown role:", role);
           break;
       }
+
+      toast.success("Login successfully");
     } catch (error) {
       console.error("Authentication Error:", error.message);
+
+      setLoginAttempts(loginAttempts + 1);
+      if (loginAttempts + 1 === MAX_LOGIN_ATTEMPTS) {
+        toast.error("Maximum login attempts reached. Please try again later.");
+        setResetTimer(true);
+      } else {
+        const attemptsLeft = MAX_LOGIN_ATTEMPTS - (loginAttempts + 1);
+        toast.warn(`You have ${attemptsLeft} attempts left.`);
+      }
     }
   };
-
 
   useEffect(() => {
     window.addEventListener("message", handleMessage);
@@ -144,8 +177,13 @@ function LoginPage() {
                 Sign in using Fingerprint
               </Button>
 
-              <Button variant="success" type="submit" className="w-100 mt-3">
-                Login
+              <Button
+                variant="success"
+                type="submit"
+                className="w-100 mt-3"
+                disabled={resetTimer}
+              >
+                {resetTimer ? "Please wait..." : "Login"}
               </Button>
             </Form>
           </Card.Body>
