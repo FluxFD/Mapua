@@ -54,8 +54,8 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
       const createdBy = user.email;
       const quizName = document.getElementById("taskName").value;
       const dueDateInput = document.getElementById("dueDate").value;
-      const question = document.getElementById("question").value;
-      const questionType = document.getElementById("questionType").value;
+      // const question = document.getElementById("question").value;
+      // const questionType = document.getElementById("questionType").value;
       const inputDate = new Date(dueDateInput);
       const month = inputDate.getMonth() + 1;
       const date = inputDate.getDate();
@@ -95,9 +95,9 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
           const newActivityEnumKey = newActivityEnumRef.key;
 
           await set(newActivityEnumRef, {
-            Question: question,
-            QuestionType: questionType,
-            Answer: enumerationItems,
+            // Question: question,
+            // QuestionType: questionType,
+            // Answer: enumerationItems,
           });
 
           setQuestionType("");
@@ -129,10 +129,10 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
               : {};
 
           await set(newActivityRef, {
-            Question: question,
-            QuestionType: questionType,
-            Answer: answer,
-            Choices: choicesToSave,
+            // Question: question,
+            // QuestionType: questionType,
+            // Answer: answer,
+            // Choices: choicesToSave,
           });
 
           console.log("Other types of questions created successfully");
@@ -140,10 +140,10 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
 
         setQuizName("");
         setDueDate("");
-        setQuestion("");
-        setQuestionType("");
-        setAnswer("");
-        setChoices(["", "", "", ""]);
+        // setQuestion("");
+        // setQuestionType("");
+        // setAnswer("");
+        // setChoices(["", "", "", ""]);
 
         onHide();
       } catch (error) {
@@ -200,7 +200,7 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
               </Form.Group>
             </Col>
           </Row>
-          <Form.Select
+          {/* <Form.Select
             aria-label="Default select example"
             id="questionType"
             className="mb-3"
@@ -211,8 +211,8 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
             <option value="Multiplechoice">Multiple Choice</option>
             <option value="Identification">Identification</option>
             <option value="Enumeration">Enumeration</option>
-          </Form.Select>
-          <Form.Group className="mb-3" controlId="question">
+          </Form.Select> */}
+          {/* <Form.Group className="mb-3" controlId="question">
             <Form.Control
               as="textarea"
               rows={3}
@@ -220,7 +220,7 @@ function CreateTaskModal({ show, onHide, selectedCourse }) {
               value={question}
               onChange={handleQuestion}
             />
-          </Form.Group>
+          </Form.Group> */}
 
           {questionType === "Identification" && (
             <Form.Group className="mb-3" controlId="answer">
